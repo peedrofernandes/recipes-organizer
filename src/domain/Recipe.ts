@@ -29,7 +29,7 @@ class Recipe {
         listItem.ingredient.macros!.proteins,
         listItem.ingredient.macros!.gramsPerServing,
         listItem.totalGrams
-      ), this._macros!.proteins)
+      ), 0)
     
     // Calculate carbs based on ingredients
     this._macros!.carbs = this._ingredientList.reduce(
@@ -37,7 +37,7 @@ class Recipe {
         listItem.ingredient.macros!.carbs,
         listItem.ingredient.macros!.gramsPerServing,
         listItem.totalGrams
-      ), this._macros!.carbs)
+      ), 0)
     
     // Calculate fats based on ingredients
     this._macros!.fats = this._ingredientList.reduce(
@@ -45,7 +45,7 @@ class Recipe {
         listItem.ingredient.macros!.fats,
         listItem.ingredient.macros!.gramsPerServing,
         listItem.totalGrams
-      ), this._macros!.fats)
+      ), 0)
   }
 
   constructor(
@@ -68,6 +68,19 @@ class Recipe {
       this._macros = { proteins: 0, carbs: 0, fats: 0 }
       this.setMacros()
     }
+  }
+
+  public addIngredient(ingredient: Ingredient, totalGrams: number) {
+    this._ingredientList.push({
+      ingredient,
+      totalGrams
+    })
+    this.setMacros()
+  }
+
+  public removeIngredient(id: number | string) {
+    this._ingredientList = this._ingredientList.filter(item => item.ingredient.id !== id)
+    this.setMacros()
   }
 
   get id() {
