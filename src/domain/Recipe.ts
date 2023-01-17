@@ -1,25 +1,51 @@
 import Ingredient from "./Ingredient"
 
-type IngredientList = {
+export type IngredientList = {
   ingredient: Ingredient,
   totalGrams: number
 }[]
 
-type RecipeMacros = {
+export type RecipeMacros = {
   carbs: number,
   proteins: number,
   fats: number
 }
 
 class Recipe {
-  private id: number | string
-  private name: string
-  private description: string
-  private ingredientList: IngredientList
-  private macros?: RecipeMacros
+  private _id: number | string
+  private _name: string
+  private _description: string
+  private _ingredientList: IngredientList
+  private _macros?: RecipeMacros
 
   private calculateMacro(qtdMacro: number, gramsPerServing: number, totalGrams: number) {
     return qtdMacro * (totalGrams) / (gramsPerServing)
+  }
+
+  private setMacros() {
+    // Calculate proteins based on ingredients
+    this._macros!.proteins = this._ingredientList.reduce( 
+      (acc, listItem) => acc + this.calculateMacro(
+        listItem.ingredient.macros!.proteins,
+        listItem.ingredient.macros!.gramsPerServing,
+        listItem.totalGrams
+      ), this._macros!.proteins)
+    
+    // Calculate carbs based on ingredients
+    this._macros!.carbs = this._ingredientList.reduce(
+      (acc, listItem) => acc + this.calculateMacro(
+        listItem.ingredient.macros!.carbs,
+        listItem.ingredient.macros!.gramsPerServing,
+        listItem.totalGrams
+      ), this._macros!.carbs)
+    
+    // Calculate fats based on ingredients
+    this._macros!.fats = this._ingredientList.reduce(
+      (acc, listItem) => acc + this.calculateMacro(
+        listItem.ingredient.macros!.fats,
+        listItem.ingredient.macros!.gramsPerServing,
+        listItem.totalGrams
+      ), this._macros!.fats)
   }
 
   constructor(
@@ -28,10 +54,10 @@ class Recipe {
     description: string,
     ingredientList: IngredientList
   ) {
-    this.id = id
-    this.name = name
-    this.description = description
-    this.ingredientList = ingredientList
+    this._id = id
+    this._name = name
+    this._description = description
+    this._ingredientList = ingredientList
 
     const everyIngredientHasMacros = ingredientList.every(
       (list) => list.ingredient.macros !== undefined
@@ -39,35 +65,26 @@ class Recipe {
 
     if (everyIngredientHasMacros) {
       // Initialize macros property, otherwise it'll be undefined
-      this.macros = { proteins: 0, carbs: 0, fats: 0 }
-
-      // Calculate proteins based on ingredients
-      this.macros.proteins = this.ingredientList.reduce(
-        (acc, listItem) => acc + this.calculateMacro(
-          listItem.ingredient.macros!.proteins,
-          listItem.ingredient.macros!.gramsPerServing,
-          listItem.totalGrams
-        ), this.macros.proteins)
-      
-      // Calculate carbs based on ingredients
-      this.macros.carbs = this.ingredientList.reduce(
-        (acc, listItem) => acc + this.calculateMacro(
-          listItem.ingredient.macros!.carbs,
-          listItem.ingredient.macros!.gramsPerServing,
-          listItem.totalGrams
-        ), this.macros.carbs)
-      
-      // Calculate fats based on ingredients
-      this.macros.fats = this.ingredientList.reduce(
-        (acc, listItem) => acc + this.calculateMacro(
-          listItem.ingredient.macros!.fats,
-          listItem.ingredient.macros!.gramsPerServing,
-          listItem.totalGrams
-        ), this.macros.fats)
+      this._macros = { proteins: 0, carbs: 0, fats: 0 }
+      this.setMacros()
     }
   }
 
-
+  get id() {
+    return this._id
+  }
+  get name() {
+    return this._name
+  }
+  get description() {
+    return this._description
+  }
+  get ingredientList() {
+    return this._ingredientList
+  }
+  get macros() {
+    return this._macros
+  }
 }
 
 export default Recipe
