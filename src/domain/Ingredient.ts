@@ -5,7 +5,7 @@ type IngredientMacros = {
   gramsPerServing: number
 }
 
-class Ingredient {
+export default class Ingredient {
   private _id: number | string
   private _name: string
   private _description: string
@@ -47,5 +47,3 @@ class Ingredient {
     return this._macros
   }
 }
-
-export default Ingredient
