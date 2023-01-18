@@ -1,4 +1,4 @@
-import Recipe, { IngredientList } from "../src/domain/Recipe"
+import Recipe, { IngredientList, RecipeType } from "../src/domain/Recipe"
 import Ingredient from "../src/domain/Ingredient"
 
 describe("Recipe entity tests", () => {
@@ -30,6 +30,7 @@ describe("Recipe entity tests", () => {
     1,
     "Arroz com Ovo",
     "Uma receita simples de arroz com ovo",
+    RecipeType.Week,
     ingredientsList
   )
 

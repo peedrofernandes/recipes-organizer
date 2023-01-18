@@ -1,3 +1,4 @@
+import { WebpackError } from "webpack"
 import Ingredient from "./Ingredient"
 
 export type IngredientList = {
@@ -11,10 +12,14 @@ export type RecipeMacros = {
   fats: number
 }
 
-class Recipe {
+export enum RecipeType { Week, Weekend }
+
+export default class Recipe {
   private _id: number | string
   private _name: string
   private _description: string
+  private _type: RecipeType
+  private _date?: Date
   private _ingredientList: IngredientList
   private _macros?: RecipeMacros
 
@@ -47,17 +52,28 @@ class Recipe {
         listItem.totalGrams
       ), 0)
   }
-
+  
   constructor(
     id: number | string,
     name: string,
     description: string,
+    type: RecipeType,
     ingredientList: IngredientList
+  )
+  constructor(
+    id: number | string,
+    name: string,
+    description: string,
+    type: RecipeType,
+    ingredientList: IngredientList,
+    date?: Date
   ) {
     this._id = id
     this._name = name
     this._description = description
+    this._type = type
     this._ingredientList = ingredientList
+    this._date = undefined
 
     const everyIngredientHasMacros = ingredientList.every(
       (list) => list.ingredient.macros !== undefined
@@ -67,7 +83,12 @@ class Recipe {
       // Initialize macros property, otherwise it'll be undefined
       this._macros = { proteins: 0, carbs: 0, fats: 0 }
       this.setMacros()
+    } else {
+      this._macros = undefined
     }
+
+    if (date)
+      this._date = date
   }
 
   public addIngredient(ingredient: Ingredient, totalGrams: number) {
@@ -92,12 +113,20 @@ class Recipe {
   get description() {
     return this._description
   }
+  get type() {
+    return this._type
+  }
   get ingredientList() {
     return this._ingredientList
   }
   get macros() {
     return this._macros
   }
-}
+  get date() {
+    return this._date
+  }
 
-export default Recipe
+  set date(date: Date | undefined) {
+    this._date = date
+  }
+}

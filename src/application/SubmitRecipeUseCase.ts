@@ -1,14 +1,19 @@
-import Recipe from "../domain/Recipe";
+import Recipe, { IngredientList, RecipeType } from "../domain/Recipe";
+import IUseCase from "./IUseCase";
 
-class SubmitRecipeUseCase {
+export default class SubmitRecipe implements IUseCase {
   constructor(
-    private persistMethod: (recipe: Recipe) => Promise<void>,
-    private recipe: Recipe
+    private submitMethod: (recipe: Recipe) => Promise<void>,
   ) { }
 
-  async execute() {
-    await this.persistMethod(this.recipe)
+  async execute(
+    id: number | string,
+    name: string,
+    description: string,
+    type: RecipeType,
+    ingredientsList: IngredientList
+  ) {
+    const recipe = new Recipe(id, name, description, type, ingredientsList)
+    await this.submitMethod(recipe)
   }
 }
-
-export default SubmitRecipeUseCase
