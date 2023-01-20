@@ -7,7 +7,10 @@ module.exports = {
     filename: "bundle.js"
   },
   plugins: [ new HtmlWebpackPlugin({ template: "./src/ui/index.html" }) ],
-  devServer: { port: 3000 },
+  devServer: {
+    port: 3000,
+    historyApiFallback: true
+  },
   module: {
     rules: [
       {
