@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Container = styled.div`
   display: flex;
-  align-items: center;
+  justify-content: center;
   width: 100%;
   
   & > div {
@@ -17,7 +17,7 @@ const Container = styled.div`
     width: 100%;
     margin: 0 16px;
     gap: 4px;
-  
+
     // 600-904px
     @media (min-width: 600px) {
       grid-template-columns: repeat(8, 1fr);
