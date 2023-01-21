@@ -1,4 +1,8 @@
-type IngredientMacros = {
+type IngredientOptions =
+  { description: string } |
+  { imageUrl: string }
+
+export type IngredientMacros = {
   proteins: number,
   carbs: number,
   fats: number,
@@ -6,32 +10,42 @@ type IngredientMacros = {
 }
 
 export default class Ingredient {
-  private _id: number | string
-  private _name: string
-  private _description: string
-  private _macros?: IngredientMacros
-
-  // Constructor signatures
-  constructor(id: number | string, name: string, description: string)
-  constructor(id: number | string, name: string, description: string, proteins: number, carbs: number, fats: number, gramsPerServing: number)
+  private readonly _id: number | string
+  private readonly _name: string
+  private readonly _options?: IngredientOptions
+  private readonly _macros?: IngredientMacros
 
   // Complete constructor
-  constructor(
-    id: number | string,
-    name: string,
-    description: string,
-    proteins?: number,
-    carbs?: number,
-    fats?: number,
-    gramsPerServing?: number
-  ) {
+  constructor(props: {
+    id: number | string
+    name: string
+    options?: IngredientOptions
+    macros?: IngredientMacros
+  }) {
+    const { id, name, options, macros } = props
+
     this._id = id
     this._name = name
-    this._description = description
 
-    if (proteins && carbs && fats && gramsPerServing) {
-      this._macros = { proteins, carbs, fats, gramsPerServing }
+    if (options)
+      this._options = options
+
+    if (macros)
+      this._macros = macros
+  }
+
+  calculateMacros(grams: number): Omit<IngredientMacros, "gramsPerServing"> {
+    if (this._macros) {
+      return {
+        proteins: this._macros.proteins * grams / this._macros.gramsPerServing,
+        carbs: this._macros.carbs * grams / this._macros.gramsPerServing,
+        fats: this._macros.fats * grams / this._macros.gramsPerServing
+      }  
     }
+
+    throw new Error(
+      "Ingredient must have macronutrients before be capable to calculate macros."
+    )
   }
 
   get id() {
@@ -40,8 +54,8 @@ export default class Ingredient {
   get name() {
     return this._name
   }
-  get description() {
-    return this._description
+  get options() {
+    return this._options
   }
   get macros() {
     return this._macros

@@ -2,10 +2,30 @@ import Recipe, { IngredientList, RecipeType } from "../src/domain/Recipe"
 import Ingredient from "../src/domain/Ingredient"
 
 describe("Recipe entity tests", () => {
-  const egg = new Ingredient(1, "Egg", "Ovo simples", 6, 1, 2, 50)
-  const rice = new Ingredient(2, "Arroz", "Arroz Urbano Parboilizado", 3, 40, 3, 100)
-  const ham = new Ingredient(3, "Presunto", "Presunto Cozido Seara", 10, 20, 30, 100)
-  const oil = new Ingredient(4, "Óleo de coco", "Óleo de coco SALADA", 0.4, 10, 80, 100)
+  const egg = new Ingredient({
+    id: 1,
+    name: "Egg",
+    options: {description: "Ovo simples" },
+    macros: { proteins: 6, carbs: 1, fats: 2, gramsPerServing: 50 }
+  })
+  const rice = new Ingredient({
+    id: 2,
+    name: "Arroz",
+    options: { description: "Arroz Urbano Parboilizado" },
+    macros: { proteins: 3,  carbs: 40,  fats: 3, gramsPerServing: 100 }
+  });
+  const ham = new Ingredient({
+    id: 3,
+    name: "Presunto",
+    options: {description: "Presunto Cozido Seara" },
+    macros: { proteins: 10,  carbs: 20, fats: 30, gramsPerServing: 100 }
+  });
+  const oil = new Ingredient({
+    id: 4,
+    name: "Óleo de coco",
+    options: { description: "Óleo de coco SALADA" },
+    macros: { proteins: 0.4, carbs: 10, fats: 80, gramsPerServing: 100 }
+  })
 
   const ingredientsList: IngredientList = [
     {
@@ -26,23 +46,28 @@ describe("Recipe entity tests", () => {
     }
   ]
 
-  const RiceWithEgg = new Recipe(
-    1,
-    "Arroz com Ovo",
-    "Uma receita simples de arroz com ovo",
-    RecipeType.Week,
-    ingredientsList
-  )
+  const RiceWithEgg = new Recipe({
+    id: 1,
+    name: "Arroz com ovo",
+    type: RecipeType.Week,
+    options: { description: "Uma receita simples de arroz com ovo" },
+    ingredientList: ingredientsList
+  })
 
   it("Should have accordingly macronutrients after creation", () => {
-    expect(RiceWithEgg).toHaveProperty("_macros")
+    expect(RiceWithEgg.macros).toBeDefined()
     expect(RiceWithEgg.macros!.proteins).toBeCloseTo(18.52)
     expect(RiceWithEgg.macros!.carbs).toBeCloseTo(66.5)
     expect(RiceWithEgg.macros!.fats).toBeCloseTo(18.5)
   })
 
   it("Should have accordingly macros after adding a new ingredient", () => {
-    const butter = new Ingredient(5, "Manteiga", "Manteiga TIROL com sal", 2, 5, 40, 100)
+    const butter = new Ingredient({
+      id: 5,
+      name: "Manteiga",
+      options: { description: "Manteiga TIROL com sal" },
+      macros: { proteins: 2, carbs: 5, fats: 40, gramsPerServing: 100 }
+    })
     RiceWithEgg.addIngredient(butter, 5)
     expect(RiceWithEgg.macros!.proteins).toBeCloseTo(18.62)
     expect(RiceWithEgg.macros!.carbs).toBeCloseTo(66.75)
