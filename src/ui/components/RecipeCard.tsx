@@ -1,10 +1,12 @@
-import React, { ReactNode } from "react"
-import styled from "styled-components"
+import React, { Component, ReactNode } from "react"
+import styled, { StyledComponent } from "styled-components"
 import { AtLeastOne } from "../../types/AtLeastOne"
 import DeleteIconButton from "./buttons/DeleteIconButton"
 import EditIconButton from "./buttons/EditIconButton"
 
-const Container = styled.div`
+const CardContainer = styled.div<{
+  status: "active" | "inactive"
+}>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,8 +14,11 @@ const Container = styled.div`
   width: 100%;
   aspect-ratio: 3 / 2;
   padding: 4px;
-  box-shadow: 0 0 4px black;
   border-radius: 8px;
+  background-color: white;
+
+  box-shadow: ${props => props.status === "active" && '0 0 4px black'};
+  border: ${props => props.status === "inactive" && '1px dashed grey'};
 
   & > * {
     font-size: 0.8em;
@@ -24,7 +29,13 @@ const Container = styled.div`
   & > h1, h2, h3 {
     font-size: 1.1em;
   }
-`
+
+  transition: 0.1s ease-in-out;
+
+  &:hover {
+    ${({ status }) => status === "active" && ('transform: scale(1.02)')};
+  }
+`;
 
 const TypeSpan = styled.span`
   position: absolute;
@@ -32,18 +43,7 @@ const TypeSpan = styled.span`
   padding: 2px 4px;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
-`
-
-const ImageContainer = styled.div<{
-  imageUrl?: string
-}>`
-  width: 100%;
-  height: 70%;
-  background: ${props => props.imageUrl ? `url(${props.imageUrl})` : "grey"};
-  background-size: cover;
-  border-radius: 8px;
-
-`
+`;
 
 const ContentContainer = styled.div`
   position: relative;
@@ -59,62 +59,68 @@ const ContentContainer = styled.div`
     align-items: flex-end;
     height: 100%;
   }
-`
+`;
+
+const ImageContainer = styled.div<{
+  imageUrl?: string
+}>`
+  width: 100%;
+  height: 70%;
+  background: ${props => props.imageUrl ? `url(${props.imageUrl})` : "grey"};
+  background-size: cover;
+  border-radius: 8px;
+`;
 
 type RecipeCardProps = {
-  name: string
-  type: "Week" | "Weekend" | "Both"
-  options?: AtLeastOne<{ description: string, imageUrl: string }>
-}
+  status: "active";
+  name: string;
+  type: "Week" | "Weekend" | "Both";
+  options?: AtLeastOne<{ description: string, imageUrl: string }>;
+} | { status: "inactive" }
+
+const isActive = (props: RecipeCardProps): props is {
+  status: "active";
+  name: string;
+  type: "Week" | "Weekend" | "Both";
+  options?: AtLeastOne<{ description: string, imageUrl: string }>;
+} => props.status === "active"
 
 export default function RecipeCard(props: RecipeCardProps) {
-  const { name, options, type } = props
+  if (isActive(props)) {
+    const { name, options, type } = props;
+    
+    return (
+      <CardContainer status="active">
 
-  const ImageElement = (() => {
-    if (options && options.imageUrl) {
-      return <ImageContainer imageUrl={options.imageUrl} />
-    } else {
-      return <ImageContainer />
-    }
-  })
+        {
+          (type === "Week") ? <TypeSpan>Receita de semana</TypeSpan> :
+          (type === "Weekend") ? <TypeSpan>Receita de fim de semana</TypeSpan> : null
+        }
 
-  const TypeElement = (() => {
-    switch (type) {
-      case "Week":
-        return <TypeSpan>Receita de semana</TypeSpan>
-      case "Weekend":
-        return <TypeSpan>Receita de fim de semana</TypeSpan>
-      case "Both":
-        return null
-      default:
-        return null
-    }
-  })
+        {
+          (options?.imageUrl) ? <ImageContainer imageUrl={options.imageUrl} /> :
+          <ImageContainer />
+        }
 
-  const DescriptionElement = (() => {
-    if (options && options.description) {
-      return <p>{options.description}</p>
-    } else {
-      return null
-    }
-  })
+        <ContentContainer>
+          <div>
+            <h3>{props.name}</h3>
+            {options?.description && <p>{options.description}</p>}
+          </div>
+          <div>
+            <EditIconButton size={24} />
+            <DeleteIconButton size={24} />
+          </div>
+        </ContentContainer>
+          
+      </CardContainer>
+    )
+  } else {
+    return (
+      <CardContainer status="inactive">
 
-  return (
-    <Container>
-      <TypeElement />
-
-      <ImageElement />
-      <ContentContainer>
-        <div>
-          <h3>{props.name}</h3>
-          <DescriptionElement />
-        </div>
-        <div>
-          <EditIconButton size={24} />
-          <DeleteIconButton size={24} />
-        </div>
-      </ContentContainer>
-
-    </Container>
-  )
+      </CardContainer>
+    )
+    
+  }
 }
