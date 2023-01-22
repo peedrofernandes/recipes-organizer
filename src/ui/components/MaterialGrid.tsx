@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react"
 import styled from "styled-components";
+import { OnlyOne } from "../../types/OnlyOne";
 
 const Container = styled.div`
   display: flex;
@@ -58,10 +59,25 @@ export function Grid(props: { children: ReactNode }) {
   )
 }
 
-type GridItemProps = {
-  children: ReactNode;
-  span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
-}
+// type GridItemProps = {
+//   children: ReactNode;
+//   span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+// }
+
+type Cols = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
+
+type GridItemProps = { children: ReactNode } & OnlyOne<{
+  span: Cols;
+  absolute: [Cols, Cols];
+}>
+
 export const GridItem = styled.div<GridItemProps>`
-  grid-column: span ${props => props.span};
+    // 0-599px - xs+
+
+    grid-column: ${({ span, absolute }) => {
+      if (span)
+        return `span ${span}`
+      else if (absolute)
+        return `${absolute[0]} / ${absolute[1]}`
+    }}
 `
