@@ -1,23 +1,32 @@
-import React, { Component, ReactNode } from "react"
+import React, { Component, ReactNode, useContext } from "react"
 import styled, { StyledComponent } from "styled-components"
 import { AtLeastOne } from "../../types/AtLeastOne"
-import DeleteIconButton from "./buttons/DeleteIconButton"
-import EditIconButton from "./buttons/EditIconButton"
+import ThemeContext from "../context/ThemeContext";
+import Button from "./Button";
+import Icon from "./Icon";
 
 const CardContainer = styled.div<{
   status: "active" | "inactive"
 }>`
   display: flex;
-  flex-direction: column;
   align-items: center;
+  ${({ status }) => status === "active" ? `
+      flex-direction: column;
+    ` : `
+      justify-content: center;
+    `}
+
 
   width: 100%;
   aspect-ratio: 3 / 2;
   padding: 4px;
   border-radius: 8px;
-  background-color: white;
+  background-color: ${({ theme }) => theme.main.primaryV2};
+  color: ${({ theme }) => theme.main.contrastV2};
 
-  box-shadow: ${props => props.status === "active" && '0 0 4px black'};
+  box-shadow: ${
+  props => props.status === "active" && `0 0 4px ${props.theme.main.contrastV1}`};
+
   border: ${props => props.status === "inactive" && '1px dashed grey'};
 
   & > * {
@@ -32,14 +41,18 @@ const CardContainer = styled.div<{
 
   transition: 0.1s ease-in-out;
 
+  z-index: 0;
+
   &:hover {
-    ${({ status }) => status === "active" && ('transform: scale(1.02)')};
+    transform: scale(1.02);
+    cursor: pointer;
   }
 `;
 
 const TypeSpan = styled.span`
   position: absolute;
-  background-color: white;
+  background-color: ${({ theme }) => theme.main.primaryV2};
+  color: ${({ theme }) => theme.main.contrastV2};
   padding: 2px 4px;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
@@ -66,9 +79,13 @@ const ImageContainer = styled.div<{
 }>`
   width: 100%;
   height: 70%;
-  background: ${props => props.imageUrl ? `url(${props.imageUrl})` : "grey"};
+  background: ${props => props.imageUrl ? `url(${props.imageUrl})` : `${props.theme.main.primaryV3}`};
   background-size: cover;
   border-radius: 8px;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 type RecipeCardProps = {
@@ -86,6 +103,7 @@ const isActive = (props: RecipeCardProps): props is {
 } => props.status === "active"
 
 export default function RecipeCard(props: RecipeCardProps) {
+
   if (isActive(props)) {
     const { name, options, type } = props;
     
@@ -99,7 +117,9 @@ export default function RecipeCard(props: RecipeCardProps) {
 
         {
           (options?.imageUrl) ? <ImageContainer imageUrl={options.imageUrl} /> :
-          <ImageContainer />
+          <ImageContainer>
+              <Icon type="NoRecipe" />
+          </ImageContainer>
         }
 
         <ContentContainer>
@@ -108,8 +128,9 @@ export default function RecipeCard(props: RecipeCardProps) {
             {options?.description && <p>{options.description}</p>}
           </div>
           <div>
-            <EditIconButton size={24} />
-            <DeleteIconButton size={24} />
+            <Button type="icon">
+              <Icon type="Delete" size={24} color="red" />
+            </Button>
           </div>
         </ContentContainer>
           
@@ -118,7 +139,8 @@ export default function RecipeCard(props: RecipeCardProps) {
   } else {
     return (
       <CardContainer status="inactive">
-
+        <Icon type="AddRecipe" size={48} />
+        <Icon type="Plus" size={24} />
       </CardContainer>
     )
     

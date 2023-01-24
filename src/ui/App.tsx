@@ -1,12 +1,13 @@
-import React from "react"
+import React, { useContext, useState } from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components"
+import Button from "./components/Button"
+import ThemeContext, { ThemeContextProps } from "./context/ThemeContext"
+import ThemeContextProvider, { Theme, themesSet } from "./context/ThemeContext"
 import Dashboard from "./pages/Dashboard"
 import Start from "./pages/Start"
 
 const GlobalStyles = createGlobalStyle`
-  $black: #111414;
-
   * {
     margin: 0;
     padding: 0;
@@ -16,31 +17,48 @@ const GlobalStyles = createGlobalStyle`
 `
 
 const Layout = styled.div`
+  position: relative;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  background-color: ${({ theme }) => theme.main.primaryV1};
+  color: ${({ theme }) => theme.main.contrastV1};
 `
 
-const theme = {
-  main: "#111414",
-  secondary: "white"
-}
-
 export default function App() {
+  const [theme, setTheme] = useState<Theme>(themesSet.light)
+  
+  const ThemeContextValue: ThemeContextProps = [
+    theme,
+    () => {
+      const { dark, light } = themesSet;
+      const newTheme = theme === light ? dark : light;
+      setTheme(newTheme)
+    }
+  ]
+
+  const [,toggleTheme] = ThemeContextValue
+
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <Layout>
-          <GlobalStyles />
+      <ThemeContext.Provider value={ThemeContextValue}>
+        <ThemeProvider theme={theme}>
 
-          <Router>
-            <Routes>
-              <Route path="/" element={<Start />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-            </Routes>
-          </Router>
+          <Layout>
 
-        </Layout>
-      </ThemeProvider>
+            <Button type="styled" onClick={toggleTheme} text="Change theme" />
+            <GlobalStyles />
+
+            <Router>
+              <Routes>
+                <Route path="/" element={<Start />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+              </Routes>
+            </Router>
+
+          </Layout>
+
+        </ThemeProvider>
+      </ThemeContext.Provider>
     </>
   )
 }

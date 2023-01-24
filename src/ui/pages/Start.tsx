@@ -1,7 +1,7 @@
 import React from "react"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
-import Button from "../components/buttons/Button"
+import Button from "../components/Button"
 
 const StartPage = styled.div`
   width: 100%;
@@ -16,9 +16,11 @@ export default function Start() {
   return (
     <StartPage>
       <h1>Start page</h1>
+
       <Link to="/dashboard">
-        <Button>Go to Dashboard</Button>
+        <Button type="styled" text="Go to dashboard" />
       </Link>
+
     </StartPage>
   )
 }

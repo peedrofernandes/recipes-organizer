@@ -3,7 +3,9 @@ import styled from "styled-components"
 import { AtLeastOne } from "../../types/AtLeastOne"
 import { Grid, GridItem } from "../components/MaterialGrid"
 import RecipeCard from "../components/RecipeCard"
-import Modal, { ModalType } from "../components/modals/Modal"
+import Modal from "../components/Modal"
+import { Link } from "react-router-dom"
+import Button from "../components/Button"
 
 const Box = styled.div<{
   height?: string
@@ -63,7 +65,12 @@ export default function Dashboard() {
 
   return (
     <div>
-      {/* <Modal type={ModalType.CreateNewRecipe} /> */}
+
+      <Link to="/">
+        <Button type="styled" text="Help"/>
+      </Link>
+
+      {/* <Modal type="CreateRecipe" /> */}
       <Title>Recipes Organizer</Title>
       <Grid>
         {recipes.map((recipe) => {
