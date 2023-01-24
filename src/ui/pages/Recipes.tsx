@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useContext } from "react"
 import styled from "styled-components"
 import { AtLeastOne } from "../../types/AtLeastOne"
 import { Grid, GridItem } from "../components/MaterialGrid"
@@ -6,16 +6,16 @@ import RecipeCard from "../components/RecipeCard"
 import Modal from "../components/Modal"
 import { Link } from "react-router-dom"
 import Button from "../components/Button"
+import { ModalContext } from "../context/ModalContext"
+import Icon from "../components/Icon"
+import { ThemeContext } from "../context/ThemeContext"
 
-const Box = styled.div<{
-  height?: string
-  color?: string
-}>`
-  background-color: ${props => props.color ? props.color : "black"};
-  width: 100%;
-  /* padding-bottom: 56.25%; */
-  /* height: 200px; */
-  /* height: ${props => props.height ? props.height : "200px"}; */
+const BottomBar = styled.nav`
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-start;
+  padding: 0 16px 16px 16px;
 `
 
 const Title = styled.h1`
@@ -24,6 +24,8 @@ const Title = styled.h1`
 `
 
 export default function Dashboard() {
+  const { theme } = useContext(ThemeContext)
+
   const recipes: {
     name: string
     type: "Week" | "Weekend" | "Both"
@@ -66,11 +68,14 @@ export default function Dashboard() {
   return (
     <div>
 
-      <Link to="/">
-        <Button type="styled" text="Help"/>
-      </Link>
+      <BottomBar>
+        <Link to="/">
+          <Button type="icon">
+            <Icon type="Help" color={theme.color.primaryV1} />
+          </Button>
+        </Link>
+      </BottomBar>
 
-      {/* <Modal type="CreateRecipe" /> */}
       <Title>Recipes Organizer</Title>
       <Grid>
         {recipes.map((recipe) => {

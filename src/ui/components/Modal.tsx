@@ -1,13 +1,14 @@
-import React, { ReactNode } from "react"
+import React, { ReactNode, useContext } from "react"
 import styled from "styled-components"
+import { ModalContext } from "../context/ModalContext";
 import Form from "./Form";
 import { Grid, GridItem } from "./MaterialGrid";
 
 const ModalBackground = styled.div`
-  width: 100%;
-  height: 100%;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba(0, 0, 0, .6);
-  position: absolute;
   z-index: 1;
 
   display: flex;
@@ -25,25 +26,18 @@ const ModalBox = styled.div`
   overflow-y: auto;
 `
 
-type ModalProps = {
-  type: "CreateRecipe"
-} | {
-  type: "UpdateRecipe"
-} | {
-  type: "ConfirmRecipeDelete"
-} | {
-  type: "CreateIngredient"
-} | {
-  type: "UpdateIngredient"
-} | {
-  type: "ConfirmIngredientDelete"
-}
+export default function Modal() {
+  const { currentModal, setModal } = useContext(ModalContext)
 
-export default function Modal(props: ModalProps) {
-  const { type } = props;
+  function handleClick() {
+    console.log("Clicked on background!")
+    console.log(`Current modal: ${currentModal}`);
+    setModal("none")
+    console.log("Modal set to 'none'.");
+  }
 
   const ModalContainer = (props: { children: ReactNode }) => (
-    <ModalBackground>
+    <ModalBackground onClick={() => setModal("none")}>
       <Grid>
         <GridItem rAbs={{ xs: [1, 5], sm: [2, 8], md: [2, 12] }}>
           <ModalBox>
@@ -54,13 +48,16 @@ export default function Modal(props: ModalProps) {
     </ModalBackground>
   )
 
-  switch (type) {
+  switch (currentModal) {
+    case "none":
+      return null;
     case "CreateRecipe":
-      
       
       return (
         <ModalContainer>
-          <h1>Criar nova receita</h1>
+
+          <h1>Nova receita</h1>
+
           <Form>
             <label>Nome*</label>
             <input type="text" name="name" placeholder="Nome" />
@@ -82,6 +79,33 @@ export default function Modal(props: ModalProps) {
       );
     
     case "UpdateRecipe":
+
+      return (
+        <ModalContainer>
+
+          <h1>Nova receita</h1>
+
+          <Form>
+            <label>Nome*</label>
+            <input type="text" name="name" placeholder="Nome" />
+
+            <label>Descrição</label>
+            <input type="text" name="description" placeholder="Descrição" />
+
+            <label>Tipo*</label>
+            <select name="type">
+              <option value="Week">Receita de semana</option>
+              <option value="Weekend">Receita de fim de semana</option>
+              <option value="Both">Ambos</option>
+            </select>
+
+            <label>Imagem</label>
+            <input type="file" accept="image/png, image/gif, image/jpeg" title=" Selecione" />
+          </Form>
+          
+        </ModalContainer>
+      )
+      
     case "ConfirmRecipeDelete":
     case "CreateIngredient":
     case "UpdateIngredient":

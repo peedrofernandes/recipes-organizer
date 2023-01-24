@@ -23,13 +23,11 @@ const IconButton = styled.div`
 
   transition: 0.1s ease-in-out;
 
-  &:hover {
-    cursor: pointer;
-    transform: scale(1.2);
-  }
+  opacity: 0.75;
 
-  &:active {
-    transform: scale(1.1);
+  cursor: pointer;
+  &:hover {
+    opacity: 1;
   }
 `
 
@@ -39,7 +37,7 @@ type ButtonProps = ({
 } | {
   type: "icon";
   children: React.ReactElement<typeof Icon>
-}) & { onClick?: () => any }
+}) & { onClick?: any }
 
 export default function Button(props: ButtonProps) {
   const { type, onClick } = props

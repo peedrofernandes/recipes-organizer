@@ -1,9 +1,9 @@
 import React, { ReactNode, useContext } from "react"
-import ThemeContext from "../context/ThemeContext"
+import { ThemeContext } from "../context/ThemeContext";
 
 
 export type IconProps = {
-  type: "Delete" | "Edit" | "NoRecipe" | "NoImage" | "AddRecipe" | "Plus"; 
+  type: "Delete" | "Edit" | "NoRecipe" | "NoImage" | "AddRecipe" | "Plus" | "DarkMode" | "Help"; 
   size?: number;
   color?: string;
 }
@@ -11,7 +11,7 @@ export type IconProps = {
 export default function Icon(props: IconProps) {
   const { type, size, color } = props
 
-  const [theme] = useContext(ThemeContext)
+  const { theme } = useContext(ThemeContext)
 
   const Svg = (props: {
     children: ReactNode,
@@ -63,6 +63,18 @@ export default function Icon(props: IconProps) {
         <Svg size={size} viewBox={[0,0,24,24]}>
           <path d="M0 0h24v24H0V0z" fill="none"/>
           <path fill={color ?? theme.main.contrastV1} d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+        </Svg>
+      )
+    case "DarkMode":
+      return (
+        <Svg size={size} viewBox={[0,0,48,48]}>
+          <path fill={color ?? theme.main.contrastV1} d="M24 42q-7.5 0-12.75-5.25T6 24q0-7.5 5.25-12.75T24 6q.4 0 .85.025.45.025 1.15.075-1.8 1.6-2.8 3.95-1 2.35-1 4.95 0 4.5 3.15 7.65Q28.5 25.8 33 25.8q2.6 0 4.95-.925T41.9 22.3q.05.6.075.975Q42 23.65 42 24q0 7.5-5.25 12.75T24 42Zm0-3q5.45 0 9.5-3.375t5.05-7.925q-1.25.55-2.675.825Q34.45 28.8 33 28.8q-5.75 0-9.775-4.025T19.2 15q0-1.2.25-2.575.25-1.375.9-3.125-4.9 1.35-8.125 5.475Q9 18.9 9 24q0 6.25 4.375 10.625T24 39Zm-.2-14.85Z"/>
+        </Svg>
+      )
+    case "Help":
+      return (
+        <Svg size={size} viewBox={[0,0,48,48]}>
+          <path fill={color ?? theme.main.contrastV1} d="M24.2 36.2q.9 0 1.525-.625.625-.625.625-1.525 0-.9-.625-1.525Q25.1 31.9 24.2 31.9q-.9 0-1.525.625-.625.625-.625 1.525 0 .9.625 1.525.625.625 1.525.625Zm-2.05-7.65h3.55q0-1.4.3-2.55t2.15-2.7q1.55-1.25 2.225-2.55.675-1.3.675-2.9 0-2.8-1.85-4.45-1.85-1.65-4.9-1.65-2.7 0-4.675 1.325Q17.65 14.4 16.8 16.75l3.15 1.2q.45-1.35 1.525-2.2 1.075-.85 2.675-.85 1.6 0 2.65.875 1.05.875 1.05 2.275 0 1.1-.675 2.075-.675.975-1.925 2.025-1.65 1.4-2.375 2.7-.725 1.3-.725 3.7ZM24 44.8q-4.3 0-8.075-1.65-3.775-1.65-6.6-4.475Q6.5 35.85 4.85 32.05 3.2 28.25 3.2 24q0-4.3 1.65-8.1t4.475-6.625q2.825-2.825 6.625-4.45T24 3.2q4.3 0 8.1 1.625t6.625 4.45q2.825 2.825 4.45 6.625t1.625 8.15q0 4.25-1.625 8.025-1.625 3.775-4.45 6.6Q35.9 41.5 32.1 43.15 28.3 44.8 24 44.8Z"/>
         </Svg>
       )
     default:

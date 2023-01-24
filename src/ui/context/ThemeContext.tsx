@@ -1,4 +1,5 @@
-import { createContext } from "react";
+import React from "react";
+import { createContext, ReactNode, useState } from "react";
 
 export type Theme = {
   main: {
@@ -63,10 +64,32 @@ export const themesSet: ThemesSet = {
   }
 }
 
-export type ThemeContextProps = [Theme, () => void]
+export type ThemeContextValue = {
+  theme: Theme;
+  toggleTheme: () => void
+}
 
-const ThemeContext = createContext<ThemeContextProps>(
-  [themesSet.light, () => { }]
-)
+export const ThemeContext = createContext<ThemeContextValue>({
+  theme: themesSet.light,
+  toggleTheme: () => {}
+})
 
-export default ThemeContext
+export default function ThemeContextProvider(props: { children: ReactNode }) {
+  const { children } = props;
+
+  const [theme, setTheme] = useState<Theme>(themesSet.light);
+
+  const toggleTheme = () => {
+    const newTheme: Theme = (theme === themesSet.light) ? themesSet.dark : themesSet.light;
+
+    console.log("Toggle theme!")
+
+    setTheme(newTheme);
+  }
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  )
+}

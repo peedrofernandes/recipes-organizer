@@ -1,6 +1,7 @@
 import React, { Component, ReactNode, useContext } from "react"
 import styled, { StyledComponent } from "styled-components"
 import { AtLeastOne } from "../../types/AtLeastOne"
+import { ModalContext } from "../context/ModalContext";
 import ThemeContext from "../context/ThemeContext";
 import Button from "./Button";
 import Icon from "./Icon";
@@ -43,10 +44,13 @@ const CardContainer = styled.div<{
 
   z-index: 0;
 
-  &:hover {
-    transform: scale(1.02);
+  ${({ status, theme }) => status === "inactive" && `
     cursor: pointer;
-  }
+
+    &:hover {
+      background-color: ${theme.main.primaryV1}
+    }
+  `}
 `;
 
 const TypeSpan = styled.span`
@@ -103,6 +107,7 @@ const isActive = (props: RecipeCardProps): props is {
 } => props.status === "active"
 
 export default function RecipeCard(props: RecipeCardProps) {
+  const { setModal } = useContext(ModalContext)
 
   if (isActive(props)) {
     const { name, options, type } = props;
@@ -128,6 +133,9 @@ export default function RecipeCard(props: RecipeCardProps) {
             {options?.description && <p>{options.description}</p>}
           </div>
           <div>
+            <Button type="icon" onClick={() => setModal("UpdateRecipe")}>
+              <Icon type="Edit" size={24}/>
+            </Button>
             <Button type="icon">
               <Icon type="Delete" size={24} color="red" />
             </Button>
@@ -138,7 +146,7 @@ export default function RecipeCard(props: RecipeCardProps) {
     )
   } else {
     return (
-      <CardContainer status="inactive">
+      <CardContainer status="inactive" onClick={() => setModal("CreateRecipe")}>
         <Icon type="AddRecipe" size={48} />
         <Icon type="Plus" size={24} />
       </CardContainer>

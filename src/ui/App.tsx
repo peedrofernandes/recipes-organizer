@@ -2,9 +2,10 @@ import React, { useContext, useState } from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components"
 import Button from "./components/Button"
-import ThemeContext, { ThemeContextProps } from "./context/ThemeContext"
-import ThemeContextProvider, { Theme, themesSet } from "./context/ThemeContext"
-import Dashboard from "./pages/Dashboard"
+import Layout from "./components/Layout"
+import ModalContextProvider from "./context/ModalContext"
+import ThemeContextProvider, { ThemeContext } from "./context/ThemeContext"
+import Recipes from "./pages/Recipes"
 import Start from "./pages/Start"
 
 const GlobalStyles = createGlobalStyle`
@@ -16,49 +17,26 @@ const GlobalStyles = createGlobalStyle`
   }
 `
 
-const Layout = styled.div`
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  background-color: ${({ theme }) => theme.main.primaryV1};
-  color: ${({ theme }) => theme.main.contrastV1};
-`
-
 export default function App() {
-  const [theme, setTheme] = useState<Theme>(themesSet.light)
-  
-  const ThemeContextValue: ThemeContextProps = [
-    theme,
-    () => {
-      const { dark, light } = themesSet;
-      const newTheme = theme === light ? dark : light;
-      setTheme(newTheme)
-    }
-  ]
-
-  const [,toggleTheme] = ThemeContextValue
 
   return (
     <>
-      <ThemeContext.Provider value={ThemeContextValue}>
-        <ThemeProvider theme={theme}>
+      <ThemeContextProvider>
+        <ModalContextProvider>
 
+          <GlobalStyles />
+          
           <Layout>
-
-            <Button type="styled" onClick={toggleTheme} text="Change theme" />
-            <GlobalStyles />
-
             <Router>
               <Routes>
                 <Route path="/" element={<Start />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/recipes" element={<Recipes />} />
               </Routes>
             </Router>
-
           </Layout>
-
-        </ThemeProvider>
-      </ThemeContext.Provider>
+          
+        </ModalContextProvider>
+      </ThemeContextProvider>
     </>
   )
 }
