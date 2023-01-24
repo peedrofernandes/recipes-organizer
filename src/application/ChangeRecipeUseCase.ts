@@ -1,4 +1,4 @@
-import Recipe, { IngredientList, RecipeType } from "../domain/Recipe";
+import Recipe from "../domain/Recipe";
 import IUseCase from "./IUseCase";
 
 export default class ChangeRecipeUseCase implements IUseCase {
@@ -6,14 +6,7 @@ export default class ChangeRecipeUseCase implements IUseCase {
     private persistMethod: (recipe: Recipe) => Promise<void>,
   ) { }
   
-  async execute(
-    id: number | string,
-    name: string,
-    description: string,
-    type: RecipeType,
-    ingredientList: IngredientList
-  ) {
-    const newRecipe = new Recipe(id, name, description, type, ingredientList)
-    await this.persistMethod(newRecipe)
+  async execute(recipe: Recipe) {
+    await this.persistMethod(recipe)
   }
 }
