@@ -1,12 +1,19 @@
-type IngredientOptions =
-  { description: string } |
-  { imageUrl: string }
+import { AtLeastOne } from "../types/AtLeastOne";
 
 export type IngredientMacros = {
   proteins: number,
   carbs: number,
   fats: number,
   gramsPerServing: number
+}
+
+type IngredientOptions = AtLeastOne<{
+  description: string;
+  imageUrl: string;
+}>
+
+export function isIngredientOptions(options: any): options is IngredientOptions {
+  return (options.description !== undefined || options.imageUrl !== undefined)
 }
 
 export default class Ingredient {

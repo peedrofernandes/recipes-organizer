@@ -1,3 +1,4 @@
+import { AtLeastOne } from "../types/AtLeastOne"
 import Ingredient from "./Ingredient"
 
 export type IngredientList = {
@@ -11,9 +12,14 @@ export type RecipeMacros = {
   fats: number
 }
 
-type RecipeOptions =
-  { description: string } |
-  { imageUrl: string }
+type RecipeOptions = AtLeastOne<{
+  description: string;
+  imageUrl: string;
+}>
+
+export function isRecipeOptions(options: any): options is RecipeOptions {
+  return (options.description !== undefined || options.imageUrl !== undefined)
+}
 
 export enum RecipeType { Week, Weekend, Both }
 
