@@ -16,16 +16,22 @@ const StyledButton = styled.button`
   }
 `
 
-const IconButton = styled.div`
+const IconButton = styled.button`
+  outline: none;
+  border: none;
+  font-weight: bold;
+
   display: flex;
   justify-content: center;
   align-items: center;
 
+  background: none;
+  color: ${({ theme }) => theme.main.contrastV1};
+
   transition: 0.1s ease-in-out;
-
   opacity: 0.75;
-
   cursor: pointer;
+
   &:hover {
     opacity: 1;
   }

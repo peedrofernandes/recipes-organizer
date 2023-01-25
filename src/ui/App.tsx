@@ -26,14 +26,12 @@ export default function App() {
 
           <GlobalStyles />
           
-          <Layout>
-            <Router>
-              <Routes>
-                <Route path="/" element={<Start />} />
-                <Route path="/recipes" element={<Recipes />} />
-              </Routes>
-            </Router>
-          </Layout>
+          <Router>
+            <Routes>
+              <Route path="/" element={<Start />} />
+              <Route path="/recipes" element={<Recipes />} />
+            </Routes>
+          </Router>
           
         </ModalContextProvider>
       </ThemeContextProvider>

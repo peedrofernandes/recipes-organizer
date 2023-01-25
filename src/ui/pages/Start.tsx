@@ -2,25 +2,15 @@ import React from "react"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 import Button from "../components/Button"
-
-const StartPage = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`
+import Layout from "../components/Layout"
 
 export default function Start() {
   return (
-    <StartPage>
+    <Layout>
       <h1>Start page</h1>
-
       <Link to="/recipes">
         <Button type="styled" text="Go to dashboard" />
       </Link>
-
-    </StartPage>
+    </Layout>
   )
 }

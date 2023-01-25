@@ -9,14 +9,7 @@ import Button from "../components/Button"
 import { ModalContext } from "../context/ModalContext"
 import Icon from "../components/Icon"
 import { ThemeContext } from "../context/ThemeContext"
-
-const BottomBar = styled.nav`
-  position: fixed;
-  bottom: 0;
-  display: flex;
-  justify-content: flex-start;
-  padding: 0 16px 16px 16px;
-`
+import Layout from "../components/Layout"
 
 const Title = styled.h1`
   padding: 24px 0;
@@ -62,20 +55,69 @@ export default function Dashboard() {
         options: {
           description: "Picanha, pão de alho, linguicinha e queijo coalho",
         }
+      },
+      {
+        name: "Arroz com ovo",
+        type: "Week",
+        options: {
+          description: "Receita simples de arroz com ovos",
+          imageUrl: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8cmVjaXBlc3xlbnwwfHwwfHw%3D&w=1000&q=80"
+        }
+      },
+      {
+        name: "Parmeggiana",
+        type: "Week",
+        options: {
+          description: "Macarrão e peito de frango parmeggiana",
+        }
+      },
+      {
+        name: "Sushi",
+        type: "Weekend",
+        options: {
+          description: "Niguiri, sushi e Sashimi",
+        }
+      },
+      {
+        name: "Churrasco",
+        type: "Weekend",
+        options: {
+          description: "Picanha, pão de alho, linguicinha e queijo coalho",
+        }
+      },
+      {
+        name: "Arroz com ovo",
+        type: "Week",
+        options: {
+          description: "Receita simples de arroz com ovos",
+          imageUrl: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8cmVjaXBlc3xlbnwwfHwwfHw%3D&w=1000&q=80"
+        }
+      },
+      {
+        name: "Parmeggiana",
+        type: "Week",
+        options: {
+          description: "Macarrão e peito de frango parmeggiana",
+        }
+      },
+      {
+        name: "Sushi",
+        type: "Weekend",
+        options: {
+          description: "Niguiri, sushi e Sashimi",
+        }
+      },
+      {
+        name: "Churrasco",
+        type: "Weekend",
+        options: {
+          description: "Picanha, pão de alho, linguicinha e queijo coalho",
+        }
       }
     ]
 
   return (
-    <div>
-
-      <BottomBar>
-        <Link to="/">
-          <Button type="icon">
-            <Icon type="Help" color={theme.color.primaryV1} />
-          </Button>
-        </Link>
-      </BottomBar>
-
+    <Layout>
       <Title>Recipes Organizer</Title>
       <Grid>
         {recipes.map((recipe) => {
@@ -95,6 +137,6 @@ export default function Dashboard() {
           <RecipeCard status="inactive"/>
         </GridItem>
       </Grid>
-    </div>
+    </Layout>
   )
 }

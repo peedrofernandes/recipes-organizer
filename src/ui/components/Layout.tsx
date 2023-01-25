@@ -1,4 +1,5 @@
 import React, { ReactNode, useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 import { ThemeContext } from "../context/ThemeContext";
 import Button from "./Button";
@@ -9,29 +10,39 @@ const LayoutContainer = styled.div`
   position: relative;
   width: 100%;
   min-height: 100vh;
+
   background-color: ${({ theme }) => theme.main.primaryV1};
   color: ${({ theme }) => theme.main.contrastV1};
 `
 
-const TopBar = styled.div`
-  position: fixed;
-  width: 100%;
-
+const ButtonSet = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   padding: 16px 16px 0 16px;
-`
+  gap: 16px;
 
-const FloatingButton = styled.div`
-  position: absolute;
-  top: 2px;
-  right: 2px;
+  @media (min-width: 1000px) {
+    display: block;
+
+    & > a {
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+    }
+
+    & > button {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+    }
+  }
 `
 
 export default function Layout(props: { children: ReactNode }) {
   const { children } = props;
 
   const { theme, toggleTheme } = useContext(ThemeContext); 
+  const location = useLocation()
 
   return (
     <ThemeProvider theme={theme}>
@@ -39,11 +50,21 @@ export default function Layout(props: { children: ReactNode }) {
       <Modal />
 
       <LayoutContainer>
-          <TopBar>
-            <Button type="icon" onClick={() => toggleTheme()} >
-              <Icon type="DarkMode" size={36} />
+
+        <ButtonSet>
+          {location.pathname !== "/" && (
+          <Link to="/">
+            <Button type="icon">
+              <Icon type="Help" color={theme.color.primaryV1} />
             </Button>
-          </TopBar>
+          </Link>
+          )}
+
+          <Button type="icon" onClick={() => toggleTheme()} >
+            <Icon type="DarkMode" size={36} />
+          </Button>
+        </ButtonSet>
+
         {children}
 
       </LayoutContainer>
