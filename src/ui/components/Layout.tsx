@@ -31,7 +31,7 @@ const ButtonSet = styled.div`
 
     & > a {
       position: fixed;
-      bottom: 16px;
+      top: 16px;
       left: 16px;
     }
 
@@ -87,7 +87,9 @@ export default function Layout(props: { children: ReactNode }) {
           {children}
         </section>
 
-        <BottomNav>
+        {location.pathname !== "/" && (
+
+          <BottomNav>
           <Link to="/recipes">
             <Button type="layout" selected={location.pathname === "/recipes"}>
               <Icon type="Menu Book" size={36} />
@@ -100,7 +102,8 @@ export default function Layout(props: { children: ReactNode }) {
               <span>Ingredientes</span>
             </Button>
           </Link>
-        </BottomNav>
+          </BottomNav>
+        )}
 
       </LayoutContainer>
 

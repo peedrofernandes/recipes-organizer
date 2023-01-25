@@ -11,6 +11,10 @@ const StyledForm = styled.form`
 
   input, select {
     padding: 8px 4px;
+    background-color: ${({ theme }) => theme.main.primaryV1 + "00"};
+    color: ${({ theme }) => theme.main.contrastV1};
+    border: 1px solid ${({ theme }) => theme.main.contrastV1};
+    margin-top: 4px;
     
     &:focus {
       outline: none;

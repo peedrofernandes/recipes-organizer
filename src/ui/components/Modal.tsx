@@ -1,7 +1,9 @@
-import React, { ReactNode, useContext } from "react"
+import React, { MouseEvent, ReactNode, useContext, useRef } from "react"
 import styled from "styled-components"
 import { ModalContext } from "../context/ModalContext";
+import Button from "./Button";
 import Form from "./Form";
+import Icon from "./Icon";
 import { Grid, GridItem } from "./MaterialGrid";
 
 const ModalBackground = styled.div`
@@ -17,30 +19,41 @@ const ModalBackground = styled.div`
 `
 
 const ModalBox = styled.div`
-  background-color: white;
+  background-color: ${({ theme }) => theme.main.primaryV2};
+  color: ${({ theme }) => theme.main.contrastV2};
   width: 100%;
   height: 100%;
   padding: 16px;
   border-radius: 8px;
   max-height: 80vh;
   overflow-y: auto;
+
+  & > button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
+
 `
 
 export default function Modal() {
   const { currentModal, setModal } = useContext(ModalContext)
+  const modalBoxRef = useRef<HTMLDivElement>(null)
 
-  function handleClick() {
-    console.log("Clicked on background!")
-    console.log(`Current modal: ${currentModal}`);
-    setModal("none")
-    console.log("Modal set to 'none'.");
+  function modalCloseClickOutside(e: MouseEvent) {
+    if (!modalBoxRef.current?.contains(e.target as Node)) {
+      setModal("none")
+    }
   }
 
   const ModalContainer = (props: { children: ReactNode }) => (
-    <ModalBackground onClick={() => setModal("none")}>
+    <ModalBackground onClick={(e) => modalCloseClickOutside(e)}>
       <Grid>
         <GridItem rAbs={{ xs: [1, 5], sm: [2, 8], md: [2, 12] }}>
-          <ModalBox>
+          <ModalBox ref={modalBoxRef}>
+            <Button type="icon" onClick={() => setModal("none")}>
+              <Icon type="Close" size={24}/>
+            </Button>
             {props.children}
           </ModalBox>
         </GridItem>
