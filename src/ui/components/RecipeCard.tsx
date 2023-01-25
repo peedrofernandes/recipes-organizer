@@ -123,7 +123,7 @@ export default function RecipeCard(props: RecipeCardProps) {
         {
           (options?.imageUrl) ? <ImageContainer imageUrl={options.imageUrl} /> :
           <ImageContainer>
-              <Icon type="NoRecipe" />
+              <Icon variant="NoRecipe" />
           </ImageContainer>
         }
 
@@ -133,11 +133,11 @@ export default function RecipeCard(props: RecipeCardProps) {
             {options?.description && <p>{options.description}</p>}
           </div>
           <div>
-            <Button type="icon" onClick={() => setModal("UpdateRecipe")}>
-              <Icon type="Edit" size={24}/>
+            <Button variant="icon" onClick={() => setModal("UpdateRecipe")}>
+              <Icon variant="Edit" size={24}/>
             </Button>
-            <Button type="icon">
-              <Icon type="Delete" size={24} color="red" />
+            <Button variant="icon">
+              <Icon variant="Delete" size={24} color="red" />
             </Button>
           </div>
         </ContentContainer>
@@ -147,8 +147,8 @@ export default function RecipeCard(props: RecipeCardProps) {
   } else {
     return (
       <CardContainer status="inactive" onClick={() => setModal("CreateRecipe")}>
-        <Icon type="AddRecipe" size={48} />
-        <Icon type="Plus" size={24} />
+        <Icon variant="AddRecipe" size={48} />
+        <Icon variant="Plus" size={24} />
       </CardContainer>
     )
     

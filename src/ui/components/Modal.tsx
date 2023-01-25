@@ -51,8 +51,8 @@ export default function Modal() {
       <Grid>
         <GridItem rAbs={{ xs: [1, 5], sm: [2, 8], md: [2, 12] }}>
           <ModalBox ref={modalBoxRef}>
-            <Button type="icon" onClick={() => setModal("none")}>
-              <Icon type="Close" size={24}/>
+            <Button variant="icon" onClick={() => setModal("none")}>
+              <Icon variant="Close" size={24}/>
             </Button>
             {props.children}
           </ModalBox>

@@ -8,7 +8,7 @@ export default function Start() {
     <Layout>
       <h1>Start page</h1>
       <Link to="/recipes">
-        <Button type="styled" text="Go to dashboard" />
+        <Button variant="styled" text="Go to dashboard" />
       </Link>
     </Layout>
   )

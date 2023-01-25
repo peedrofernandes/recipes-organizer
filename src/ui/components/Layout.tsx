@@ -72,14 +72,14 @@ export default function Layout(props: { children: ReactNode }) {
         <ButtonSet>
           {location.pathname !== "/" && (
           <Link to="/">
-            <Button type="icon">
-              <Icon type="Help" color={theme.color.primaryV1} />
+            <Button variant="icon">
+              <Icon variant="Help" color={theme.color.primaryV1} />
             </Button>
           </Link>
           )}
 
-          <Button type="icon" onClick={() => toggleTheme()} >
-            <Icon type="DarkMode" size={36} />
+          <Button variant="icon" onClick={() => toggleTheme()} >
+            <Icon variant="DarkMode" size={36} />
           </Button>
         </ButtonSet>
 
@@ -91,14 +91,14 @@ export default function Layout(props: { children: ReactNode }) {
 
           <BottomNav>
           <Link to="/recipes">
-            <Button type="layout" selected={location.pathname === "/recipes"}>
-              <Icon type="Menu Book" size={36} />
+            <Button variant="layout" selected={location.pathname === "/recipes"}>
+              <Icon variant="Menu Book" size={36} />
               <span>Receitas</span>
             </Button>
           </Link>
           <Link to="/ingredients">
-            <Button type="layout" selected={location.pathname === "/ingredients"}>
-              <Icon type="Ingredient" size={36} />
+            <Button variant="layout" selected={location.pathname === "/ingredients"}>
+              <Icon variant="Ingredient" size={36} />
               <span>Ingredientes</span>
             </Button>
           </Link>

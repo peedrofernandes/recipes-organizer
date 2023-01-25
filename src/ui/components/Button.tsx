@@ -3,13 +3,13 @@ import styled from "styled-components";
 import Icon from "./Icon";
 
 type ButtonProps = ({
-  type: "styled";
+  variant: "styled";
   text: string;
 } | {
-  type: "icon";
+  variant: "icon";
   children: ReactElement<typeof Icon>;
 } | {
-  type: "layout";
+  variant: "layout";
   selected?: boolean;
   children?: ReactNode;
 }) & { onClick?: any }
@@ -84,7 +84,7 @@ const UnsetButton = styled.button`
 `
 
 export default function Button(props: ButtonProps) {
-  switch (props.type) {
+  switch (props.variant) {
 
     case "styled":
       return (

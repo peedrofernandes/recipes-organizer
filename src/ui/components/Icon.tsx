@@ -3,13 +3,13 @@ import { ThemeContext } from "../context/ThemeContext";
 
 
 export type IconProps = {
-  type: "Delete" | "Edit" | "NoRecipe" | "NoImage" | "AddRecipe" | "Plus" | "DarkMode" | "Help" | "Menu Book" | "Ingredient" | "Close"; 
+  variant: "Delete" | "Edit" | "NoRecipe" | "NoImage" | "AddRecipe" | "Plus" | "DarkMode" | "Help" | "Menu Book" | "Ingredient" | "Close"; 
   size?: number;
   color?: string;
 }
 
 export default function Icon(props: IconProps) {
-  const { type, size, color } = props
+  const { variant, size, color } = props
 
   const { theme } = useContext(ThemeContext)
 
@@ -33,7 +33,7 @@ export default function Icon(props: IconProps) {
     )
   }
 
-  switch (type) {
+  switch (variant) {
     case "Delete":
       return (
         <Svg size={size} viewBox={[0,0,48,48]}>
