@@ -13,6 +13,11 @@ const LayoutContainer = styled.div`
 
   background-color: ${({ theme }) => theme.main.primaryV1};
   color: ${({ theme }) => theme.main.contrastV1};
+
+  & > section {
+    padding: 0 0 128px 0;
+  }
+
 `
 
 const ButtonSet = styled.div`
@@ -37,6 +42,20 @@ const ButtonSet = styled.div`
     }
   }
 `
+
+const BottomNav = styled.nav`
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  & > a {
+    width: 100%;
+    text-decoration: none;
+  }
+`
+
 export default function Layout(props: { children: ReactNode }) {
   const { children } = props;
 
@@ -64,7 +83,24 @@ export default function Layout(props: { children: ReactNode }) {
           </Button>
         </ButtonSet>
 
-        {children}
+        <section>
+          {children}
+        </section>
+
+        <BottomNav>
+          <Link to="/recipes">
+            <Button type="layout" selected={location.pathname === "/recipes"}>
+              <Icon type="Menu Book" size={36} />
+              <span>Receitas</span>
+            </Button>
+          </Link>
+          <Link to="/ingredients">
+            <Button type="layout" selected={location.pathname === "/ingredients"}>
+              <Icon type="Ingredient" size={36} />
+              <span>Ingredientes</span>
+            </Button>
+          </Link>
+        </BottomNav>
 
       </LayoutContainer>
 

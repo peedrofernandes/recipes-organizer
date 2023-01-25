@@ -38,8 +38,8 @@ export const themesSet: ThemesSet = {
     },
     color: {
       primaryV1: "#07da63",
-      primaryV2: "#01A84A",
-      primaryV3: "#01A84A",
+      primaryV2: "#00ac4a",
+      primaryV3: "#007c36",
       contrastV1: "#111414",
       contrastV2: "#ffffff",
       contrastV3: "#ffffff",
@@ -55,8 +55,8 @@ export const themesSet: ThemesSet = {
       contrastV3: "#ffffff",
     },
     color: {
-      primaryV1: "#01A84A",
-      primaryV2: "#07da63",
+      primaryV1: "#007c36",
+      primaryV2: "#00ac4a",
       primaryV3: "#07da63",
       contrastV1: "#ffffff",
       contrastV2: "#111414",

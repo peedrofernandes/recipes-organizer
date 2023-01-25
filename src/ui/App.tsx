@@ -5,6 +5,7 @@ import Button from "./components/Button"
 import Layout from "./components/Layout"
 import ModalContextProvider from "./context/ModalContext"
 import ThemeContextProvider, { ThemeContext } from "./context/ThemeContext"
+import Ingredients from "./pages/Ingredients"
 import Recipes from "./pages/Recipes"
 import Start from "./pages/Start"
 
@@ -30,6 +31,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Start />} />
               <Route path="/recipes" element={<Recipes />} />
+              <Route path="/ingredients" element={<Ingredients />} />
             </Routes>
           </Router>
           
