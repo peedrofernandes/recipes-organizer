@@ -37,7 +37,6 @@ const ButtonSet = styled.div`
     }
   }
 `
-
 export default function Layout(props: { children: ReactNode }) {
   const { children } = props;
 

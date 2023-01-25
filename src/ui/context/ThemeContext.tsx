@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createContext, ReactNode, useState } from "react";
+import ThemeController from "../../controllers/ThemeController";
 
 export type Theme = {
   main: {
@@ -77,12 +78,21 @@ export const ThemeContext = createContext<ThemeContextValue>({
 export default function ThemeContextProvider(props: { children: ReactNode }) {
   const { children } = props;
 
+  const themeController = new ThemeController();
+
   const [theme, setTheme] = useState<Theme>(themesSet.light);
+
+  useEffect(() => {
+    const existingTheme = themeController.loadTheme();
+    if (existingTheme) {
+      setTheme(existingTheme === "dark" ? themesSet.dark : themesSet.light)
+    }
+  }, [])
 
   const toggleTheme = () => {
     const newTheme: Theme = (theme === themesSet.light) ? themesSet.dark : themesSet.light;
 
-    console.log("Toggle theme!")
+    themeController.persistTheme(newTheme === themesSet.light ? "light" : "dark");
 
     setTheme(newTheme);
   }
