@@ -11,6 +11,23 @@ const Title = styled.h1`
   text-align: center;
 `
 
+type IngredientPageProps = {
+  ingredients: {
+    id: number | string;
+    name: string;
+    macros?: {
+      proteins: number;
+      carbs: number;
+      fats: number;
+      gramsPerServing: number;
+    },
+    options?: AtLeastOne<{
+      description: string;
+      imageUrl: string;
+    }>
+  }
+}
+
 export default function Ingredients() {
   const { theme } = useContext(ThemeContext)
 

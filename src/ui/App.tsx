@@ -1,13 +1,11 @@
-import React, { useContext, useState } from "react"
+import React from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import styled, { createGlobalStyle, ThemeProvider } from "styled-components"
-import Button from "./components/Button"
-import Layout from "./components/Layout"
+import { createGlobalStyle } from "styled-components"
 import ModalContextProvider from "./context/ModalContext"
-import ThemeContextProvider, { ThemeContext } from "./context/ThemeContext"
-import Ingredients from "./pages/Ingredients"
-import Recipes from "./pages/Recipes"
-import Start from "./pages/Start"
+import ThemeContextProvider from "./context/ThemeContext"
+import IngredientsPage from "./pages/IngredientsPage"
+import RecipesPage from "./pages/RecipesPage"
+import HelpPage from "./pages/HelpPage"
 
 const GlobalStyles = createGlobalStyle`
   * {
@@ -29,9 +27,9 @@ export default function App() {
           
           <Router>
             <Routes>
-              <Route path="/" element={<Start />} />
-              <Route path="/recipes" element={<Recipes />} />
-              <Route path="/ingredients" element={<Ingredients />} />
+              <Route path="/" element={<HelpPage />} />
+              <Route path="/recipes" element={<RecipesPage />} />
+              <Route path="/ingredients" element={<IngredientsPage />} />
             </Routes>
           </Router>
           
