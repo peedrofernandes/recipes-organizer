@@ -3,9 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import { createGlobalStyle } from "styled-components"
 import ModalContextProvider from "./context/ModalContext"
 import ThemeContextProvider from "./context/ThemeContext"
-import IngredientsPage from "./pages/IngredientsPage"
-import RecipesPage from "./pages/RecipesPage"
-import HelpPage from "./pages/HelpPage"
+import Page from "./pages/Page"
 
 const GlobalStyles = createGlobalStyle`
   * {
@@ -20,21 +18,25 @@ export default function App() {
 
   return (
     <>
-      <ThemeContextProvider>
-        <ModalContextProvider>
+      
+    <ThemeContextProvider>
+    <ModalContextProvider>
 
-          <GlobalStyles />
-          
-          <Router>
-            <Routes>
-              <Route path="/" element={<HelpPage />} />
-              <Route path="/recipes" element={<RecipesPage />} />
-              <Route path="/ingredients" element={<IngredientsPage />} />
-            </Routes>
-          </Router>
-          
-        </ModalContextProvider>
-      </ThemeContextProvider>
+      <GlobalStyles />
+        
+      <Router>
+        <Routes>
+            
+        <Route path="/" element={<Page variant="Help"/>} />
+        <Route path="/recipes" element={<Page variant="Recipes"/>} />
+        <Route path="/ingredients" element={<Page variant="Ingredients" />} />
+            
+        </Routes>
+      </Router>
+        
+    </ModalContextProvider>
+    </ThemeContextProvider>
+
     </>
   )
 }

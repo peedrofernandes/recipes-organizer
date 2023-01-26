@@ -1,10 +1,10 @@
-import React, { MouseEvent, ReactNode, useContext, useRef } from "react"
+import React, { memo, MouseEvent, ReactNode, useCallback, useRef } from "react"
 import styled from "styled-components"
-import { ModalContext } from "../context/ModalContext";
+
+import { Grid, GridItem } from "./MaterialGrid";
 import Button from "./Button";
 import Form from "./Form";
 import Icon from "./Icon";
-import { Grid, GridItem } from "./MaterialGrid";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -36,58 +36,83 @@ const ModalBox = styled.div`
 
 `
 
-export default function Modal() {
-  const { currentModal, setModal } = useContext(ModalContext)
+export type ModalProps = ({
+  variant: "none";
+} | {
+  variant: "CreateRecipe";
+} | {
+  variant: "UpdateRecipe";
+  id: number | string;
+} | {
+  variant: "ConfirmRecipeDelete";
+  id: number | string;
+} | {
+  variant: "CreateIngredient";
+} | {
+  variant: "UpdateIngredient";
+  id: number | string;
+} | {
+  variant: "ConfirmIngredientDelete";
+  id: number | string;
+}) & {
+  events: {  closeModal: () => void }
+}
+
+
+export default function Modal(props: ModalProps) {
+  const { variant, events } = props;
   const modalBoxRef = useRef<HTMLDivElement>(null)
 
-  function modalCloseClickOutside(e: MouseEvent) {
+  const modalCloseClickOutside = useCallback((e: MouseEvent) => {
     if (!modalBoxRef.current?.contains(e.target as Node)) {
-      setModal("none")
+      events.closeModal()
     }
-  }
+  }, [modalBoxRef])
 
-  const ModalContainer = (props: { children: ReactNode }) => (
+  const ModalContainer = memo((props: { children: ReactNode }) => (
     <ModalBackground onClick={(e) => modalCloseClickOutside(e)}>
-      <Grid>
-        <GridItem rAbs={{ xs: [1, 5], sm: [2, 8], md: [2, 12] }}>
-          <ModalBox ref={modalBoxRef}>
-            <Button variant="icon" onClick={() => setModal("none")}>
-              <Icon variant="Close" size={24}/>
-            </Button>
-            {props.children}
-          </ModalBox>
-        </GridItem>
-      </Grid>
-    </ModalBackground>
-  )
 
-  switch (currentModal) {
+    <Grid>
+      <GridItem rAbs={{ xs: [1, 5], sm: [2, 8], md: [2, 12] }}>
+        <ModalBox ref={modalBoxRef}>
+          <Button variant="icon" onClick={() => events.closeModal()}>
+            <Icon variant="Close" size={24}/>
+          </Button>
+          {props.children}
+        </ModalBox>
+      </GridItem>
+    </Grid>
+      
+    </ModalBackground>
+  ))
+
+  switch (variant) {
     case "none":
       return null;
     case "CreateRecipe":
-      
       return (
         <ModalContainer>
 
-          <h1>Nova receita</h1>
+        <h1>Nova receita</h1>
+        
+        <Form>
+          <label>Nome*</label>
+          <input type="text" name="name" placeholder="Nome" />
 
-          <Form>
-            <label>Nome*</label>
-            <input type="text" name="name" placeholder="Nome" />
+          <label>Descrição</label>
+          <input type="text" name="description" placeholder="Descrição" />
 
-            <label>Descrição</label>
-            <input type="text" name="description" placeholder="Descrição" />
+          <label>Tipo*</label>
+          <select name="type">
+            <option value="Week">Receita de semana</option>
+            <option value="Weekend">Receita de fim de semana</option>
+            <option value="Both">Ambos</option>
+          </select>
 
-            <label>Tipo*</label>
-            <select name="type">
-              <option value="Week">Receita de semana</option>
-              <option value="Weekend">Receita de fim de semana</option>
-              <option value="Both">Ambos</option>
-            </select>
+          <label>Imagem</label>
+          <input type="file" accept="image/png, image/gif, image/jpeg" title=" Selecione" />
+        </Form>
 
-            <label>Imagem</label>
-            <input type="file" accept="image/png, image/gif, image/jpeg" title=" Selecione" />
-          </Form>
         </ModalContainer>
       );
     
@@ -96,25 +121,25 @@ export default function Modal() {
       return (
         <ModalContainer>
 
-          <h1>Nova receita</h1>
+        <h1>Nova receita</h1>
 
-          <Form>
-            <label>Nome*</label>
-            <input type="text" name="name" placeholder="Nome" />
+        <Form>
+          <label>Nome*</label>
+          <input type="text" name="name" placeholder="Nome" />
 
-            <label>Descrição</label>
-            <input type="text" name="description" placeholder="Descrição" />
+          <label>Descrição</label>
+          <input type="text" name="description" placeholder="Descrição" />
 
-            <label>Tipo*</label>
-            <select name="type">
-              <option value="Week">Receita de semana</option>
-              <option value="Weekend">Receita de fim de semana</option>
-              <option value="Both">Ambos</option>
-            </select>
+          <label>Tipo*</label>
+          <select name="type">
+            <option value="Week">Receita de semana</option>
+            <option value="Weekend">Receita de fim de semana</option>
+            <option value="Both">Ambos</option>
+          </select>
 
-            <label>Imagem</label>
-            <input type="file" accept="image/png, image/gif, image/jpeg" title=" Selecione" />
-          </Form>
+          <label>Imagem</label>
+          <input type="file" accept="image/png, image/gif, image/jpeg" title=" Selecione" />
+        </Form>
           
         </ModalContainer>
       )

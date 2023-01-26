@@ -1,42 +1,6 @@
-import React, { useContext } from "react"
-import styled from "styled-components"
+import { AtLeastOne } from "../types/AtLeastOne";
 
-import { AtLeastOne } from "../../types/AtLeastOne"
-
-import { ThemeContext } from "../context/ThemeContext"
-
-import { Grid, GridItem } from "../components/MaterialGrid"
-import RecipeCard from "../components/RecipeCard"
-import Layout from "../components/Layout"
-
-const Title = styled.h1`
-  padding: 24px 0;
-  text-align: center;
-`
-
-type RecipeProps = {
-  recipes: {
-    id: number | string;
-    name: string;
-    type: "Week" | "Weekend" | "Both";
-    macros?: {
-      proteins: number;
-      carbs: number;
-      fats: number;
-      gramsPerServing: number;
-    }
-    idIngredients: (number | string)[];
-    options?: AtLeastOne<{
-      description: string;
-      imageUrl: string;
-    }>
-  }[]
-}
-
-export default function Recipes() {
-  const { theme } = useContext(ThemeContext)
-
-  const recipes: {
+const recipes: {
   name: string
   type: "Week" | "Weekend" | "Both"
   options?: AtLeastOne<{
@@ -130,27 +94,4 @@ export default function Recipes() {
     }
   ]
 
-  return (
-    <Layout>
-      <Title>Receitas</Title>
-      <Grid>
-        {recipes.map((recipe) => {
-          const { name, type, options } = recipe;
-          return (
-            <GridItem span={4}>
-              <RecipeCard
-                status="active"
-                name={name}
-                type={type}
-                options={options}
-              />
-            </GridItem>
-          )
-        })}
-        <GridItem span={4}>
-          <RecipeCard status="inactive"/>
-        </GridItem>
-      </Grid>
-    </Layout>
-  )
-}
+export default recipes;

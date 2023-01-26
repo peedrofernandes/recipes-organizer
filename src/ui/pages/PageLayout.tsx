@@ -1,10 +1,13 @@
 import React, { ReactNode, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
+
 import { ThemeContext } from "../context/ThemeContext";
-import Button from "./Button";
-import Icon from "./Icon";
-import Modal from "./Modal";
+
+import Button from "../components/Button";
+import Icon from "../components/Icon";
+import Modal from "../components/Modal";
+import { ModalContext } from "../context/ModalContext";
 
 const LayoutContainer = styled.div`
   position: relative;
@@ -56,16 +59,17 @@ const BottomNav = styled.nav`
   }
 `
 
-export default function Layout(props: { children: ReactNode }) {
+export default function PageLayout(props: { children: ReactNode }) {
   const { children } = props;
 
   const { theme, toggleTheme } = useContext(ThemeContext); 
+  const { currentModal, setModal } = useContext(ModalContext);
   const location = useLocation()
 
   return (
     <ThemeProvider theme={theme}>
 
-      <Modal />
+      <Modal variant={currentModal} />
 
       <LayoutContainer>
 
