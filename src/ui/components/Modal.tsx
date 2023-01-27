@@ -24,17 +24,40 @@ const ModalBox = styled.div`
   color: ${({ theme }) => theme.main.contrastV2};
   width: 100%;
   height: 100%;
-  padding: 16px;
+  padding: 0 16px 16px 16px;
   border-radius: 8px;
   max-height: 80vh;
-  overflow-y: auto;
+  overflow-y: scroll;
 
-  & > button {
-    position: absolute;
-    top: 8px;
-    right: 8px;
+  &::-webkit-scrollbar {
+     width: 6px;
   }
 
+  &::-webkit-scrollbar-track {
+    margin: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.main.contrastV3};
+    border-radius: 64px;
+
+    &:hover {
+      background-color: ${({ theme }) => theme.main.contrastV1};
+    }
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+  }
+`
+
+const CloseModalContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  position: sticky;
+  background-color: ${({ theme }) => theme.main.primaryV2};
+  padding: 16px 0;
+  top: 0;
+  width: 100%;
 `
 
 export type ModalProps = ModalOptions & {
@@ -58,9 +81,11 @@ export default function Modal(props: ModalProps) {
     <Grid>
       <GridItem rAbs={{ xs: [1, 5], sm: [2, 8], md: [2, 12] }}>
         <ModalBox ref={modalBoxRef}>
-          <Button variant="icon" onClick={() => events.closeModal()}>
-            <Icon variant="Close" size={24}/>
-          </Button>
+          <CloseModalContainer>
+            <Button variant="icon" onClick={() => events.closeModal()}>
+              <Icon variant="Close" size={24}/>
+            </Button>
+          </CloseModalContainer>
           {props.children}
         </ModalBox>
       </GridItem>
@@ -70,9 +95,11 @@ export default function Modal(props: ModalProps) {
   ))
 
   switch (variant) {
-    case "none":
+    case "none": {
       return null;
-    case "CreateRecipe":
+    }
+    case "CreateRecipe": {
+
       return (
         <ModalContainer>
 
@@ -98,13 +125,13 @@ export default function Modal(props: ModalProps) {
 
         </ModalContainer>
       );
-    
-    case "UpdateRecipe":
-
+      
+    }
+    case "UpdateRecipe": {
       return (
         <ModalContainer>
 
-        <h1>Nova receita</h1>
+        <h1>Atualizar receita</h1>
 
         <Form>
           <label>Nome*</label>
@@ -122,15 +149,43 @@ export default function Modal(props: ModalProps) {
 
           <label>Imagem</label>
           <input type="file" accept="image/png, image/gif, image/jpeg" title=" Selecione" />
-        </Form>
+          </Form>
+          
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
+          <h1>COntent</h1>
           
         </ModalContainer>
       )
       
-    case "ConfirmRecipeDelete":
-    case "CreateIngredient":
-    case "UpdateIngredient":
-    case "ConfirmIngredientDelete":
+    }
+    case "ConfirmRecipeDelete": {
+
+    }
+    case "CreateIngredient": {
+
+    }
+    case "UpdateIngredient": {
+
+    }
+    case "ConfirmIngredientDelete": {
+
+    }
     default:
       return null;
   }

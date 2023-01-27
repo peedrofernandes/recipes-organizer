@@ -18,21 +18,6 @@ const GlobalStyles = createGlobalStyle`
 
 export default function App() {
 
-  const events = useMemo(() => {
-    return {
-      ingredientEvents: {
-        handleCreateClick: () => console.log("A new ingredient should be created."),
-        handleEditClick: (id: number | string) => console.log(`The ${id} ingredient should be updated.`),
-        handleDeleteClick: (id: number | string) => console.log(`The ${id} ingredient should be deleted.`)
-      },
-      recipeEvents: {
-        handleCreateClick: () => console.log("A new recipe should be created."),
-        handleEditClick: (id: number | string) => console.log(`The ${id} recipe should be updated.`),
-        handleDeleteClick: (id: number | string) => console.log(`The ${id} recipe should be deleted.`)
-      }
-    }
-  }, []);
-
   return (
     <>
       
@@ -59,7 +44,6 @@ export default function App() {
             <Page
               variant="Recipes"
               recipes={recipes}
-              events={events.recipeEvents}
             />
             }
           />
@@ -70,7 +54,6 @@ export default function App() {
               <Page
                 variant="Ingredients"
                 ingredients={ingredients}
-                events={events.ingredientEvents}
               />
             }
           />
