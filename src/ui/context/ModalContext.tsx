@@ -1,8 +1,6 @@
 import React, { createContext, ReactNode, useState } from "react";
 import { ModalOptions } from "../types/ModalOptions";
 
-
-
 type ModalContextType = {
   currentModal: ModalOptions;
   setModal: (modal: ModalOptions) => void

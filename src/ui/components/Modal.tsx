@@ -5,6 +5,7 @@ import { Grid, GridItem } from "./MaterialGrid";
 import Button from "./Button";
 import Form from "./Form";
 import Icon from "./Icon";
+import { ModalOptions } from "../types/ModalOptions";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -36,26 +37,8 @@ const ModalBox = styled.div`
 
 `
 
-export type ModalProps = ({
-  variant: "none";
-} | {
-  variant: "CreateRecipe";
-} | {
-  variant: "UpdateRecipe";
-  id: number | string;
-} | {
-  variant: "ConfirmRecipeDelete";
-  id: number | string;
-} | {
-  variant: "CreateIngredient";
-} | {
-  variant: "UpdateIngredient";
-  id: number | string;
-} | {
-  variant: "ConfirmIngredientDelete";
-  id: number | string;
-}) & {
-  events: {  closeModal: () => void }
+export type ModalProps = ModalOptions & {
+  events: { closeModal: () => void }
 }
 
 

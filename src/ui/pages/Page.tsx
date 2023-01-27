@@ -1,15 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-
-import recipes from "../data";
-
-import { AtLeastOne } from "../../types/AtLeastOne";
-
 import Card from "../components/Card";
 import { Grid, GridItem } from "../components/MaterialGrid";
 import PageLayout from "./PageLayout";
 import { Link } from "react-router-dom";
 import Button from "../components/Button";
+import { Ingredient, Recipe } from "../types/Data";
 
 const Title = styled.h1`
   padding: 24px 0;
@@ -17,41 +13,23 @@ const Title = styled.h1`
 `
 
 type PageProps = {
-  variant: "Help",
+  variant: "Help";
 } | {
-  variant: "Ingredients",
-  ingredients: {
-    id: number | string;
-    name: string;
-    macros?: {
-      proteins: number;
-      carbs: number;
-      fats: number;
-      gramsPerServing: number;
-    },
-    options?: AtLeastOne<{
-      description: string;
-      imageUrl: string;
-    }>
-  }[]
+  variant: "Ingredients";
+  ingredients: Ingredient[];
+  events: {
+    handleEditClick: (id: number | string) => void;
+    handleDeleteClick: (id: number | string) => void;
+    handleCreateClick: () => void;
+  }
 } | {
-  variant: "Recipes"
-  recipes: {
-    id: number | string;
-    name: string;
-    type: "Week" | "Weekend" | "Both";
-    macros?: {
-      proteins: number;
-      carbs: number;
-      fats: number;
-      totalGrams: number;
-    }
-    idIngredients: (number | string)[];
-    options?: AtLeastOne<{
-      description: string;
-      imageUrl: string;
-    }>
-  }[]
+  variant: "Recipes";
+  recipes: Recipe[];
+  events: {
+    handleEditClick: (id: number | string) => void;
+    handleDeleteClick: (id: number | string) => void;
+    handleCreateClick: () => void;
+  }
 }
 
 export default function Page(props: PageProps) {
@@ -76,17 +54,23 @@ export default function Page(props: PageProps) {
           
           <Grid>
 
-            {recipes.map((recipe) => {
-              const { name, type, options } = recipe;
+            {props.ingredients.map((ingredient) => {
               return (
                 <GridItem span={4}>
-                  <Card />
+                  <Card
+                    variant="Ingredient"
+                    ingredient={ingredient}
+                    events={props.events}
+                  />
                 </GridItem>
               )
             })}
             
           <GridItem span={4}>
-            <Card status="inactive" />
+            <Card
+              variant="CreateIngredient"
+              events={props.events}
+            />
           </GridItem>
             
           </Grid>
@@ -100,20 +84,20 @@ export default function Page(props: PageProps) {
         <PageLayout>
           <Title>Receitas</Title>
           <Grid>
-            {recipes.map((recipe) => {
-              const events = {
-                handleDeleteClick: () => { },
-                handleUpdateClick: () => { }
-              }
+            {props.recipes.map((recipe) => {
 
               return (
                 <GridItem span={4}>
-                  <Card variant="Recipe" {...recipe} events={events} />
+                  <Card
+                    variant="Recipe"
+                    recipe={recipe}
+                    events={props.events}
+                  />
                 </GridItem>
               )
             })}
             <GridItem span={4}>
-              <Card variant="CreateRecipe" />
+              <Card variant="CreateRecipe" events={props.events} />
             </GridItem>
           </Grid>
         </PageLayout>

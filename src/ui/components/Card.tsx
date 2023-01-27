@@ -1,8 +1,7 @@
-import React, { Component, ReactNode, useContext } from "react"
-import styled, { StyledComponent } from "styled-components"
-import { AtLeastOne } from "../../types/AtLeastOne"
-import { ModalContext } from "../context/ModalContext";
-import ThemeContext from "../context/ThemeContext";
+import React from "react"
+import styled from "styled-components"
+import { Ingredient, Recipe } from "../types/Data";
+
 import Button from "./Button";
 import Icon from "./Icon";
 
@@ -87,6 +86,7 @@ const ImageContainer = styled.div<{
   height: 70%;
   background: ${props => props.imageUrl ? `url(${props.imageUrl})` : `${props.theme.main.primaryV3}`};
   background-size: cover;
+  background-position: center;
   border-radius: 8px;
   
   display: flex;
@@ -97,31 +97,19 @@ const ImageContainer = styled.div<{
 // ----------- Type Options -----------
 
 type CardProps = {
-  variant: "Recipe";
-  id: number | string;
-  name: string;
-  type: "Week" | "Weekend" | "Both";
-  macros?: {
-    proteins: number;
-    carbs: number;
-    fats: number;
-    totalGrams: number;
-  };
-  options?: AtLeastOne<{ description: string; imageUrl: string }>;
+  variant: "Ingredient";
+  ingredient: Ingredient;
   events: {
     handleEditClick: (id: number | string) => void;
     handleDeleteClick: (id: number | string) => void;
   }
 } | {
-  variant: "Ingredient";
-  name: string;
-  macros?: {
-    proteins: number;
-    carbs: number;
-    fats: number;
-    gramsPerServing: number;
-  };
-  options?: AtLeastOne<{ description: string; imageUrl: string }>
+  variant: "Recipe";
+  recipe: Recipe;
+  events: {
+    handleEditClick: (id: number | string) => void;
+    handleDeleteClick: (id: number | string) => void;
+  }
 } | {
   variant: "CreateRecipe";
   events: {
@@ -129,6 +117,9 @@ type CardProps = {
   }
 } | {
   variant: "CreateIngredient";
+  events: {
+    handleCreateClick: () => void;
+  }
 };
 
 // ------------------------------------
@@ -136,17 +127,48 @@ type CardProps = {
 export default function Card(props: CardProps) {
   switch (props.variant) {
     case "Ingredient": {
-      const { name, macros, options } = props;
+      const { events, ingredient } = props;
+      const { id, name, macros, options } = ingredient;
+
+      return (
+      <CardContainer status="active">
+        
+      <ImageContainer imageUrl={options?.imageUrl}>
+        {!options?.imageUrl && <Icon variant="NoRecipe" />}
+      </ImageContainer>
+
+      <ContentContainer>
+        <div>
+          <h3>{name}</h3>
+          {options?.description && <p>{options.description}</p>}
+        </div>
+        <div>
+          <Button variant="icon" onClick={() => events.handleEditClick(id)}>
+            <Icon variant="Edit" size={24}/>
+          </Button>
+          <Button variant="icon" onClick={() => events.handleDeleteClick(id)}>
+            <Icon variant="Delete" size={24} color="red" />
+          </Button>
+        </div>
+      </ContentContainer>
+        
+      </CardContainer>
+      )
 
 
       return null;
     }
     case "CreateIngredient": {
-
-      return null;
+      return (
+        <CardContainer status="inactive" onClick={() => props.events.handleCreateClick()}>
+          <Icon variant="AddRecipe" size={48} />
+          <Icon variant="Plus" size={24} />
+        </CardContainer>
+      )
     }
     case "Recipe": {
-      const { id, name, type, macros, options, events } = props;
+      const { events } = props;
+      const { id, name, type, macros, options } = props.recipe;
 
       return (
         <CardContainer status="active">
@@ -155,16 +177,10 @@ export default function Card(props: CardProps) {
           (type === "Week") ? <TypeSpan>Receita de semana</TypeSpan> :
           (type === "Weekend") ? <TypeSpan>Receita de fim de semana</TypeSpan> : null
         }
-
-        {/* {
-          (options?.imageUrl) ? <ImageContainer imageUrl={options.imageUrl} /> :
-          <ImageContainer>
-              <Icon variant="NoRecipe" />
-          </ImageContainer>
-        } */}
-          <ImageContainer imageUrl={options?.imageUrl}>
-            {options?.imageUrl && <Icon variant="NoRecipe" />}
-          </ImageContainer>
+          
+        <ImageContainer imageUrl={options?.imageUrl}>
+          {!options?.imageUrl && <Icon variant="NoRecipe" />}
+        </ImageContainer>
 
         <ContentContainer>
           <div>

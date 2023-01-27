@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext } from "react";
+import React, { ReactNode, useContext, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 
@@ -8,6 +8,7 @@ import Button from "../components/Button";
 import Icon from "../components/Icon";
 import Modal from "../components/Modal";
 import { ModalContext } from "../context/ModalContext";
+import { modalHasId } from "../types/typeGuards";
 
 const LayoutContainer = styled.div`
   position: relative;
@@ -66,10 +67,30 @@ export default function PageLayout(props: { children: ReactNode }) {
   const { currentModal, setModal } = useContext(ModalContext);
   const location = useLocation()
 
+  const events = useMemo(() => {
+    return {
+      modalEvents: {
+        closeModal: () => setModal({ variant: "none" })
+      }
+    }
+  }, [])
+
   return (
     <ThemeProvider theme={theme}>
 
-      <Modal variant={currentModal} />
+      {!modalHasId(currentModal) ? (
+        <Modal
+          variant={currentModal.variant}
+          events={events.modalEvents}
+        />
+        
+      ) : (
+        <Modal
+          variant={currentModal.variant}
+          events={events.modalEvents}
+          id={currentModal.id}
+        />
+      )}
 
       <LayoutContainer>
 

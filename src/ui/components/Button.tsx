@@ -77,12 +77,6 @@ const LayoutButton = styled.button<{
   };
 `
 
-const UnsetButton = styled.button`
-  outline: none;
-  border: none;
-  background: none;
-`
-
 export default function Button(props: ButtonProps) {
   switch (props.variant) {
 
