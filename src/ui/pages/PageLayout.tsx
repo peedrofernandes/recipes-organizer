@@ -69,9 +69,7 @@ export default function PageLayout(props: { children: ReactNode }) {
 
   const events = useMemo(() => {
     return {
-      modalEvents: {
-        closeModal: () => setModal({ name: "none" })
-      }
+      modalEvents: { closeModal: () => setModal({ name: "none" }) }
     }
   }, [])
 

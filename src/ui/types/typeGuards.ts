@@ -1,4 +1,4 @@
-import { ModalVariants, ComponentModalVariants } from "./ModalVariants";
+import { ModalVariants, ComponentModalVariants } from "./ModalTypes";
 
 type ShouldHaveIdVariants =
   | "UpdateRecipe"

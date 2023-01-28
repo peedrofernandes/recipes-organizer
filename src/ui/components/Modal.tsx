@@ -16,7 +16,8 @@ import Button from "./Button";
 import { Form, FieldSet, InputBox, SubmitContainer } from "./Form";
 import Icon from "./Icon";
 
-import { ComponentModalVariants, ModalVariants } from "../types/ModalVariants";
+import { ComponentModalVariants, ModalVariants } from "../types/ModalTypes";
+import { Ingredient, Recipe } from "../types/Data";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -71,14 +72,9 @@ const CloseModalContainer = styled.div`
   width: 100%;
 `
 
-export type ModalProps = {
-  variant: ModalVariants,
-  events: { closeModal: () => void }
-}
-
 const ModalComponents: ComponentModalVariants = {
   None: () => null,
-  CreateIngredient: () => {
+  CreateIngredient: (props) => {
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [proteins, setProteins] = useState<number>();
@@ -123,6 +119,7 @@ const ModalComponents: ComponentModalVariants = {
               <label>Proteínas</label>
               <input
                 type="number"
+                min="0"
                 id="proteins"
                 name="proteins"
                 placeholder="g"
@@ -134,6 +131,7 @@ const ModalComponents: ComponentModalVariants = {
               <label>Carboidratos</label>
               <input
                 type="number"
+                min="0"
                 id="proteins"
                 name="proteins"
                 placeholder="g"
@@ -145,6 +143,7 @@ const ModalComponents: ComponentModalVariants = {
               <label>Gorduras</label>
               <input
                 type="number"
+                min="0"
                 id="proteins"
                 name="proteins"
                 placeholder="g"
@@ -158,6 +157,7 @@ const ModalComponents: ComponentModalVariants = {
           <label>Gramas totais</label>
           <input
             type="number"
+            min="0"
             id="totalGrams"
             name="totalGrams"
             placeholder="g"
@@ -184,8 +184,8 @@ const ModalComponents: ComponentModalVariants = {
       </>   
     )
   },
-  UpdateIngredient: (props: { id: number | string }) => <></>,
-  ConfirmIngredientDelete: (props: { id: number | string }) => <></>,
+  UpdateIngredient: (props) => <></>,
+  ConfirmIngredientDelete: (props) => <></>,
   CreateRecipe: () => {
     return (
       <>
@@ -261,9 +261,21 @@ const ModalComponents: ComponentModalVariants = {
       </>
     )
   },
-  ConfirmRecipeDelete: (props: { id: number | string }) => <></>
+  ConfirmRecipeDelete: (props) => <></>
 }
 
+export type ModalProps = {
+  variant: ModalVariants,
+  events: {
+    closeModal: () => void;
+    handleCreateIngredient: (i: Omit<Ingredient, "id">) => void;
+    handleUpdateIngredient: (id: number | string, i: Omit<Ingredient, "id">) => void;
+    handleDeleteIngredient: (id: number | string) => void;
+    handleCreateRecipe: (r: Omit<Recipe, "id">) => void;
+    handleUpdateRecipe: (id: number | string, r: Omit<Recipe, "id">) => void;
+    handleDeleteRecipe: (id: number | string) => void;
+  }
+}
 
 export default function Modal(props: ModalProps) {
   const { variant, events } = props;
@@ -298,24 +310,36 @@ export default function Modal(props: ModalProps) {
   switch (variant.name) {
     case "none":
       return null;
-    case "CreateIngredient":
-      ModalVariant = <ModalComponents.CreateIngredient />
+    case "CreateIngredient": {
+      const e = { handleSubmit: events.handleCreateIngredient }
+      ModalVariant = <ModalComponents.CreateIngredient events={e} />
       break;
-    case "UpdateIngredient":
-      ModalVariant = <ModalComponents.UpdateIngredient id={variant.id} />
+    }
+    case "UpdateIngredient": {
+      const e = { handleSubmit: events.handleUpdateIngredient };
+      ModalVariant = <ModalComponents.UpdateIngredient id={variant.id} events={e} />
       break;
-    case "ConfirmIngredientDelete":
-      ModalVariant = <ModalComponents.ConfirmIngredientDelete id={variant.id} />
+    }
+    case "ConfirmIngredientDelete": {
+      const e = { handleConfirm: events.handleDeleteIngredient };
+      ModalVariant = <ModalComponents.ConfirmIngredientDelete id={variant.id} events={e} />
       break;
-    case "CreateRecipe":
-      ModalVariant = <ModalComponents.CreateRecipe />
+    }
+    case "CreateRecipe": {
+      const e = { handleSubmit: events.handleCreateRecipe };
+      ModalVariant = <ModalComponents.CreateRecipe events={e} />
       break;
-    case "UpdateRecipe":
-      ModalVariant = <ModalComponents.UpdateRecipe id={variant.id} />
+    }
+    case "UpdateRecipe": {
+      const e = { handleSubmit: events.handleUpdateRecipe };
+      ModalVariant = <ModalComponents.UpdateRecipe id={variant.id} events={e} />
       break;
-    case "ConfirmRecipeDelete":
-      ModalVariant = <ModalComponents.ConfirmRecipeDelete id={variant.id} />
+    }
+    case "ConfirmRecipeDelete": { 
+      const e = { handleConfirm: events.handleDeleteRecipe };
+      ModalVariant = <ModalComponents.ConfirmRecipeDelete id={variant.id} events={e} />
       break;
+    }
   }
 
   return (

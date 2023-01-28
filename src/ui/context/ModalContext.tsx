@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useState } from "react";
-import { ModalVariants } from "../types/ModalVariants";
+import { ModalVariants } from "../types/ModalTypes";
 
 type ModalContextType = {
   currentModal: ModalVariants;
