@@ -2,23 +2,11 @@ import React, { ReactNode, ReactElement } from "react";
 import styled from "styled-components";
 import Icon from "./Icon";
 
-type ButtonProps = ({
-  variant: "styled";
-  text: string;
-} | {
-  variant: "icon";
-  children: ReactElement<typeof Icon>;
-} | {
-  variant: "layout";
-  selected?: boolean;
-  children?: ReactNode;
-}) & { onClick?: any }
-
 const StyledButton = styled.button`
   background-color: ${({ theme }) => theme.color.primaryV1};
   color: ${({ theme }) => theme.color.contrastV1};
-  padding: 10px;
-  border-radius: 16px;
+  padding: 8px 32px;
+  border-radius: 4px;
   outline: none;
   border: none;
   font-weight: bold;
@@ -77,25 +65,50 @@ const LayoutButton = styled.button<{
   };
 `
 
+type ButtonProps = ({
+  variant: "styled";
+  text: string;
+} | {
+  variant: "icon";
+  children: ReactElement<typeof Icon>;
+} | {
+  variant: "layout";
+  selected?: boolean;
+  children?: ReactNode;
+}) & {
+  onClick?: any;
+  onSubmit?: any;
+}
+
 export default function Button(props: ButtonProps) {
   switch (props.variant) {
 
     case "styled":
       return (
-        <StyledButton onClick={props.onClick}>
+        <StyledButton
+          onClick={props.onClick}
+          onSubmit={props.onSubmit}
+        >
           {props.text}
         </StyledButton>
       )
     
     case "icon":
       return (
-        <IconButton onClick={props.onClick}>
+        <IconButton
+          onClick={props.onClick}
+          onSubmit={props.onSubmit}
+        >
           {props.children}
         </IconButton>
       )
     case "layout":
       return (
-        <LayoutButton selected={props.selected ?? false}>
+        <LayoutButton
+          selected={props.selected ?? false}
+          onClick={props.onClick}
+          onSubmit={props.onSubmit}
+        >
           {props.children}
         </LayoutButton>
       )

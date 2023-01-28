@@ -70,7 +70,7 @@ export default function PageLayout(props: { children: ReactNode }) {
   const events = useMemo(() => {
     return {
       modalEvents: {
-        closeModal: () => setModal({ variant: "none" })
+        closeModal: () => setModal({ name: "none" })
       }
     }
   }, [])
@@ -80,15 +80,14 @@ export default function PageLayout(props: { children: ReactNode }) {
 
       {!modalHasId(currentModal) ? (
         <Modal
-          variant={currentModal.variant}
+          variant={{ name: currentModal.name }}
           events={events.modalEvents}
         />
         
       ) : (
         <Modal
-          variant={currentModal.variant}
+          variant={{ name: currentModal.name, id: currentModal.id }}
           events={events.modalEvents}
-          id={currentModal.id}
         />
       )}
 

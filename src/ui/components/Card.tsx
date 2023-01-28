@@ -154,13 +154,12 @@ export default function Card(props: CardProps) {
         
       </CardContainer>
       )
-
-
-      return null;
     }
     case "CreateIngredient": {
+      const { events } = props;
+
       return (
-        <CardContainer status="inactive" onClick={() => props.events.handleCreateClick()}>
+        <CardContainer status="inactive" onClick={() => events.handleCreateClick()}>
           <Icon variant="AddRecipe" size={48} />
           <Icon variant="Plus" size={24} />
         </CardContainer>

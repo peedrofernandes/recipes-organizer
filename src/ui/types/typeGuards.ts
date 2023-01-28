@@ -1,14 +1,16 @@
-import { ModalOptions } from "./ModalOptions";
+import { ModalVariants, ComponentModalVariants } from "./ModalVariants";
 
-export function modalHasId(modal: ModalOptions): modal is {
-  variant:
+type ShouldHaveIdVariants =
   | "UpdateRecipe"
   | "ConfirmRecipeDelete"
   | "UpdateIngredient"
-  | "ConfirmIngredientDelete",
-  id: number | string
+  | "ConfirmIngredientDelete";
+
+export function modalHasId(modal: ModalVariants): modal is {
+  name: ShouldHaveIdVariants;
+  id: number | string;
 } {
   const allowedVariants = ["UpdateRecipe", "ConfirmRecipeDelete", "UpdateIngredient", "ConfirmIngredientDelete"];
 
-  return allowedVariants.some((val) => val === modal.variant)
+  return allowedVariants.some((val) => val === modal.name)
 }

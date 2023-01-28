@@ -30,14 +30,14 @@ export default function Page(props: PageProps) {
 
   const events = useMemo(() => ({
     ingredientEvents: {
-      handleCreateClick: () => setModal({ variant: "CreateIngredient" }),
-      handleEditClick: (id: number | string) => setModal({ variant: "UpdateIngredient", id }),
-      handleDeleteClick: (id: number | string) => setModal({ variant: "ConfirmIngredientDelete", id })
+      handleCreateClick: () => setModal({ name: "CreateIngredient" }),
+      handleEditClick: (id: number | string) => setModal({ name: "UpdateIngredient", id }),
+      handleDeleteClick: (id: number | string) => setModal({ name: "ConfirmIngredientDelete", id })
     },
     recipeEvents: {
-      handleCreateClick: () => setModal({ variant: "CreateRecipe" }),
-      handleEditClick: (id: number | string) => setModal({ variant: "UpdateRecipe", id }),
-      handleDeleteClick: (id: number | string) => setModal({ variant: "ConfirmRecipeDelete", id })
+      handleCreateClick: () => setModal({ name: "CreateRecipe" }),
+      handleEditClick: (id: number | string) => setModal({ name: "UpdateRecipe", id }),
+      handleDeleteClick: (id: number | string) => setModal({ name: "ConfirmRecipeDelete", id })
     }
   }), [])
 
@@ -53,6 +53,9 @@ export default function Page(props: PageProps) {
       )
     }
     case "Ingredients": {
+      const {
+        handleCreateClick, handleEditClick, handleDeleteClick
+      } = events.ingredientEvents;
 
       return (
         <PageLayout>
@@ -66,7 +69,7 @@ export default function Page(props: PageProps) {
                   <Card
                     variant="Ingredient"
                     ingredient={ingredient}
-                    events={events.ingredientEvents}
+                    events={{ handleEditClick, handleDeleteClick }}
                   />
                 </GridItem>
               )
@@ -75,7 +78,7 @@ export default function Page(props: PageProps) {
           <GridItem span={4}>
             <Card
               variant="CreateIngredient"
-              events={events.recipeEvents}
+              events={{ handleCreateClick }}
             />
           </GridItem>
             
