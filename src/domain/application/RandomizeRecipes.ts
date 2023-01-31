@@ -4,7 +4,7 @@ import IUseCase from "./IUseCase";
 export default class RandomizeRecipesUseCase implements IUseCase {
 
   constructor(
-    private generatePDF: (recipes: Recipe[]) => any
+    private generatePDF: (recipesWithDates: [Recipe, Date][]) => any
   ) { }
 
   execute(recipes: Recipe[], date: Date): [Recipe, Date][] {
@@ -41,6 +41,6 @@ export default class RandomizeRecipesUseCase implements IUseCase {
       currentDate.setDate(currentDate.getDate() + 1)
     }
 
-    return this.generatePDF(recipes);
+    return this.generatePDF(recipesWithDates);
   }
 }
