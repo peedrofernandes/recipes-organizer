@@ -1,5 +1,8 @@
 import CreateRecipe from "../domain/application/CreateRecipe";
 import DeleteRecipe from "../domain/application/DeleteRecipe";
+import GenerateJson from "../domain/application/GenerateJson";
+import LoadRecipesFromJson from "../domain/application/LoadRecipesFromJson";
+import RandomizeRecipes from "../domain/application/RandomizeRecipes";
 import UpdateRecipe from "../domain/application/UpdateRecipe"
 import Ingredient from "../domain/entities/Ingredient";
 import Recipe, { isRecipeOptions } from "../domain/entities/Recipe";
@@ -12,60 +15,61 @@ type RecipeAttributes = {
   description?: string,
   imageUrl?: string,
   ingredients?: [Ingredient, number][],
-  macros?: [number, number, number, number]
+  macros?: [number, number, number]
 }
 
 export default class RecipeController {
-  private createRecipeUseCase: CreateRecipe;
-  private updateRecipeUseCase: UpdateRecipe;
-  private deleteRecipeUseCase: DeleteRecipe;
-
   constructor(
     private recipeRepository: IRepository<Recipe>,
-    private generateIDMethod: () => Id
-  ) { 
-    this.createRecipeUseCase = new CreateRecipe(this.recipeRepository);
-    this.updateRecipeUseCase = new UpdateRecipe(this.recipeRepository);
-    this.deleteRecipeUseCase = new DeleteRecipe(this.recipeRepository);
-  }
+    private ingredientRepository: IRepository<Ingredient>,
+    private generateIDMethod: () => Id,
+    private turnIntoJsonMethod: (recipes: RecipeAttributes[]) => any,
+    private generatePDFMethod: (recipesWithDates: [Id, Date][]) => any
+  ) { }
 
-  public async createRecipe(attributes: RecipeAttributes) {
+  private adaptRecipe(id: Id, attributes: RecipeAttributes): Recipe {
     const options = {
       description: attributes.description,
       imageUrl: attributes.imageUrl
     }
 
-    const ingredients = attributes.ingredients?.map((item) => ({
-      ingredient: item[0],
-      totalGrams: item[1]
-    }))
+    const ingredients = attributes.ingredients?.map(i => ({
+      ingredient: i[0],
+      totalGrams: i[1]
+    }));
 
-    const macros = attributes.macros ? {
-      proteins: attributes.macros[0],
-      carbs: attributes.macros[1],
-      fats: attributes.macros[2],
-      totalGrams: attributes.macros[3]
-    } : undefined
-
-    const recipe = new Recipe({
-      id: this.generateIDMethod(),
+    return new Recipe({
+      id,
       name: attributes.name,
       type: attributes.type,
-
-      ...(isRecipeOptions(options) ? {
-        options: { ...options }
-      } : undefined),
-
-      ...(ingredients && ingredients.length > 0 ? {
-        ingredients: { ...ingredients }
-      } : undefined),
-      
-      ...(macros ? {
-        macros: { ...macros }
-      } : undefined)
+      ingredientList: (ingredients ?? undefined),
+      options: (isRecipeOptions(options) ? { ...options } : undefined)
     })
+  }
 
-    await this.createRecipeUseCase.execute(recipe);
+  private getAttributes(recipe: Recipe): RecipeAttributes {
+    return {
+      name: recipe.name,
+      type: recipe.type,
+      description: recipe.options?.description,
+      imageUrl: recipe.options?.imageUrl,
+      
+      ingredients: (recipe.ingredientList ? recipe.ingredientList.map(
+        item => [item.ingredient, item.totalGrams]
+      ) : undefined),
+
+      macros: (recipe.macros ? [
+        recipe.macros.proteins, recipe.macros.carbs, recipe.macros.fats
+      ] : undefined)
+    }
+  }
+
+  public async createRecipe(attributes: RecipeAttributes) {
+    const createRecipeUseCase = new CreateRecipe(this.recipeRepository);
+
+    const recipe = this.adaptRecipe(this.generateIDMethod(), attributes);
+
+    await createRecipeUseCase.execute(recipe);
   }
 
   public async getAllRecipes() {
@@ -73,6 +77,8 @@ export default class RecipeController {
   }
 
   public async updateRecipe(id: Id, attributes: Partial<RecipeAttributes>) {
+    const updateRecipeUseCase = new UpdateRecipe(this.recipeRepository);
+
     const modifiedRecipe = await this.recipeRepository.find(id);
     
     const options = {
@@ -88,8 +94,7 @@ export default class RecipeController {
     const macros = attributes.macros ? {
       proteins: attributes.macros[0],
       carbs: attributes.macros[1],
-      fats: attributes.macros[2],
-      totalGrams: attributes.macros[3]
+      fats: attributes.macros[2]
     } : undefined;
 
     const newRecipeAttributes = {
@@ -109,10 +114,51 @@ export default class RecipeController {
       } : modifiedRecipe.macros)
     }
 
-    await this.updateRecipeUseCase.execute(id, newRecipeAttributes);
+    await updateRecipeUseCase.execute(id, newRecipeAttributes);
   }
 
   public async deleteRecipe(id: Id) {
-    await this.deleteRecipeUseCase.execute(id);
+    const deleteRecipeUseCase = new DeleteRecipe(this.recipeRepository);
+    await deleteRecipeUseCase.execute(id);
+  }
+
+  public async turnRecipesIntoJson(attributes: RecipeAttributes[]) {
+    const turnIntoJsonMethod = (recipes: Recipe[]) => {
+      const transformedRecipes = recipes.map(r => this.getAttributes(r));
+      return this.turnIntoJsonMethod(transformedRecipes);
+    }
+
+    const generateJsonUseCase = new GenerateJson(turnIntoJsonMethod);
+
+    const recipes = attributes.map(
+      attr => this.adaptRecipe(this.generateIDMethod(), attr)
+    )
+
+    await generateJsonUseCase.execute(recipes);
+  }
+
+  public async loadRecipesFromJson(jsonFile: any) {
+    const loadRecipesFromJsonUseCase = new LoadRecipesFromJson(
+      this.ingredientRepository,
+      this.recipeRepository
+    );
+
+    const { newIngredients, newRecipes } = await loadRecipesFromJsonUseCase.execute(jsonFile);
+
+    return { newIngredients, newRecipes };
+  }
+
+  public async randomizeAndGeneratePDF(recipes: Recipe[], date: Date) {
+    const generatePDF = (recipesWithDates: [Recipe, Date][]) => {
+      const adaptedParams = recipesWithDates.map(
+        ([recipe, date]) => [recipe.id, date] as [Id, Date]
+      )
+
+      return this.generatePDFMethod(adaptedParams);
+    }
+
+    const randomizeRecipesUseCase = new RandomizeRecipes(generatePDF);
+
+    randomizeRecipesUseCase.execute(recipes, date)
   }
 }

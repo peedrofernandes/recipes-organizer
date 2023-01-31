@@ -1,7 +1,7 @@
 import Recipe from "../entities/Recipe";
 import IUseCase from "./IUseCase";
 
-export default class GenerateJsonUseCase implements IUseCase {
+export default class GenerateJson implements IUseCase {
   constructor(
     private turnRecipesIntoJson: (recipes: Recipe[]) => any
   ) { }

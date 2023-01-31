@@ -13,20 +13,14 @@ type IngredientAttributes = {
 }
 
 export default class IngredientController {
-  private createIngredientUseCase: CreateIngredient
-  private updateIngredientUseCase: UpdateIngredient
-  private deleteIngredientUseCase: DeleteIngredient
-
   constructor(
     private ingredientRepository: IRepository<Ingredient>,
     private generateIDMethod: () => Id
-  ) { 
-    this.createIngredientUseCase = new CreateIngredient(this.ingredientRepository);
-    this.updateIngredientUseCase = new UpdateIngredient(this.ingredientRepository);
-    this.deleteIngredientUseCase = new DeleteIngredient(this.ingredientRepository);
-  }
+  ) { }
 
   public async createIngredient(attributes: IngredientAttributes) {
+    const createIngredientUseCase = new CreateIngredient(this.ingredientRepository);
+
     const options = {
       description: attributes.description,
       imageUrl: attributes.imageUrl
@@ -50,7 +44,7 @@ export default class IngredientController {
       } : {})
     })
 
-    await this.createIngredientUseCase.execute(ingredient);
+    await createIngredientUseCase.execute(ingredient);
   } 
 
   public async getAllIngredients() {
@@ -58,6 +52,7 @@ export default class IngredientController {
   }
 
   public async updateIngredient(id: Id, attributes: Partial<IngredientAttributes>) {
+    const updateIngredientUseCase = new UpdateIngredient(this.ingredientRepository);
     const modifiedIngredient = await this.ingredientRepository.find(id);
 
     const options = {
@@ -80,11 +75,12 @@ export default class IngredientController {
       }) : modifiedIngredient.macros
     }
 
-    await this.updateIngredientUseCase.execute(id, newIngredientAttributes);
+    await updateIngredientUseCase.execute(id, newIngredientAttributes);
   }
 
   public async deleteIngredient(id: Id) {
-    await this.deleteIngredientUseCase.execute(id);
+    const deleteIngredientUseCase = new DeleteIngredient(this.ingredientRepository);
+    await deleteIngredientUseCase.execute(id);
   }
 
 

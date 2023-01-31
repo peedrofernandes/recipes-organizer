@@ -86,8 +86,8 @@ export default class Recipe {
     id: number | string,
     name: string,
     type: RecipeType,
-    options?: RecipeOptions,
     ingredientList?: IngredientList,
+    options?: RecipeOptions,
   }) {
     const { id, name, type, options, ingredientList } = props
     

@@ -6,7 +6,7 @@ import IUseCase from "./IUseCase";
 
 import { exists } from "../utilities/binarySearch"
 
-export default class LoadRecipesFromJsonUseCase implements IUseCase {
+export default class LoadRecipesFromJson implements IUseCase {
   constructor(
     private ingredientRepository: IRepository<Ingredient>,
     private recipeRepository: IRepository<Recipe>

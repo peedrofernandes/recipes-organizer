@@ -1,7 +1,7 @@
 import Recipe from "../entities/Recipe";
 import IUseCase from "./IUseCase";
 
-export default class RandomizeRecipesUseCase implements IUseCase {
+export default class RandomizeRecipes implements IUseCase {
 
   constructor(
     private generatePDF: (recipesWithDates: [Recipe, Date][]) => any
