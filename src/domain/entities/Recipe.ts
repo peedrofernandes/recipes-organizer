@@ -1,4 +1,5 @@
 import { AtLeastOne } from "../../types/AtLeastOne"
+import generateId from "../utilities/generateId"
 import Ingredient from "./Ingredient"
 
 export type IngredientList = {
@@ -83,25 +84,24 @@ export default class Recipe {
   }
 
   constructor(props: {
-    id: number | string,
-    name: string,
-    type: RecipeType,
-    ingredientList?: IngredientList,
-    options?: RecipeOptions,
+    name: string;
+    type: RecipeType;
+    ingredientList?: IngredientList;
+    options?: RecipeOptions;
   }) {
-    const { id, name, type, options, ingredientList } = props
+    const { name, type, options, ingredientList } = props;
     
-    this._id = id
-    this._name = name
-    this._type = type
+    this._id = generateId();
+    this._name = name;
+    this._type = type;
 
     // Options
     if (options)
-      this._options = options
+      this._options = options;
 
     // Ingredient List
     if (ingredientList) {
-      this._ingredientList = ingredientList
+      this._ingredientList = ingredientList;
 
       const everyIngredientHasMacros = ingredientList.every(
         (list) => list.ingredient.macros !== undefined
@@ -109,28 +109,28 @@ export default class Recipe {
         
       if (everyIngredientHasMacros) {
         // Initialize macros property, otherwise it'll be undefined
-        this._macros = { proteins: 0, carbs: 0, fats: 0 }
-        this.setMacros()
+        this._macros = { proteins: 0, carbs: 0, fats: 0 };
+        this.setMacros();
       }
     }
   }
 
   get id() {
-    return this._id
+    return this._id;
   }
   get name() {
-    return this._name
+    return this._name;
   }
   get type() {
-    return this._type
+    return this._type;
   }
   get options() {
-    return this._options
+    return this._options;
   }
   get ingredientList() {
-    return this._ingredientList
+    return this._ingredientList;
   }
   get macros() {
-    return this._macros
+    return this._macros;
   }
 }
