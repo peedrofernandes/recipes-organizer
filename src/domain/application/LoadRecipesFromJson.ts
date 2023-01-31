@@ -4,6 +4,8 @@ import { IRepository } from "../repositories/IRepository";
 import ExtractIngredients from "../services/ExtractIngredients";
 import IUseCase from "./IUseCase";
 
+import { exists } from "../utilities/binarySearch"
+
 export default class LoadRecipesFromJsonUseCase implements IUseCase {
   constructor(
     private ingredientRepository: IRepository<Ingredient>,
@@ -14,7 +16,19 @@ export default class LoadRecipesFromJsonUseCase implements IUseCase {
     const recipes = await this.recipeRepository.load(jsonFile);
     const ingredients = ExtractIngredients(recipes);
 
-    await this.recipeRepository.createList(recipes);
-    await this.ingredientRepository.createList(ingredients);
+    const existingRecipes = await this.recipeRepository.findAll();
+    const existingIngredients = await this.ingredientRepository.findAll();
+
+    const newRecipes = recipes.filter(
+      r => !exists<Recipe>(existingRecipes, r, (r) => r.id)
+    )
+    const newIngredients = ingredients.filter(
+      i => !exists<Ingredient>(existingIngredients, i, (i) => i.id)
+    )
+
+    await this.recipeRepository.createList(newRecipes);
+    await this.ingredientRepository.createList(newIngredients);
+
+    return { newRecipes, newIngredients };
   }
 }
