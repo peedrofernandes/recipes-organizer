@@ -1,4 +1,4 @@
-import Ingredient from "../src/domain/Ingredient"
+import Ingredient from "../src/domain/entities/Ingredient";
 
 describe("Ingredient entity tests", () => {
   // const milk = new Ingredient(1, "Leite", "Leite Tirol Semidesnatado")

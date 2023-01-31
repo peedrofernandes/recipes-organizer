@@ -1,5 +1,5 @@
-import Recipe, { IngredientList, RecipeType } from "../src/domain/Recipe"
-import Ingredient from "../src/domain/Ingredient"
+import Recipe, { IngredientList, RecipeType } from "../src/domain/entities/Recipe"
+import Ingredient from "../src/domain/entities/Ingredient"
 
 describe("Recipe entity tests", () => {
   const egg = new Ingredient({
@@ -49,7 +49,7 @@ describe("Recipe entity tests", () => {
   const RiceWithEgg = new Recipe({
     id: 1,
     name: "Arroz com ovo",
-    type: RecipeType.Week,
+    type: "Week",
     options: { description: "Uma receita simples de arroz com ovo" },
     ingredientList: ingredientsList
   })

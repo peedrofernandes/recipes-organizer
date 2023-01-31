@@ -1,6 +1,6 @@
-import RandomizeRecipesUseCase from "../src/application/RandomizeRecipesUseCase"
-import Ingredient from "../src/domain/Ingredient";
-import Recipe, { IngredientList, RecipeType } from "../src/domain/Recipe"
+import RandomizeRecipes from "../src/domain/application/RandomizeRecipes"
+import Ingredient from "../src/domain/entities/Ingredient";
+import Recipe, { IngredientList, RecipeType } from "../src/domain/entities/Recipe"
 
 describe("Randomization of recipes logic test", () => {
   // ------------ PREPARING ENVIRONMENT FOR TESTS ------------
@@ -56,8 +56,8 @@ describe("Randomization of recipes logic test", () => {
       ]
 
       const random = Math.floor(Math.random() * 1000) % 3
-      const optionsArray = ["Week", "Weekend", "Both"]
-      const type: RecipeType = RecipeType[optionsArray[random]]
+      const optionsArray: RecipeType[] = ["Week", "Weekend", "Both"]
+      const type = optionsArray[random]
 
       return new Recipe({
         id: i,
@@ -69,7 +69,7 @@ describe("Randomization of recipes logic test", () => {
     }
   )
 
-  const randomizeRecipes = new RandomizeRecipesUseCase()
+  const randomizeRecipes = new RandomizeRecipes((recipes) => recipes)
 
   const recipesWithDates: [Recipe, Date][] = randomizeRecipes.execute(
     recipes, new Date("2022-10-30")
@@ -97,9 +97,9 @@ describe("Randomization of recipes logic test", () => {
     recipesWithDates.forEach((item) => {
       const day = item[1].getDay()
 
-      if (item[0].type === RecipeType.Weekend)
+      if (item[0].type === "Weekend")
         expect(day == 0 || day == 6).toBeTruthy()
-      else if (item[0].type === RecipeType.Week)
+      else if (item[0].type === "Week")
         expect(day >= 1 && day <= 5).toBeTruthy()
     })
   })
