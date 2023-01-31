@@ -1,11 +1,6 @@
 type ThemeOptions = "light" | "dark";
 
-interface IThemeController {
-  persistTheme(theme: ThemeOptions): void;
-  loadTheme(): ThemeOptions | null;
-}
-
-export default class ThemeController implements IThemeController {
+export default class ThemeController {
 
   private isTheme(theme: any): theme is ThemeOptions {
     return (theme === "light" || theme === "dark")

@@ -14,7 +14,7 @@ export default class LoadRecipesFromJsonUseCase implements IUseCase {
     const recipes = await this.recipeRepository.load(jsonFile);
     const ingredients = ExtractIngredients(recipes);
 
-    await this.recipeRepository.create(recipes);
-    await this.ingredientRepository.create(ingredients);
+    await this.recipeRepository.createList(recipes);
+    await this.ingredientRepository.createList(ingredients);
   }
 }

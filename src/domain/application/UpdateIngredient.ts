@@ -4,7 +4,7 @@ import { Attributes } from "../value-objects/Attributes";
 import { Id } from "../value-objects/Id";
 import IUseCase from "./IUseCase";
 
-export default class ChangeIngredient implements IUseCase {
+export default class UpdateIngredient implements IUseCase {
   constructor(
     private ingredientRepository: IRepository<Ingredient>
   ) { }
