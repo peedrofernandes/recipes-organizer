@@ -1,5 +1,6 @@
 import { AtLeastOne } from "../../types/AtLeastOne";
 import generateId from "../utilities/generateId";
+import { Id } from "../value-objects/Id";
 
 export type IngredientMacros = {
   proteins: number,
@@ -25,14 +26,17 @@ export default class Ingredient {
 
   // Complete constructor
   constructor(props: {
+    id?: Id;
     name: string;
     options?: IngredientOptions;
     macros?: IngredientMacros;
   }) {
-    const { name, options, macros } = props;
+    const { id, name, options, macros } = props;
 
-    this._id = generateId();
     this._name = name;
+
+    if (id) this._id = id;
+    else this._id = generateId();
 
     if (options)
       this._options = options;
