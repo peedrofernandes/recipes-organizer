@@ -5,14 +5,7 @@ import Ingredient, { isIngredientOptions } from "../domain/entities/Ingredient";
 import { IRepository } from "../domain/repositories/IRepository";
 import { Id } from "../domain/value-objects/Id";
 import { Attributes } from "../domain/value-objects/Attributes";
-
-type AdaptedIngredient = {
-  id: Id,
-  name: string,
-  description?: string,
-  imageUrl?: string,
-  macros?: [number, number, number, number]
-}
+import { AdaptedIngredient } from "./AdaptedTypes";
 
 export default class IngredientController {
 
@@ -20,10 +13,14 @@ export default class IngredientController {
   
   constructor(
     private ingredientRepository: IRepository<Ingredient>,
-    private callbacks: {
+    private uiCallbacks: {
       updateUIOnCreate: (ingredient: AdaptedIngredient) => void,
       updateUIOnUpdate: (ingredient: AdaptedIngredient) => void,
       updateUIOnDelete: (id: Id) => void
+    },
+    private services: {
+      postImage: (image: File) => string | undefined,
+      retrieveImage: (imageUrl: string) => File | undefined
     }
   ) { }
   
@@ -36,6 +33,9 @@ export default class IngredientController {
       id: ingredient.id,
       name: ingredient.name,
       description: ingredient.options?.description,
+      imageFile: (ingredient.options?.imageUrl ? (
+        this.services.retrieveImage(ingredient.options.imageUrl)
+      ) : undefined),
       imageUrl: ingredient.options?.imageUrl,
       macros: (ingredient.macros ? [
         ingredient.macros.proteins,
@@ -74,12 +74,16 @@ export default class IngredientController {
   ): Promise<void> {
     const updateUI = (ingredient: Ingredient) => {
       const adaptedIngredient = this.adaptIngredient(ingredient);
-      this.callbacks.updateUIOnCreate(adaptedIngredient);
+      this.uiCallbacks.updateUIOnCreate(adaptedIngredient);
     }
     const createIngredientUseCase = new CreateIngredient(
       this.ingredientRepository,
       updateUI
     );
+
+    if (attributes.imageFile) {
+      attributes.imageUrl = this.services.postImage(attributes.imageFile)
+    }
 
     const schemeAttributes = this.getSchemeAttributes(attributes);
 
@@ -97,14 +101,14 @@ export default class IngredientController {
   public async updateIngredient(id: Id, attributes: Attributes<AdaptedIngredient>) {
     const updateUI = (ingredient: Ingredient) => {
       const adaptedIngredient = this.adaptIngredient(ingredient);
-      this.callbacks.updateUIOnUpdate(adaptedIngredient);
+      this.uiCallbacks.updateUIOnUpdate(adaptedIngredient);
     }
     const updateIngredientUseCase = new UpdateIngredient(
       this.ingredientRepository,
       updateUI
     );
 
-    const modifiedIngredient = this.adaptIngredient(
+    const modifiedIngredient: AdaptedIngredient = this.adaptIngredient(
       await this.ingredientRepository.find(id)
     );
 
@@ -112,6 +116,7 @@ export default class IngredientController {
       name: attributes.name ?? modifiedIngredient.name,
       description: attributes.description ?? modifiedIngredient.description,
       imageUrl: attributes.imageUrl ?? modifiedIngredient.imageUrl,
+      imageFile: attributes.imageFile ?? modifiedIngredient.imageFile,
       macros: attributes.macros ?? modifiedIngredient.macros
     }
 
@@ -123,7 +128,7 @@ export default class IngredientController {
   public async deleteIngredient(id: Id) {
     const deleteIngredientUseCase = new DeleteIngredient(
       this.ingredientRepository,
-      this.callbacks.updateUIOnDelete
+      this.uiCallbacks.updateUIOnDelete
     );
     await deleteIngredientUseCase.execute(id);
   }

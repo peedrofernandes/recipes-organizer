@@ -9,16 +9,7 @@ import Recipe, { isRecipeOptions } from "../domain/entities/Recipe";
 import { IRepository } from "../domain/repositories/IRepository";
 import { Attributes } from "../domain/value-objects/Attributes";
 import { Id } from "../domain/value-objects/Id";
-
-type AdaptedRecipe = {
-  id: Id,
-  name: string,
-  type: "Week" | "Weekend" | "Both",
-  description?: string,
-  imageUrl?: string,
-  ingredients?: [Ingredient, number][],
-  macros?: [number, number, number]
-}
+import { AdaptedRecipe } from "./AdaptedTypes";
 
 export default class RecipeController {
   // ----------- CONSTRUCTOR ------------
@@ -28,10 +19,14 @@ export default class RecipeController {
     private ingredientRepository: IRepository<Ingredient>,
     private turnIntoJsonMethod: (recipes: AdaptedRecipe[]) => any,
     private generatePDFMethod: (recipesWithDates: [Id, Date][]) => any,
-    private callbacks: {
+    private uiCallbacks: {
       updateUIOnCreate: (recipe: AdaptedRecipe) => void,
       updateUIOnUpdate: (recipe: AdaptedRecipe) => void,
       updateUIOnDelete: (id: Id) => void
+    },
+    private services: {
+      postImage: (image: File) => string,
+      retrieveImage: (imageUrl: string) => File
     }
     ) { }
     
@@ -46,6 +41,9 @@ export default class RecipeController {
       type: recipe.type,
       description: recipe.options?.description,
       imageUrl: recipe.options?.imageUrl,
+      imageFile: (recipe.options?.imageUrl ? (
+        this.services.retrieveImage(recipe.options.imageUrl)
+      ) : undefined),
       ingredients: (recipe.ingredientList ? recipe.ingredientList.map(
         item => [item.ingredient, item.totalGrams]
       ) : undefined),
@@ -87,7 +85,7 @@ export default class RecipeController {
   ): Promise<void> {
     const updateUI = (recipe: Recipe) => {
       const adaptedRecipe = this.adaptRecipe(recipe);
-      this.callbacks.updateUIOnCreate(adaptedRecipe);
+      this.uiCallbacks.updateUIOnCreate(adaptedRecipe);
     }
     const createRecipeUseCase = new CreateRecipe(
       this.recipeRepository,
@@ -107,7 +105,7 @@ export default class RecipeController {
   public async updateRecipe(id: Id, newAttributes: Attributes<AdaptedRecipe>) {
     const updateUI = (recipe: Recipe) => {
       const adaptedRecipe = this.adaptRecipe(recipe);
-      this.callbacks.updateUIOnUpdate(adaptedRecipe)
+      this.uiCallbacks.updateUIOnUpdate(adaptedRecipe)
     }
     const updateRecipeUseCase = new UpdateRecipe(
       this.recipeRepository,
@@ -123,6 +121,7 @@ export default class RecipeController {
       type: newAttributes.type ?? modifiedRecipe.type,
       description: newAttributes.description ?? modifiedRecipe.description,
       imageUrl: newAttributes.imageUrl ?? modifiedRecipe.imageUrl,
+      imageFile: newAttributes.imageFile ?? modifiedRecipe.imageFile,
       ingredients: newAttributes.ingredients ?? modifiedRecipe.ingredients,
       macros: newAttributes.macros ?? modifiedRecipe.macros
     }
@@ -135,7 +134,7 @@ export default class RecipeController {
   public async deleteRecipe(id: Id) {
     const deleteRecipeUseCase = new DeleteRecipe(
       this.recipeRepository,
-      this.callbacks.updateUIOnDelete
+      this.uiCallbacks.updateUIOnDelete
     );
     await deleteRecipeUseCase.execute(id);
   }
