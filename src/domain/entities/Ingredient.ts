@@ -19,7 +19,7 @@ export function isIngredientOptions(options: any): options is IngredientOptions 
 }
 
 export default class Ingredient {
-  private readonly _id: number | string
+  private readonly _id: Id
   private readonly _name: string
   private readonly _options?: IngredientOptions
   private readonly _macros?: IngredientMacros

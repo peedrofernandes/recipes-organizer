@@ -27,72 +27,75 @@ export default class RecipeController {
     private recipeRepository: IRepository<Recipe>,
     private ingredientRepository: IRepository<Ingredient>,
     private turnIntoJsonMethod: (recipes: AdaptedRecipe[]) => any,
-    private generatePDFMethod: (recipesWithDates: [Id, Date][]) => any
+    private generatePDFMethod: (recipesWithDates: [Id, Date][]) => any,
+    private callbacks: {
+      updateUIOnCreate: (recipe: AdaptedRecipe) => void,
+      updateUIOnUpdate: (recipe: AdaptedRecipe) => void,
+      updateUIOnDelete: (id: Id) => void
+    }
     ) { }
     
   // ------------------------------------
 
   // --------- PRIVATE METHODS ----------
 
-  private adaptAttributes(attributes: Attributes<Recipe>): Attributes<AdaptedRecipe> {
-    return {
-      name: attributes.name,
-      type: attributes.type,
-      description: attributes.options?.description,
-      imageUrl: attributes.options?.imageUrl,
-      ingredients: (attributes.ingredientList ? attributes.ingredientList.map(
-        item => [item.ingredient, item.totalGrams]
-      ) : undefined),
-      macros: (attributes.macros ? [
-        attributes.macros?.proteins,
-        attributes.macros?.carbs,
-        attributes.macros?.fats
-      ] : undefined)
-    }
-  }
   private adaptRecipe(recipe: Recipe): AdaptedRecipe {
     return {
       id: recipe.id,
-      ...this.adaptAttributes(recipe)
+      name: recipe.name,
+      type: recipe.type,
+      description: recipe.options?.description,
+      imageUrl: recipe.options?.imageUrl,
+      ingredients: (recipe.ingredientList ? recipe.ingredientList.map(
+        item => [item.ingredient, item.totalGrams]
+      ) : undefined),
+      macros: (recipe.macros ? [
+        recipe.macros.proteins, recipe.macros.carbs, recipe.macros.fats
+      ] : undefined)
     }
   }
-  private getOriginalAttributes(adaptedAttributes: Attributes<AdaptedRecipe>): Attributes<Recipe> {
+
+  private getSchemeAttributes(
+    adaptedAttr: Attributes<AdaptedRecipe>
+  ): Attributes<Recipe> {
     const options = {
-      description: adaptedAttributes.description,
-      imageUrl: adaptedAttributes.imageUrl
+      description: adaptedAttr.description,
+      imageUrl: adaptedAttr.imageUrl
     }
 
     return {
-      name: adaptedAttributes.name,
-      type: adaptedAttributes.type,
+      name: adaptedAttr.name,
+      type: adaptedAttr.type,
       options: (isRecipeOptions(options) ? options : undefined),
-      ingredientList: (adaptedAttributes.ingredients ? adaptedAttributes.ingredients.map(
+      ingredientList: (adaptedAttr.ingredients ? adaptedAttr.ingredients.map(
         item => ({ ingredient: item[0], totalGrams: item[1] })
       ) : undefined),
-      macros: (adaptedAttributes.macros ? ({
-        proteins: adaptedAttributes.macros[0],
-        carbs: adaptedAttributes.macros[1],
-        fats: adaptedAttributes.macros[2]
+      macros: (adaptedAttr.macros ? ({
+        proteins: adaptedAttr.macros[0],
+        carbs: adaptedAttr.macros[1],
+        fats: adaptedAttr.macros[2]
       }) : undefined)
     }
-  }
-  private getOriginalScheme(adaptedRecipe: AdaptedRecipe): Recipe {
-    return new Recipe({
-      id: adaptedRecipe.id,
-      ...this.getOriginalAttributes(adaptedRecipe as Attributes<AdaptedRecipe>)
-    })
   }
 
   // ------------------------------------
 
   // ------------ PUBLIC API ------------
 
-  public async createRecipe(adaptedAttributes: Attributes<AdaptedRecipe>): Promise<void> {
-    const createRecipeUseCase = new CreateRecipe(this.recipeRepository);
+  public async createRecipe(
+    adaptedAttributes: Attributes<AdaptedRecipe>
+  ): Promise<void> {
+    const updateUI = (recipe: Recipe) => {
+      const adaptedRecipe = this.adaptRecipe(recipe);
+      this.callbacks.updateUIOnCreate(adaptedRecipe);
+    }
+    const createRecipeUseCase = new CreateRecipe(
+      this.recipeRepository,
+      updateUI
+    );
 
-    const attributes = this.getOriginalAttributes(adaptedAttributes);
-
-    await createRecipeUseCase.execute(new Recipe({...attributes}));
+    const attributes = this.getSchemeAttributes(adaptedAttributes);
+    await createRecipeUseCase.execute(attributes);
   }
 
   public async getAllRecipes(): Promise<AdaptedRecipe[]> {
@@ -101,30 +104,39 @@ export default class RecipeController {
     return adaptedRecipes;
   }
 
-  public async updateRecipe(id: Id, attributes: Attributes<AdaptedRecipe>) {
-    const updateRecipeUseCase = new UpdateRecipe(this.recipeRepository);
-    const existingRecipe = await this.recipeRepository.find(id);
+  public async updateRecipe(id: Id, newAttributes: Attributes<AdaptedRecipe>) {
+    const updateUI = (recipe: Recipe) => {
+      const adaptedRecipe = this.adaptRecipe(recipe);
+      this.callbacks.updateUIOnUpdate(adaptedRecipe)
+    }
+    const updateRecipeUseCase = new UpdateRecipe(
+      this.recipeRepository,
+      updateUI
+    );
 
-    const originalAttributes = this.getOriginalAttributes(attributes);
+    const modifiedRecipe = this.adaptRecipe(
+      await this.recipeRepository.find(id)
+    );
 
-    const mergedOptions = {
-      description: originalAttributes.options?.description,
-      imageUrl: existingRecipe.options?.imageUrl
+    const adaptedMergedAttributes: Attributes<AdaptedRecipe> = {
+      name: newAttributes.name ?? modifiedRecipe.name,
+      type: newAttributes.type ?? modifiedRecipe.type,
+      description: newAttributes.description ?? modifiedRecipe.description,
+      imageUrl: newAttributes.imageUrl ?? modifiedRecipe.imageUrl,
+      ingredients: newAttributes.ingredients ?? modifiedRecipe.ingredients,
+      macros: newAttributes.macros ?? modifiedRecipe.macros
     }
 
-    const mergedRecipe: Attributes<Recipe> = {
-      name: originalAttributes.name ?? existingRecipe.name,
-      type: originalAttributes.type ?? existingRecipe.type,
-      options: (isRecipeOptions(mergedOptions) ? mergedOptions : undefined),
-      ingredientList: originalAttributes.ingredientList ?? originalAttributes.ingredientList,
-      macros: originalAttributes.macros ?? existingRecipe.macros
-    }
+    const newRecipeAttributes = this.getSchemeAttributes(adaptedMergedAttributes);
 
-    await updateRecipeUseCase.execute(id, mergedRecipe);
+    await updateRecipeUseCase.execute(id, newRecipeAttributes);
   }
 
   public async deleteRecipe(id: Id) {
-    const deleteRecipeUseCase = new DeleteRecipe(this.recipeRepository);
+    const deleteRecipeUseCase = new DeleteRecipe(
+      this.recipeRepository,
+      this.callbacks.updateUIOnDelete
+    );
     await deleteRecipeUseCase.execute(id);
   }
 
@@ -133,11 +145,13 @@ export default class RecipeController {
       const transformedRecipes = recipes.map(r => this.adaptRecipe(r));
       return this.turnIntoJsonMethod(transformedRecipes);
     }
-
     const generateJsonUseCase = new GenerateJson(turnIntoJsonMethod);
 
-    const recipes = adaptedRecipes.map(
-      item => this.getOriginalScheme(item)
+    const recipes: Recipe[] = adaptedRecipes.map(
+      item => new Recipe({
+        id: item.id,
+        ...this.getSchemeAttributes(item as Attributes<AdaptedRecipe>)
+      })
     )
 
     await generateJsonUseCase.execute(recipes);

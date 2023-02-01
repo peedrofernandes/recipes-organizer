@@ -6,13 +6,13 @@ import IUseCase from "./IUseCase";
 
 export default class UpdateIngredient implements IUseCase {
   constructor(
-    private ingredientRepository: IRepository<Ingredient>
+    private ingredientRepository: IRepository<Ingredient>,
+    private updateUI: (newIngredient: Ingredient) => void
   ) { }
 
   async execute(ingredientId: Id, newAttributes: Attributes<Ingredient>) {
-    if (!newAttributes.name)
-      throw new Error("Ingredient must have a name!");
-
     await this.ingredientRepository.update(ingredientId, newAttributes);
+    const newIngredient = await this.ingredientRepository.find(ingredientId);
+    this.updateUI(newIngredient);
   }
 }
