@@ -1,6 +1,5 @@
-
 import { Id } from "../value-objects/Id";
-import Recipe from "../entities/Recipe";
+import Recipe, { isRecipeOptions } from "../entities/Recipe";
 import IUseCase from "./IUseCase";
 import { IRepository } from "../repositories/IRepository";
 import { Attributes } from "../value-objects/Attributes";
@@ -17,6 +16,7 @@ export default class UpdateRecipe implements IUseCase {
       throw new Error("Recipe must have a name!");
     if (!newAttributes.type)
       throw new Error("Recipe must have a type!");
+    
 
     await this.recipeRepository.update(recipeId, newAttributes);
   }

@@ -5,3 +5,7 @@ type GetKeysWithout<T, U> = {
 export type Attributes<T> = {
   [K in Exclude<GetKeysWithout<T, Function>, "id">]: T[K]
 }
+
+export function isAttributeType(props: any): props is ({ id: never }) {
+  return !(props.id);
+}

@@ -26,12 +26,12 @@ export function isRecipeOptions(options: any): options is RecipeOptions {
 export type RecipeType = "Week" | "Weekend" | "Both";
 
 export default class Recipe {
-  private _id: number | string
-  private _name: string
-  private _type: RecipeType
-  private _options?: RecipeOptions
-  private _ingredientList?: IngredientList
-  private _macros?: RecipeMacros
+  private _id: Id;
+  private _name: string;
+  private _type: RecipeType;
+  private _options?: RecipeOptions;
+  private _ingredientList?: IngredientList;
+  private _macros?: RecipeMacros;
 
   private calculateMacro(qtdMacro: number, gramsPerServing: number, totalGrams: number) {
     return qtdMacro * (totalGrams) / (gramsPerServing)

@@ -14,8 +14,7 @@ type IngredientAttributes = {
 
 export default class IngredientController {
   constructor(
-    private ingredientRepository: IRepository<Ingredient>,
-    private generateIDMethod: () => Id
+    private ingredientRepository: IRepository<Ingredient>
   ) { }
 
   public async createIngredient(attributes: IngredientAttributes) {
@@ -27,7 +26,6 @@ export default class IngredientController {
     }
 
     const ingredient = new Ingredient({
-      id: this.generateIDMethod(),
       name: attributes.name,
 
       ...(isIngredientOptions(options) ? {
@@ -82,6 +80,4 @@ export default class IngredientController {
     const deleteIngredientUseCase = new DeleteIngredient(this.ingredientRepository);
     await deleteIngredientUseCase.execute(id);
   }
-
-
 }
