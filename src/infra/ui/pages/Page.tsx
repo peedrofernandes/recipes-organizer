@@ -11,6 +11,7 @@ import { IngredientContext } from "../context/IngredientContext";
 import { RecipeContext } from "../context/RecipeContextProvider";
 import IngredientController from "@controllers/IngredientController";
 import RecipeController from "@controllers/RecipeController";
+import { Id } from "@domain/value-objects/Id";
 
 const Title = styled.h1`
   padding: 24px 0;
@@ -35,13 +36,13 @@ export default function Page(props: PageProps) {
   const events = useMemo(() => ({
     ingredientEvents: {
       handleCreateClick: () => setModal({ name: "CreateIngredient" }),
-      handleEditClick: (id: number | string) => setModal({ name: "UpdateIngredient", id }),
-      handleDeleteClick: (id: number | string) => setModal({ name: "ConfirmIngredientDelete", id })
+      handleEditClick: (id: Id) => setModal({ name: "UpdateIngredient", id }),
+      handleDeleteClick: (id: Id) => setModal({ name: "ConfirmIngredientDelete", id })
     },
     recipeEvents: {
       handleCreateClick: () => setModal({ name: "CreateRecipe" }),
-      handleEditClick: (id: number | string) => setModal({ name: "UpdateRecipe", id }),
-      handleDeleteClick: (id: number | string) => setModal({ name: "ConfirmRecipeDelete", id })
+      handleEditClick: (id: Id) => setModal({ name: "UpdateRecipe", id }),
+      handleDeleteClick: (id: Id) => setModal({ name: "ConfirmRecipeDelete", id })
     }
   }), [])
 

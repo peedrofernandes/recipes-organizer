@@ -16,9 +16,9 @@ import { Form, FieldSet, InputBox, SubmitContainer } from "./Form";
 import Icon from "./Icon";
 
 import { ComponentModalVariants, ModalVariants } from "../types/ModalTypes";
-import { Attributes } from "@domain/value-objects/Attributes";
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes";
 import { Id } from "@domain/value-objects/Id";
+import { Values } from "@domain/value-objects/Values";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -63,14 +63,34 @@ const ModalBox = styled.div`
   }
 `
 
-const CloseModalContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
+const TopContainer = styled.div`
   position: sticky;
   background-color: ${({ theme }) => theme.main.primaryV2};
   padding: 16px 0;
   top: 0;
   width: 100%;
+  filter: ${({ theme }) => `drop-shadow(0 12px 6px ${theme.main.primaryV2})`};
+
+  & > button {
+    position: absolute;
+    top: 16px;
+    right: 0;
+  };
+
+  & > h1, h2, h3 {
+    width: 100%;
+    text-align: center;
+  }
+`
+
+const ConfirmButtonSet = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 16px;
 `
 
 const ModalComponents: ComponentModalVariants = {
@@ -88,7 +108,7 @@ const ModalComponents: ComponentModalVariants = {
     const handleSubmit = (e: SyntheticEvent) => {
       e.preventDefault();
 
-      const ingredientAttributes: Attributes<AdaptedIngredient> = {
+      const ingredientAttributes: Values<AdaptedIngredient> = {
         name,
         description,
         imageFile,
@@ -101,8 +121,6 @@ const ModalComponents: ComponentModalVariants = {
 
     return (
       <>
-        <h1>Novo ingrediente</h1>
-
         <Form onSubmit={(e: SyntheticEvent) => handleSubmit(e)}>
           <label>Nome*</label>
           <input
@@ -192,6 +210,17 @@ const ModalComponents: ComponentModalVariants = {
             />
           </SubmitContainer>
 
+          <h1>Content</h1>
+          <h1>Content</h1>
+          <h1>Content</h1>
+          <h1>Content</h1>
+          <h1>Content</h1>
+          <h1>Content</h1>
+          <h1>Content</h1>
+          <h1>Content</h1>
+          <h1>Content</h1>
+          <h1>Content</h1>
+
         </Form>
       </>   
     )
@@ -199,7 +228,14 @@ const ModalComponents: ComponentModalVariants = {
 
   UpdateIngredient: (props) => <></>,
 
-  ConfirmIngredientDelete: (props) => <></>,
+  ConfirmIngredientDelete: (props) => (
+    <>
+      <ConfirmButtonSet>
+        <Button variant="styled" text="Sim" onClick={() => props.events.handleConfirm(props.id)} />
+        <Button variant="styled" text="Não" color="red"/>
+      </ConfirmButtonSet>
+    </>
+  ),
 
   CreateRecipe: () => {
     return (
@@ -231,7 +267,7 @@ const ModalComponents: ComponentModalVariants = {
     );
   },
 
-  UpdateRecipe: (props: { id: number | string }) => {
+  UpdateRecipe: (props) => {
     return (
       <>
 
@@ -285,11 +321,11 @@ export type ModalProps = {
   variant: ModalVariants,
   events: {
     closeModal: () => void;
-    handleCreateIngredient: (attr: Attributes<AdaptedIngredient>) => void;
-    handleUpdateIngredient: (id: Id, attr: Attributes<AdaptedIngredient>) => void;
+    handleCreateIngredient: (attr: Values<AdaptedIngredient>) => void;
+    handleUpdateIngredient: (id: Id, attr: Values<AdaptedIngredient>) => void;
     handleDeleteIngredient: (id: Id) => void;
-    handleCreateRecipe: (attr: Attributes<AdaptedRecipe>) => void;
-    handleUpdateRecipe: (id: Id, attr: Attributes<AdaptedRecipe>) => void;
+    handleCreateRecipe: (attr: Values<AdaptedRecipe>) => void;
+    handleUpdateRecipe: (id: Id, attr: Values<AdaptedRecipe>) => void;
     handleDeleteRecipe: (id: Id) => void;
   }
 }
@@ -298,17 +334,18 @@ export default function Modal(props: ModalProps) {
   const { variant, events } = props;
   const modalBoxRef = useRef<HTMLDivElement>(null)
 
-  const ModalContainer = memo((props: { children: ReactNode }) => (
+  const ModalContainer = memo((props: { children: ReactNode, title: string }) => (
     <ModalBackground onClick={(e) => modalCloseClickOutside(e)}>
   
     <Grid>
       <GridItem rAbs={{ xs: [1, 5], sm: [2, 8], md: [2, 12] }}>
         <ModalBox ref={modalBoxRef}>
-          <CloseModalContainer>
+            <TopContainer>
+            <h3>{props.title}</h3>
             <Button variant="icon" onClick={() => events.closeModal()}>
               <Icon variant="Close" size={24}/>
             </Button>
-          </CloseModalContainer>
+          </TopContainer>
           {props.children}
         </ModalBox>
       </GridItem>
@@ -324,16 +361,19 @@ export default function Modal(props: ModalProps) {
   }, [modalBoxRef])
 
   let ModalVariant: ReactElement | null = null;
+  let title: string;
   switch (variant.name) {
     case "none":
       return null;
     case "CreateIngredient": {
+      title = "Criar novo ingrediente";
       ModalVariant = <ModalComponents.CreateIngredient
         events={{ handleSubmit: events.handleCreateIngredient }}
       />
       break;
     }
     case "UpdateIngredient": {
+      title = "Atualizar ingrediente";
       ModalVariant = <ModalComponents.UpdateIngredient
         id={variant.id}
         events={{ handleSubmit: events.handleUpdateIngredient }}
@@ -341,6 +381,7 @@ export default function Modal(props: ModalProps) {
       break;
     }
     case "ConfirmIngredientDelete": {
+      title = "Tem certeza que deseja excluir o ingrediente?";
       ModalVariant = <ModalComponents.ConfirmIngredientDelete
         id={variant.id}
         events={{ handleConfirm: events.handleDeleteIngredient }}
@@ -348,12 +389,14 @@ export default function Modal(props: ModalProps) {
       break;
     }
     case "CreateRecipe": {
+      title = "Criar nova receita";
       ModalVariant = <ModalComponents.CreateRecipe
         events={{ handleSubmit: events.handleCreateRecipe }}
       />
       break;
     }
     case "UpdateRecipe": {
+      title = "Atualizar receita";
       ModalVariant = <ModalComponents.UpdateRecipe
         id={variant.id}
         events={{ handleSubmit: events.handleUpdateRecipe }}
@@ -361,6 +404,7 @@ export default function Modal(props: ModalProps) {
       break;
     }
     case "ConfirmRecipeDelete": {
+      title = "Tem certeza que deseja excluir a receita?";
       ModalVariant = <ModalComponents.ConfirmRecipeDelete
         id={variant.id}
         events={{ handleConfirm: events.handleDeleteRecipe }}
@@ -370,7 +414,7 @@ export default function Modal(props: ModalProps) {
   }
 
   return (
-    <ModalContainer>
+    <ModalContainer title={title}>
       {ModalVariant}
     </ModalContainer>
   )

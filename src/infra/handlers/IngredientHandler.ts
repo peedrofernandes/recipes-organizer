@@ -1,7 +1,7 @@
 import { AdaptedIngredient } from "@controllers/AdaptedTypes";
 import IngredientController from "@controllers/IngredientController";
 import { Id } from "@domain/value-objects/Id";
-import { IngredientRepository } from "./IngredientRepository";
+import IngredientRepository from "./IngredientRepository";
 import { services } from "./services";
 
 export default function ingredientHandler(

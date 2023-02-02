@@ -1,4 +1,5 @@
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes";
+import { Id } from "@domain/value-objects/Id";
 import React from "react"
 import styled from "styled-components"
 
@@ -100,15 +101,15 @@ type CardProps = {
   variant: "Ingredient";
   ingredient: AdaptedIngredient;
   events: {
-    handleEditClick: (id: string) => void;
-    handleDeleteClick: (id: string) => void;
+    handleEditClick: (id: Id) => void;
+    handleDeleteClick: (id: Id) => void;
   }
 } | {
   variant: "Recipe";
   recipe: AdaptedRecipe;
   events: {
-    handleEditClick: (id: string) => void;
-    handleDeleteClick: (id: string) => void;
+    handleEditClick: (id: Id) => void;
+    handleDeleteClick: (id: Id) => void;
   }
 } | {
   variant: "CreateRecipe";

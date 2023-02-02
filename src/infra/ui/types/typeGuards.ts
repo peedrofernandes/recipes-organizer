@@ -1,3 +1,4 @@
+import { Id } from "@domain/value-objects/Id";
 import { ModalVariants, ComponentModalVariants } from "./ModalTypes";
 
 type ShouldHaveIdVariants =
@@ -8,7 +9,7 @@ type ShouldHaveIdVariants =
 
 export function modalHasId(modal: ModalVariants): modal is {
   name: ShouldHaveIdVariants;
-  id: number | string;
+  id: Id;
 } {
   const allowedVariants = ["UpdateRecipe", "ConfirmRecipeDelete", "UpdateIngredient", "ConfirmIngredientDelete"];
 

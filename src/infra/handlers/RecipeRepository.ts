@@ -1,46 +1,58 @@
+import { AdaptedRecipe } from "@controllers/AdaptedTypes";
+import { adaptRecipe, getRecipeEntity } from "@controllers/RecipeAdapter";
 import Recipe from "@domain/entities/Recipe";
 import { IRepository } from "@domain/repositories/IRepository";
-import { Attributes } from "@domain/value-objects/Attributes";
+import { Values } from "@domain/value-objects/Values";
+import { services } from "./services";
 
-const item = "recipes";
+const recipes = "recipes";
 
 export default class RecipeRepository implements IRepository<Recipe> {
 
-  private getData() {
-    const data = localStorage.getItem(item);
-    const recipes: Recipe[] = data ? JSON.parse(data) : [];
-    return recipes;
+  private getData(): AdaptedRecipe[] {
+    const data = localStorage.getItem(recipes);
+    const adaptedRecipes: AdaptedRecipe[] = data ? JSON.parse(data) : [];
+    return adaptedRecipes;
+  }
+
+  private setData(adaptedRecipes: AdaptedRecipe[]): void {
+    localStorage.setItem(recipes, JSON.stringify(adaptedRecipes));
   }
 
   find(id: string): Promise<Recipe> {
     const recipes = this.getData();
     const recipe = recipes.find(r => r.id === id);
     if (!recipe) throw new Error("Recipe not found!");
-    return Promise.resolve(recipe);
+    return Promise.resolve(getRecipeEntity(recipe));
   }
   findAll(): Promise<Recipe[]> {
     const recipes = this.getData();
-    return Promise.resolve(recipes);
+    return Promise.resolve(recipes.map(r => getRecipeEntity(r)));
   }
-  create(t: Recipe): Promise<void> {
+  async create(t: Recipe): Promise<void> {
     const recipes = this.getData();
-    recipes.push(t);
-    localStorage.setItem(item, JSON.stringify(recipes));
+    const adaptedRecipe = await adaptRecipe(t, services.retrieveImage);
+    recipes.push(adaptedRecipe);
+    this.setData(recipes);
     return Promise.resolve()
   }
-  createList(t: Recipe[]): Promise<void> {
+  async createList(t: Recipe[]): Promise<void> {
     const recipes = this.getData();
-    recipes.concat(t);
-    localStorage.setItem(item, JSON.stringify(recipes));
+    const adaptedRecipes = await Promise.all(t.map(
+      async r => await adaptRecipe(r, services.retrieveImage)
+    ))
+    recipes.concat(adaptedRecipes);
+    this.setData(recipes);
     return Promise.resolve()
   }
-  update(id: string, attributes: Attributes<Recipe>): Promise<void> {
+  async update(id: string, attributes: Values<Recipe>): Promise<void> {
     const recipes = this.getData();
     const foundIndex = recipes.findIndex(recipe => recipe.id === id);
     if (!foundIndex) throw new Error(`There's no such recipe with id ${id}.`);
     const newRecipe = new Recipe({ id, ...attributes });
-    recipes.splice(foundIndex, 1, newRecipe);
-    localStorage.setItem(item, JSON.stringify(recipes));
+    const adaptedNewRecipe = await adaptRecipe(newRecipe, services.retrieveImage);
+    recipes.splice(foundIndex, 1, adaptedNewRecipe);
+    this.setData(recipes);
     return Promise.resolve();
   }
   delete(id: string): Promise<void> {
@@ -48,7 +60,7 @@ export default class RecipeRepository implements IRepository<Recipe> {
     const foundIndex = recipes.findIndex(recipe => recipe.id === id);
     if (!foundIndex) throw new Error(`There's no recipe with id ${id}.`);
     recipes.splice(foundIndex, 1);
-    localStorage.setItem(item, JSON.stringify(recipes));
+    this.setData(recipes);
     return Promise.resolve()
   }
   load(source: File): Promise<Recipe[]> {

@@ -1,6 +1,6 @@
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes";
-import { Attributes } from "@domain/value-objects/Attributes";
 import { Id } from "@domain/value-objects/Id";
+import { Values } from "@domain/value-objects/Values";
 
 
 export type ModalVariants = {
@@ -9,51 +9,51 @@ export type ModalVariants = {
   name: "CreateRecipe";
 } | {
   name: "UpdateRecipe";
-  id: number | string;
+  id: Id;
 } | {
   name: "ConfirmRecipeDelete";
-  id: number | string;
+  id: Id;
 } | {
   name: "CreateIngredient";
 } | {
   name: "UpdateIngredient";
-  id: number | string;
+  id: Id;
 } | {
   name: "ConfirmIngredientDelete";
-  id: number | string;
+  id: Id;
 }
 
 
 type CreateIngredientProps = {
   events: {
-    handleSubmit: (attr: Attributes<AdaptedIngredient>) => void;
+    handleSubmit: (attr: Values<AdaptedIngredient>) => void;
   }
 }
 type UpdateIngredientProps = {
   id: number | string;
   events: {
-    handleSubmit: (id: Id, attr: Attributes<AdaptedIngredient>) => void;
+    handleSubmit: (id: Id, attr: Values<AdaptedIngredient>) => void;
   }
 }
 type ConfirmIngredientDeleteProps = {
-  id: number | string;
+  id: Id;
   events: {
     handleConfirm: (id: Id) => void;
   }
 }
 type CreateRecipeProps = {
   events: {
-    handleSubmit: (attr: Attributes<AdaptedRecipe>) => void;
+    handleSubmit: (attr: Values<AdaptedRecipe>) => void;
   }
 }
 type UpdateRecipeProps = {
-  id: number | string;
+  id: Id;
   events: {
-    handleSubmit: (id: Id, attr: Attributes<AdaptedRecipe>) => void;
+    handleSubmit: (id: Id, attr: Values<AdaptedRecipe>) => void;
   }
 }
 type ConfirmRecipeDeleteProps = {
-  id: number | string;
+  id: Id;
   events: {
     handleConfirm: (id: Id) => void;
   }

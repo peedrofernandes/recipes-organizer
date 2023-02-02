@@ -11,10 +11,10 @@ import { ModalContext } from "../context/ModalContext";
 import { modalHasId } from "../types/typeGuards";
 import ingredientHandler from "../../handlers/IngredientHandler";
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes";
-import { Attributes } from "@domain/value-objects/Attributes";
 import recipeHandler from "@infra/handlers/RecipeHandler";
 import { IngredientContext } from "../context/IngredientContext";
 import { RecipeContext } from "../context/RecipeContextProvider";
+import { Values } from "@domain/value-objects/Values";
 
 const LayoutContainer = styled.div`
   position: relative;
@@ -108,15 +108,15 @@ export default function PageLayout(props: { children: ReactNode }) {
       modalEvents: {
         closeModal: () => setModal({ name: "none" }),
 
-        handleCreateIngredient: (attr: Attributes<AdaptedIngredient>) => ingredientController.createIngredient(attr),
+        handleCreateIngredient: (attr: Values<AdaptedIngredient>) => ingredientController.createIngredient(attr),
 
-        handleUpdateIngredient: (id: string, attr: Attributes<AdaptedIngredient>) => ingredientController.updateIngredient(id, attr),
+        handleUpdateIngredient: (id: string, attr: Values<AdaptedIngredient>) => ingredientController.updateIngredient(id, attr),
 
         handleDeleteIngredient: (id: string) => ingredientController.deleteIngredient(id),
 
-        handleCreateRecipe: (attr: Attributes<AdaptedRecipe>) => recipeController.createRecipe(attr),
+        handleCreateRecipe: (attr: Values<AdaptedRecipe>) => recipeController.createRecipe(attr),
 
-        handleUpdateRecipe: (id: string, attr: Attributes<AdaptedRecipe>) => recipeController.updateRecipe(id, attr),
+        handleUpdateRecipe: (id: string, attr: Values<AdaptedRecipe>) => recipeController.updateRecipe(id, attr),
 
         handleDeleteRecipe: (id: string) => recipeController.deleteRecipe(id)
       }
@@ -127,6 +127,7 @@ export default function PageLayout(props: { children: ReactNode }) {
     const fetchIngredients = async () => {
       const foundIngredients = await ingredientController.getAllIngredients();
       setIngredients([...ingredients, ...foundIngredients]);
+      console.log(foundIngredients);
     }
     const fetchRecipes = async () => {
       const foundRecipes = await recipeController.getAllRecipes();

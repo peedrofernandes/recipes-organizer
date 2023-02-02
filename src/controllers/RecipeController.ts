@@ -1,3 +1,4 @@
+import { Values } from "@domain/value-objects/Values";
 import CreateRecipe from "../domain/application/CreateRecipe";
 import DeleteRecipe from "../domain/application/DeleteRecipe";
 import GenerateJson from "../domain/application/GenerateJson";
@@ -7,9 +8,9 @@ import UpdateRecipe from "../domain/application/UpdateRecipe"
 import Ingredient from "../domain/entities/Ingredient";
 import Recipe, { isRecipeOptions } from "../domain/entities/Recipe";
 import { IRepository } from "../domain/repositories/IRepository";
-import { Attributes } from "../domain/value-objects/Attributes";
 import { Id } from "../domain/value-objects/Id";
 import { AdaptedRecipe } from "./AdaptedTypes";
+import { adaptRecipe, getRecipeEntityValues } from "./RecipeAdapter";
 
 export default class RecipeController {
   // ----------- CONSTRUCTOR ------------
@@ -34,57 +35,15 @@ export default class RecipeController {
 
   // --------- PRIVATE METHODS ----------
 
-  private async adaptRecipe(recipe: Recipe): Promise<AdaptedRecipe> {
-    return {
-      id: recipe.id,
-      name: recipe.name,
-      type: recipe.type,
-      description: recipe.options?.description,
-      imageUrl: recipe.options?.imageUrl,
-      imageFile: (recipe.options?.imageUrl ? (
-        await this.services.retrieveImage(recipe.options.imageUrl)
-      ) : undefined),
-      ingredients: (recipe.ingredientList ? recipe.ingredientList.map(
-        item => [item.ingredient, item.totalGrams]
-      ) : undefined),
-      macros: (recipe.macros ? [
-        recipe.macros.proteins, recipe.macros.carbs, recipe.macros.fats
-      ] : undefined)
-    }
-  }
-
-  private getSchemeAttributes(
-    adaptedAttr: Attributes<AdaptedRecipe>
-  ): Attributes<Recipe> {
-    const options = {
-      description: adaptedAttr.description,
-      imageUrl: adaptedAttr.imageUrl
-    }
-
-    return {
-      name: adaptedAttr.name,
-      type: adaptedAttr.type,
-      options: (isRecipeOptions(options) ? options : undefined),
-      ingredientList: (adaptedAttr.ingredients ? adaptedAttr.ingredients.map(
-        item => ({ ingredient: item[0], totalGrams: item[1] })
-      ) : undefined),
-      macros: (adaptedAttr.macros ? ({
-        proteins: adaptedAttr.macros[0],
-        carbs: adaptedAttr.macros[1],
-        fats: adaptedAttr.macros[2]
-      }) : undefined)
-    }
-  }
-
   // ------------------------------------
 
   // ------------ PUBLIC API ------------
 
   public async createRecipe(
-    adaptedAttributes: Attributes<AdaptedRecipe>
+    adaptedValues: Values<AdaptedRecipe>
   ): Promise<void> {
     const updateUI = async (recipe: Recipe) => {
-      const adaptedRecipe = await this.adaptRecipe(recipe);
+      const adaptedRecipe = await adaptRecipe(recipe, this.services.retrieveImage);
       this.uiCallbacks.updateUIOnCreate(adaptedRecipe);
     }
     const createRecipeUseCase = new CreateRecipe(
@@ -92,21 +51,21 @@ export default class RecipeController {
       updateUI
     );
 
-    const attributes = this.getSchemeAttributes(adaptedAttributes);
+    const attributes = getRecipeEntityValues(adaptedValues);
     await createRecipeUseCase.execute(attributes);
   }
 
   public async getAllRecipes(): Promise<AdaptedRecipe[]> {
     const recipes = await this.recipeRepository.findAll();
     const adaptedRecipes = Promise.all(recipes.map(
-      async (recipe) => await this.adaptRecipe(recipe)
+      async (recipe) => await adaptRecipe(recipe, this.services.retrieveImage)
     ));
     return adaptedRecipes;
   }
 
-  public async updateRecipe(id: Id, newAttributes: Attributes<AdaptedRecipe>) {
+  public async updateRecipe(id: Id, newValues: Values<AdaptedRecipe>) {
     const updateUI = async (recipe: Recipe) => {
-      const adaptedRecipe = await this.adaptRecipe(recipe);
+      const adaptedRecipe = await adaptRecipe(recipe, this.services.retrieveImage);
       this.uiCallbacks.updateUIOnUpdate(adaptedRecipe)
     }
     const updateRecipeUseCase = new UpdateRecipe(
@@ -114,23 +73,24 @@ export default class RecipeController {
       updateUI
     );
 
-    const modifiedRecipe = await this.adaptRecipe(
-      await this.recipeRepository.find(id)
+    const modifiedRecipe = await adaptRecipe(
+      await this.recipeRepository.find(id),
+      this.services.retrieveImage
     );
 
-    const adaptedMergedAttributes: Attributes<AdaptedRecipe> = {
-      name: newAttributes.name ?? modifiedRecipe.name,
-      type: newAttributes.type ?? modifiedRecipe.type,
-      description: newAttributes.description ?? modifiedRecipe.description,
-      imageUrl: newAttributes.imageUrl ?? modifiedRecipe.imageUrl,
-      imageFile: newAttributes.imageFile ?? modifiedRecipe.imageFile,
-      ingredients: newAttributes.ingredients ?? modifiedRecipe.ingredients,
-      macros: newAttributes.macros ?? modifiedRecipe.macros
+    const adaptedMergedValues: Values<AdaptedRecipe> = {
+      name: newValues.name ?? modifiedRecipe.name,
+      type: newValues.type ?? modifiedRecipe.type,
+      description: newValues.description ?? modifiedRecipe.description,
+      imageUrl: newValues.imageUrl ?? modifiedRecipe.imageUrl,
+      imageFile: newValues.imageFile ?? modifiedRecipe.imageFile,
+      ingredients: newValues.ingredients ?? modifiedRecipe.ingredients,
+      macros: newValues.macros ?? modifiedRecipe.macros
     }
 
-    const newRecipeAttributes = this.getSchemeAttributes(adaptedMergedAttributes);
+    const newRecipeValues = getRecipeEntityValues(adaptedMergedValues);
 
-    await updateRecipeUseCase.execute(id, newRecipeAttributes);
+    await updateRecipeUseCase.execute(id, newRecipeValues);
   }
 
   public async deleteRecipe(id: Id) {
@@ -143,7 +103,7 @@ export default class RecipeController {
 
   public async turnRecipesIntoJson(adaptedRecipes: AdaptedRecipe[]) {
     const turnIntoJsonMethod = async (recipes: Recipe[]) => {
-      const transformedRecipes = await Promise.all(recipes.map(async r => await this.adaptRecipe(r)));
+      const transformedRecipes = await Promise.all(recipes.map(async r => await adaptRecipe(r, this.services.retrieveImage)));
       return this.turnIntoJsonMethod(transformedRecipes);
     }
     const generateJsonUseCase = new GenerateJson(turnIntoJsonMethod);
@@ -151,7 +111,7 @@ export default class RecipeController {
     const recipes: Recipe[] = adaptedRecipes.map(
       item => new Recipe({
         id: item.id,
-        ...this.getSchemeAttributes(item as Attributes<AdaptedRecipe>)
+        ...getRecipeEntityValues(item as Values<AdaptedRecipe>)
       })
     )
 

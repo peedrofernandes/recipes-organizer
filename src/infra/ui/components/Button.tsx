@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Icon from "./Icon";
 
 const StyledButton = styled.button`
-  background-color: ${({ theme }) => theme.color.primaryV1};
+  background-color: ${({ theme, color }) => color === "red" ? "#ff0000" : theme.color.primaryV1};
   color: ${({ theme }) => theme.color.contrastV1};
   padding: 8px 32px;
   border-radius: 4px;
@@ -68,6 +68,7 @@ const LayoutButton = styled.button<{
 type ButtonProps = ({
   variant: "styled";
   text: string;
+  color?: "red" | "green" | "blue";
 } | {
   variant: "icon";
   children: ReactElement<typeof Icon>;
@@ -88,6 +89,7 @@ export default function Button(props: ButtonProps) {
         <StyledButton
           onClick={props.onClick}
           onSubmit={props.onSubmit}
+          color={props.color}
         >
           {props.text}
         </StyledButton>

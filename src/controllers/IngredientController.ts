@@ -4,8 +4,9 @@ import DeleteIngredient from "../domain/application/DeleteIngredient";
 import Ingredient, { isIngredientOptions } from "../domain/entities/Ingredient";
 import { IRepository } from "../domain/repositories/IRepository";
 import { Id } from "../domain/value-objects/Id";
-import { Attributes } from "../domain/value-objects/Attributes";
 import { AdaptedIngredient } from "./AdaptedTypes";
+import { Values } from "@domain/value-objects/Values";
+import { adaptIngredient, getIngredientEntityValues } from "./IngredientAdapter";
 
 export default class IngredientController {
 
@@ -27,53 +28,18 @@ export default class IngredientController {
   // ------------------------------------
 
   // --------- PRIVATE METHODS ----------
-
-  private async adaptIngredient(ingredient: Ingredient): Promise<AdaptedIngredient> {
-    return {
-      id: ingredient.id,
-      name: ingredient.name,
-      description: ingredient.options?.description,
-      imageFile: (ingredient.options?.imageUrl ? (
-        await this.services.retrieveImage(ingredient.options.imageUrl)
-      ) : undefined),
-      imageUrl: ingredient.options?.imageUrl,
-      macros: (ingredient.macros ? [
-        ingredient.macros.proteins,
-        ingredient.macros.carbs,
-        ingredient.macros.fats,
-        ingredient.macros.gramsPerServing
-      ] : undefined)
-    }
-  }
-
-  private getSchemeAttributes(
-    adaptedAttributes: Attributes<AdaptedIngredient>
-  ): Attributes<Ingredient> {
-    const options = {
-      description: adaptedAttributes.description,
-      imageUrl: adaptedAttributes.imageUrl
-    }
-
-    return {
-      name: adaptedAttributes.name,
-      macros: (adaptedAttributes.macros ? {
-        proteins: adaptedAttributes.macros[0],
-        carbs: adaptedAttributes.macros[1],
-        fats: adaptedAttributes.macros[2],
-        gramsPerServing: adaptedAttributes.macros[3],
-      } : undefined),
-      options: (isIngredientOptions(options) ? options : undefined)
-    }
-  }
   // ------------------------------------
     
   // ------------ PUBLIC API ------------
 
   public async createIngredient(
-    attributes: Attributes<AdaptedIngredient>
+    values: Values<AdaptedIngredient>
   ): Promise<void> {
     const updateUI = async (ingredient: Ingredient) => {
-      const adaptedIngredient = await this.adaptIngredient(ingredient);
+      const adaptedIngredient = await adaptIngredient(
+        ingredient,
+        this.services.retrieveImage
+      );
       this.uiCallbacks.updateUIOnCreate(adaptedIngredient);
     }
     const createIngredientUseCase = new CreateIngredient(
@@ -81,26 +47,26 @@ export default class IngredientController {
       updateUI
     );
 
-    if (attributes.imageFile) {
-      attributes.imageUrl = await this.services.postImage(attributes.imageFile)
+    if (values.imageFile) {
+      values.imageUrl = await this.services.postImage(values.imageFile)
     }
 
-    const schemeAttributes = this.getSchemeAttributes(attributes);
+    const entityValues = getIngredientEntityValues(values);
 
-    await createIngredientUseCase.execute(schemeAttributes);
+    await createIngredientUseCase.execute(entityValues);
   } 
 
   public async getAllIngredients(): Promise<AdaptedIngredient[]> {
     const ingredients = await this.ingredientRepository.findAll();
     const adaptedIngredients = Promise.all(ingredients.map(
-      async item => await this.adaptIngredient(item)
+      async item => await adaptIngredient(item, this.services.retrieveImage)
     ));
     return adaptedIngredients;
   }
 
-  public async updateIngredient(id: Id, attributes: Attributes<AdaptedIngredient>) {
+  public async updateIngredient(id: Id, values: Values<AdaptedIngredient>) {
     const updateUI = async (ingredient: Ingredient) => {
-      const adaptedIngredient = await this.adaptIngredient(ingredient);
+      const adaptedIngredient = await adaptIngredient(ingredient, this.services.retrieveImage);
       this.uiCallbacks.updateUIOnUpdate(adaptedIngredient);
     }
     const updateIngredientUseCase = new UpdateIngredient(
@@ -108,21 +74,22 @@ export default class IngredientController {
       updateUI
     );
 
-    const modifiedIngredient: AdaptedIngredient = await this.adaptIngredient(
-      await this.ingredientRepository.find(id)
+    const modifiedIngredient: AdaptedIngredient = await adaptIngredient(
+      await this.ingredientRepository.find(id),
+      this.services.retrieveImage
     );
 
-    const mergedAttributes: Attributes<AdaptedIngredient> = {
-      name: attributes.name ?? modifiedIngredient.name,
-      description: attributes.description ?? modifiedIngredient.description,
-      imageUrl: attributes.imageUrl ?? modifiedIngredient.imageUrl,
-      imageFile: attributes.imageFile ?? modifiedIngredient.imageFile,
-      macros: attributes.macros ?? modifiedIngredient.macros
+    const mergedValues: Values<AdaptedIngredient> = {
+      name: values.name ?? modifiedIngredient.name,
+      description: values.description ?? modifiedIngredient.description,
+      imageUrl: values.imageUrl ?? modifiedIngredient.imageUrl,
+      imageFile: values.imageFile ?? modifiedIngredient.imageFile,
+      macros: values.macros ?? modifiedIngredient.macros
     }
 
-    const newIngredientAttributes = this.getSchemeAttributes(mergedAttributes);
+    const newIngredientValues = getIngredientEntityValues(mergedValues);
 
-    await updateIngredientUseCase.execute(id, newIngredientAttributes);
+    await updateIngredientUseCase.execute(id, newIngredientValues);
   }
 
   public async deleteIngredient(id: Id) {

@@ -1,7 +1,7 @@
 import { AdaptedRecipe } from "@controllers/AdaptedTypes";
 import RecipeController from "@controllers/RecipeController";
 import { Id } from "@domain/value-objects/Id";
-import { IngredientRepository } from "./IngredientRepository";
+import IngredientRepository from "./IngredientRepository";
 import RecipeRepository from "./RecipeRepository";
 import { services } from "./services";
 
