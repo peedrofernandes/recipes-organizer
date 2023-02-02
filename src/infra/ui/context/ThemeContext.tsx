@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { createContext, ReactNode, useState } from "react";
-import ThemeController from "../../controllers/ThemeController";
+import ThemeController from "../../../controllers/ThemeController";
 
 export type Theme = {
   main: {
@@ -72,7 +72,7 @@ export type ThemeContextValue = {
 
 export const ThemeContext = createContext<ThemeContextValue>({
   theme: themesSet.light,
-  toggleTheme: () => {}
+  toggleTheme: () => { }
 })
 
 export default function ThemeContextProvider(props: { children: ReactNode }) {

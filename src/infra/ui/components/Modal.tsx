@@ -1,5 +1,4 @@
 import React, {
-  Component,
   memo,
   MouseEvent,
   ReactElement,
@@ -17,7 +16,9 @@ import { Form, FieldSet, InputBox, SubmitContainer } from "./Form";
 import Icon from "./Icon";
 
 import { ComponentModalVariants, ModalVariants } from "../types/ModalTypes";
-import { Ingredient, Recipe } from "../types/Data";
+import { Attributes } from "@domain/value-objects/Attributes";
+import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes";
+import { Id } from "@domain/value-objects/Id";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -74,18 +75,29 @@ const CloseModalContainer = styled.div`
 
 const ModalComponents: ComponentModalVariants = {
   None: () => null,
+
   CreateIngredient: (props) => {
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    const [proteins, setProteins] = useState<number>();
-    const [carbs, setCarbs] = useState<number>();
-    const [fats, setFats] = useState<number>();
-    const [totalGrams, setTotalGrams] = useState<number>();
-    const file = useRef<HTMLInputElement>(null);
+    const [proteins, setProteins] = useState<number>(0);
+    const [carbs, setCarbs] = useState<number>(0);
+    const [fats, setFats] = useState<number>(0);
+    const [totalGrams, setTotalGrams] = useState<number>(0);
+    const [imageFile, setImageFile] = useState<File>();
 
-    const handleSubmit = useCallback((e: SyntheticEvent) => {
+    const handleSubmit = (e: SyntheticEvent) => {
       e.preventDefault();
-    }, [])
+
+      const ingredientAttributes: Attributes<AdaptedIngredient> = {
+        name,
+        description,
+        imageFile,
+        imageUrl: "",
+        macros: [proteins, carbs, fats, totalGrams]
+      };
+
+      props.events.handleSubmit(ingredientAttributes);
+    }
 
     return (
       <>
@@ -170,7 +182,7 @@ const ModalComponents: ComponentModalVariants = {
             type="file" accept="image/png, image/gif, image/jpeg" title=" Selecione"
             id="Image"
             name="Image"
-            ref={file}
+            onChange={(e) => { e.target.files && setImageFile(e.target.files[0])} }
           />
 
           <SubmitContainer>
@@ -184,8 +196,11 @@ const ModalComponents: ComponentModalVariants = {
       </>   
     )
   },
+
   UpdateIngredient: (props) => <></>,
+
   ConfirmIngredientDelete: (props) => <></>,
+
   CreateRecipe: () => {
     return (
       <>
@@ -215,6 +230,7 @@ const ModalComponents: ComponentModalVariants = {
       </>
     );
   },
+
   UpdateRecipe: (props: { id: number | string }) => {
     return (
       <>
@@ -261,6 +277,7 @@ const ModalComponents: ComponentModalVariants = {
       </>
     )
   },
+  
   ConfirmRecipeDelete: (props) => <></>
 }
 
@@ -268,12 +285,12 @@ export type ModalProps = {
   variant: ModalVariants,
   events: {
     closeModal: () => void;
-    handleCreateIngredient: (i: Omit<Ingredient, "id">) => void;
-    handleUpdateIngredient: (id: number | string, i: Omit<Ingredient, "id">) => void;
-    handleDeleteIngredient: (id: number | string) => void;
-    handleCreateRecipe: (r: Omit<Recipe, "id">) => void;
-    handleUpdateRecipe: (id: number | string, r: Omit<Recipe, "id">) => void;
-    handleDeleteRecipe: (id: number | string) => void;
+    handleCreateIngredient: (attr: Attributes<AdaptedIngredient>) => void;
+    handleUpdateIngredient: (id: Id, attr: Attributes<AdaptedIngredient>) => void;
+    handleDeleteIngredient: (id: Id) => void;
+    handleCreateRecipe: (attr: Attributes<AdaptedRecipe>) => void;
+    handleUpdateRecipe: (id: Id, attr: Attributes<AdaptedRecipe>) => void;
+    handleDeleteRecipe: (id: Id) => void;
   }
 }
 
@@ -311,33 +328,43 @@ export default function Modal(props: ModalProps) {
     case "none":
       return null;
     case "CreateIngredient": {
-      const e = { handleSubmit: events.handleCreateIngredient }
-      ModalVariant = <ModalComponents.CreateIngredient events={e} />
+      ModalVariant = <ModalComponents.CreateIngredient
+        events={{ handleSubmit: events.handleCreateIngredient }}
+      />
       break;
     }
     case "UpdateIngredient": {
-      const e = { handleSubmit: events.handleUpdateIngredient };
-      ModalVariant = <ModalComponents.UpdateIngredient id={variant.id} events={e} />
+      ModalVariant = <ModalComponents.UpdateIngredient
+        id={variant.id}
+        events={{ handleSubmit: events.handleUpdateIngredient }}
+      />
       break;
     }
     case "ConfirmIngredientDelete": {
-      const e = { handleConfirm: events.handleDeleteIngredient };
-      ModalVariant = <ModalComponents.ConfirmIngredientDelete id={variant.id} events={e} />
+      ModalVariant = <ModalComponents.ConfirmIngredientDelete
+        id={variant.id}
+        events={{ handleConfirm: events.handleDeleteIngredient }}
+      />
       break;
     }
     case "CreateRecipe": {
-      const e = { handleSubmit: events.handleCreateRecipe };
-      ModalVariant = <ModalComponents.CreateRecipe events={e} />
+      ModalVariant = <ModalComponents.CreateRecipe
+        events={{ handleSubmit: events.handleCreateRecipe }}
+      />
       break;
     }
     case "UpdateRecipe": {
-      const e = { handleSubmit: events.handleUpdateRecipe };
-      ModalVariant = <ModalComponents.UpdateRecipe id={variant.id} events={e} />
+      ModalVariant = <ModalComponents.UpdateRecipe
+        id={variant.id}
+        events={{ handleSubmit: events.handleUpdateRecipe }}
+      />
       break;
     }
-    case "ConfirmRecipeDelete": { 
-      const e = { handleConfirm: events.handleDeleteRecipe };
-      ModalVariant = <ModalComponents.ConfirmRecipeDelete id={variant.id} events={e} />
+    case "ConfirmRecipeDelete": {
+      ModalVariant = <ModalComponents.ConfirmRecipeDelete
+        id={variant.id}
+        events={{ handleConfirm: events.handleDeleteRecipe }}
+      />
       break;
     }
   }

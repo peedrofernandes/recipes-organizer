@@ -1,11 +1,11 @@
 import React, { memo, useMemo } from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import { createGlobalStyle } from "styled-components"
+import IngredientContextProvider from "./context/IngredientContext"
 import ModalContextProvider from "./context/ModalContext"
+import RecipeContextProvider from "./context/RecipeContextProvider"
 import ThemeContextProvider from "./context/ThemeContext"
 import Page from "./pages/Page"
-
-import { recipes, ingredients } from "./temp/data";
 
 const GlobalStyles = createGlobalStyle`
   * {
@@ -23,44 +23,46 @@ export default function App() {
       
     <ThemeContextProvider>
     <ModalContextProvider>
+    <IngredientContextProvider>
+    <RecipeContextProvider>
 
-      <GlobalStyles />
+    <GlobalStyles />
         
       <Router>
         <Routes>
-            
-          <Route
-            path="/"
-            element={
+          
+        <Route
+          path="/"
+          element={
+          <Page
+            variant="Help"
+          />
+          }
+        />
+          
+        <Route
+          path="/recipes"
+          element={
+          <Page
+            variant="Recipes"
+          />
+          }
+        />
+          
+        <Route
+          path="/ingredients"
+          element={
             <Page
-              variant="Help"
+              variant="Ingredients"
             />
-            }
-          />
-              
-          <Route
-            path="/recipes"
-            element={
-            <Page
-              variant="Recipes"
-              recipes={recipes}
-            />
-            }
-          />
-              
-          <Route
-            path="/ingredients"
-            element={
-              <Page
-                variant="Ingredients"
-                ingredients={ingredients}
-              />
-            }
-          />
-            
+          }
+        />
+          
         </Routes>
       </Router>
         
+    </RecipeContextProvider>
+    </IngredientContextProvider>
     </ModalContextProvider>
     </ThemeContextProvider>
 

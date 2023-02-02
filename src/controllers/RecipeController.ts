@@ -25,8 +25,8 @@ export default class RecipeController {
       updateUIOnDelete: (id: Id) => void
     },
     private services: {
-      postImage: (image: File) => string,
-      retrieveImage: (imageUrl: string) => File
+      postImage: (image: File) => Promise<string>,
+      retrieveImage: (imageUrl: string) => Promise<File>
     }
     ) { }
     
@@ -34,7 +34,7 @@ export default class RecipeController {
 
   // --------- PRIVATE METHODS ----------
 
-  private adaptRecipe(recipe: Recipe): AdaptedRecipe {
+  private async adaptRecipe(recipe: Recipe): Promise<AdaptedRecipe> {
     return {
       id: recipe.id,
       name: recipe.name,
@@ -42,7 +42,7 @@ export default class RecipeController {
       description: recipe.options?.description,
       imageUrl: recipe.options?.imageUrl,
       imageFile: (recipe.options?.imageUrl ? (
-        this.services.retrieveImage(recipe.options.imageUrl)
+        await this.services.retrieveImage(recipe.options.imageUrl)
       ) : undefined),
       ingredients: (recipe.ingredientList ? recipe.ingredientList.map(
         item => [item.ingredient, item.totalGrams]
@@ -83,8 +83,8 @@ export default class RecipeController {
   public async createRecipe(
     adaptedAttributes: Attributes<AdaptedRecipe>
   ): Promise<void> {
-    const updateUI = (recipe: Recipe) => {
-      const adaptedRecipe = this.adaptRecipe(recipe);
+    const updateUI = async (recipe: Recipe) => {
+      const adaptedRecipe = await this.adaptRecipe(recipe);
       this.uiCallbacks.updateUIOnCreate(adaptedRecipe);
     }
     const createRecipeUseCase = new CreateRecipe(
@@ -98,13 +98,15 @@ export default class RecipeController {
 
   public async getAllRecipes(): Promise<AdaptedRecipe[]> {
     const recipes = await this.recipeRepository.findAll();
-    const adaptedRecipes = recipes.map(recipe => this.adaptRecipe(recipe));
+    const adaptedRecipes = Promise.all(recipes.map(
+      async (recipe) => await this.adaptRecipe(recipe)
+    ));
     return adaptedRecipes;
   }
 
   public async updateRecipe(id: Id, newAttributes: Attributes<AdaptedRecipe>) {
-    const updateUI = (recipe: Recipe) => {
-      const adaptedRecipe = this.adaptRecipe(recipe);
+    const updateUI = async (recipe: Recipe) => {
+      const adaptedRecipe = await this.adaptRecipe(recipe);
       this.uiCallbacks.updateUIOnUpdate(adaptedRecipe)
     }
     const updateRecipeUseCase = new UpdateRecipe(
@@ -112,7 +114,7 @@ export default class RecipeController {
       updateUI
     );
 
-    const modifiedRecipe = this.adaptRecipe(
+    const modifiedRecipe = await this.adaptRecipe(
       await this.recipeRepository.find(id)
     );
 
@@ -140,8 +142,8 @@ export default class RecipeController {
   }
 
   public async turnRecipesIntoJson(adaptedRecipes: AdaptedRecipe[]) {
-    const turnIntoJsonMethod = (recipes: Recipe[]) => {
-      const transformedRecipes = recipes.map(r => this.adaptRecipe(r));
+    const turnIntoJsonMethod = async (recipes: Recipe[]) => {
+      const transformedRecipes = await Promise.all(recipes.map(async r => await this.adaptRecipe(r)));
       return this.turnIntoJsonMethod(transformedRecipes);
     }
     const generateJsonUseCase = new GenerateJson(turnIntoJsonMethod);

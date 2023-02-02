@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useMemo } from "react";
+import React, { ReactNode, useContext, useEffect, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 
@@ -9,6 +9,12 @@ import Icon from "../components/Icon";
 import Modal from "../components/Modal";
 import { ModalContext } from "../context/ModalContext";
 import { modalHasId } from "../types/typeGuards";
+import ingredientHandler from "../../handlers/IngredientHandler";
+import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes";
+import { Attributes } from "@domain/value-objects/Attributes";
+import recipeHandler from "@infra/handlers/RecipeHandler";
+import { IngredientContext } from "../context/IngredientContext";
+import { RecipeContext } from "../context/RecipeContextProvider";
 
 const LayoutContainer = styled.div`
   position: relative;
@@ -65,12 +71,70 @@ export default function PageLayout(props: { children: ReactNode }) {
 
   const { theme, toggleTheme } = useContext(ThemeContext); 
   const { currentModal, setModal } = useContext(ModalContext);
-  const location = useLocation()
+  const { ingredients, setIngredients } = useContext(IngredientContext);
+  const { recipes, setRecipes } = useContext(RecipeContext);
+  const location = useLocation();
+
+  const ingredientController = useMemo(() => {
+    return ingredientHandler(
+      // Create
+      (ingredient: AdaptedIngredient) => setIngredients([...ingredients, ingredient]),
+      // Update
+      (ingredient: AdaptedIngredient) => {
+        const filteredIngredients = ingredients.filter(i => i.id !== ingredient.id)
+        setIngredients([...filteredIngredients, ingredient])
+      },
+      // Delete
+      (id: string) => setIngredients(ingredients.filter(i => i.id !== id))
+    )
+  }, []);
+  
+  const recipeController = useMemo(() => {
+    return recipeHandler(
+      // Create
+      (recipe: AdaptedRecipe) => setRecipes([...recipes, recipe]),
+      // Update
+      (recipe: AdaptedRecipe) => {
+        const filteredRecipes = recipes.filter(r => r.id !== recipe.id);
+        setRecipes([...filteredRecipes, recipe]);
+      },
+      // Delete
+      (id: string) => setRecipes(recipes.filter(r => r.id !== id))
+    )
+  }, []);
 
   const events = useMemo(() => {
     return {
-      modalEvents: { closeModal: () => setModal({ name: "none" }) }
+      modalEvents: {
+        closeModal: () => setModal({ name: "none" }),
+
+        handleCreateIngredient: (attr: Attributes<AdaptedIngredient>) => ingredientController.createIngredient(attr),
+
+        handleUpdateIngredient: (id: string, attr: Attributes<AdaptedIngredient>) => ingredientController.updateIngredient(id, attr),
+
+        handleDeleteIngredient: (id: string) => ingredientController.deleteIngredient(id),
+
+        handleCreateRecipe: (attr: Attributes<AdaptedRecipe>) => recipeController.createRecipe(attr),
+
+        handleUpdateRecipe: (id: string, attr: Attributes<AdaptedRecipe>) => recipeController.updateRecipe(id, attr),
+
+        handleDeleteRecipe: (id: string) => recipeController.deleteRecipe(id)
+      }
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchIngredients = async () => {
+      const foundIngredients = await ingredientController.getAllIngredients();
+      setIngredients([...ingredients, ...foundIngredients]);
+    }
+    const fetchRecipes = async () => {
+      const foundRecipes = await recipeController.getAllRecipes();
+      setRecipes([...recipes, ...foundRecipes]);
+    }
+
+    fetchIngredients();
+    fetchRecipes();
   }, [])
 
   return (

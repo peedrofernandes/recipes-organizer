@@ -1,6 +1,6 @@
+import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes";
 import React from "react"
 import styled from "styled-components"
-import { Ingredient, Recipe } from "../types/Data";
 
 import Button from "./Button";
 import Icon from "./Icon";
@@ -98,17 +98,17 @@ const ImageContainer = styled.div<{
 
 type CardProps = {
   variant: "Ingredient";
-  ingredient: Ingredient;
+  ingredient: AdaptedIngredient;
   events: {
-    handleEditClick: (id: number | string) => void;
-    handleDeleteClick: (id: number | string) => void;
+    handleEditClick: (id: string) => void;
+    handleDeleteClick: (id: string) => void;
   }
 } | {
   variant: "Recipe";
-  recipe: Recipe;
+  recipe: AdaptedRecipe;
   events: {
-    handleEditClick: (id: number | string) => void;
-    handleDeleteClick: (id: number | string) => void;
+    handleEditClick: (id: string) => void;
+    handleDeleteClick: (id: string) => void;
   }
 } | {
   variant: "CreateRecipe";
@@ -128,19 +128,19 @@ export default function Card(props: CardProps) {
   switch (props.variant) {
     case "Ingredient": {
       const { events, ingredient } = props;
-      const { id, name, macros, options } = ingredient;
+      const { id, name, macros, description, imageFile, imageUrl } = ingredient;
 
       return (
       <CardContainer status="active">
         
-      <ImageContainer imageUrl={options?.imageUrl}>
-        {!options?.imageUrl && <Icon variant="NoRecipe" />}
+      <ImageContainer imageUrl={imageUrl}>
+        {imageUrl && <Icon variant="NoRecipe" />}
       </ImageContainer>
 
       <ContentContainer>
         <div>
           <h3>{name}</h3>
-          {options?.description && <p>{options.description}</p>}
+          {description && <p>{description}</p>}
         </div>
         <div>
           <Button variant="icon" onClick={() => events.handleEditClick(id)}>
@@ -167,7 +167,7 @@ export default function Card(props: CardProps) {
     }
     case "Recipe": {
       const { events } = props;
-      const { id, name, type, macros, options } = props.recipe;
+      const { id, name, type, macros, description, imageFile, imageUrl } = props.recipe;
 
       return (
         <CardContainer status="active">
@@ -177,14 +177,14 @@ export default function Card(props: CardProps) {
           (type === "Weekend") ? <TypeSpan>Receita de fim de semana</TypeSpan> : null
         }
           
-        <ImageContainer imageUrl={options?.imageUrl}>
-          {!options?.imageUrl && <Icon variant="NoRecipe" />}
+        <ImageContainer imageUrl={imageUrl}>
+          {imageUrl && <Icon variant="NoRecipe" />}
         </ImageContainer>
 
         <ContentContainer>
           <div>
             <h3>{name}</h3>
-            {options?.description && <p>{options.description}</p>}
+            {description && <p>{description}</p>}
           </div>
           <div>
             <Button variant="icon" onClick={() => events.handleEditClick(id)}>

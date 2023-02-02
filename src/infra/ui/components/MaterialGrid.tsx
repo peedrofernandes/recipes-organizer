@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react"
 import styled from "styled-components";
-import { AtLeastOne } from "../../types/AtLeastOne";
-import { OnlyOne } from "../../types/OnlyOne";
+import { AtLeastOne } from "../../../types/AtLeastOne";
+import { OnlyOne } from "../../../types/OnlyOne";
 
 const Container = styled.div`
   display: flex;
@@ -89,53 +89,53 @@ export const GridItem = styled.div<GridItemProps>`
       return `span ${rSpan.xs ?? 1}`
     else if (abs)
       return `${abs[0]} / ${abs[1]}`
-    else if (rAbs) 
-        return `
+    else if (rAbs)
+      return `
           ${rAbs.xs ? rAbs.xs[0] : 0} / ${rAbs.xs ? rAbs.xs[1] : 0}
         `
   }};
     
   @media (min-width: 600px) {
     ${({ rSpan, rAbs }) => {
-      if (rSpan)
-        return `grid-column: span ${rSpan.sm ?? 1}`
-      else if (rAbs) 
-        return `
+    if (rSpan)
+      return `grid-column: span ${rSpan.sm ?? 1}`
+    else if (rAbs)
+      return `
           grid-column: ${rAbs.sm ? rAbs.sm[0] : 0} / ${rAbs.sm ? rAbs.sm[1] : 0}
         `
-    }}
+  }}
   }
 
   @media (min-width: 905px) {
     ${({ rSpan, rAbs }) => {
-      if (rSpan)
-        return `grid-column: span ${rSpan.md ?? 1}`
-      else if (rAbs) 
-        return `
+    if (rSpan)
+      return `grid-column: span ${rSpan.md ?? 1}`
+    else if (rAbs)
+      return `
           grid-column: ${rAbs.md ? rAbs.md[0] : 0} / ${rAbs.md ? rAbs.md[1] : 0}
         `
-    }}
+  }}
   }
 
   @media (min-width: 1240px) {
     ${({ rSpan, rAbs }) => {
-      if (rSpan)
-        return `grid-column: span ${rSpan.lg ?? 1}`
-      else if (rAbs) 
-        return `
+    if (rSpan)
+      return `grid-column: span ${rSpan.lg ?? 1}`
+    else if (rAbs)
+      return `
           grid-column: ${rAbs.lg ? rAbs.lg[0] : 0} / ${rAbs.lg ? rAbs.lg[1] : 0}
         `
-    }}
+  }}
   }
 
   @media (min-width: 1440px) {
     ${({ rSpan, rAbs }) => {
-      if (rSpan)
-        return `grid-column: span ${rSpan.xl ?? 1}`
-      else if (rAbs) 
-        return `
+    if (rSpan)
+      return `grid-column: span ${rSpan.xl ?? 1}`
+    else if (rAbs)
+      return `
           grid-column: ${rAbs.xl ? rAbs.xl[0] : 0} / ${rAbs.xl ? rAbs.xl[1] : 0}
         `
-    }}
+  }}
   }
 `

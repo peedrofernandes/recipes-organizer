@@ -6,7 +6,7 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.js"
   },
-  plugins: [ new HtmlWebpackPlugin({ template: "./src/ui/index.html" }) ],
+  plugins: [ new HtmlWebpackPlugin({ template: "./src/infra/ui/index.html" }) ],
   devServer: {
     port: 3000,
     historyApiFallback: true
@@ -21,6 +21,12 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: [".js", ".jsx", ".ts", ".tsx"]
+    extensions: [".js", ".jsx", ".ts", ".tsx"],
+    alias: {
+      "@": path.resolve(__dirname, "src"),
+      "@domain": path.resolve(__dirname, "src/domain"),
+      "@controllers": path.resolve(__dirname, "src/controllers"),
+      "@infra": path.resolve(__dirname, "src/infra")
+    }
   }
 }

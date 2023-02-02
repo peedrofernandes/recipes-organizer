@@ -19,8 +19,8 @@ export default class IngredientController {
       updateUIOnDelete: (id: Id) => void
     },
     private services: {
-      postImage: (image: File) => string | undefined,
-      retrieveImage: (imageUrl: string) => File | undefined
+      postImage: (image: File) => Promise<string>,
+      retrieveImage: (imageUrl: string) => Promise<File>
     }
   ) { }
   
@@ -28,13 +28,13 @@ export default class IngredientController {
 
   // --------- PRIVATE METHODS ----------
 
-  private adaptIngredient(ingredient: Ingredient): AdaptedIngredient {
+  private async adaptIngredient(ingredient: Ingredient): Promise<AdaptedIngredient> {
     return {
       id: ingredient.id,
       name: ingredient.name,
       description: ingredient.options?.description,
       imageFile: (ingredient.options?.imageUrl ? (
-        this.services.retrieveImage(ingredient.options.imageUrl)
+        await this.services.retrieveImage(ingredient.options.imageUrl)
       ) : undefined),
       imageUrl: ingredient.options?.imageUrl,
       macros: (ingredient.macros ? [
@@ -72,8 +72,8 @@ export default class IngredientController {
   public async createIngredient(
     attributes: Attributes<AdaptedIngredient>
   ): Promise<void> {
-    const updateUI = (ingredient: Ingredient) => {
-      const adaptedIngredient = this.adaptIngredient(ingredient);
+    const updateUI = async (ingredient: Ingredient) => {
+      const adaptedIngredient = await this.adaptIngredient(ingredient);
       this.uiCallbacks.updateUIOnCreate(adaptedIngredient);
     }
     const createIngredientUseCase = new CreateIngredient(
@@ -82,7 +82,7 @@ export default class IngredientController {
     );
 
     if (attributes.imageFile) {
-      attributes.imageUrl = this.services.postImage(attributes.imageFile)
+      attributes.imageUrl = await this.services.postImage(attributes.imageFile)
     }
 
     const schemeAttributes = this.getSchemeAttributes(attributes);
@@ -92,15 +92,15 @@ export default class IngredientController {
 
   public async getAllIngredients(): Promise<AdaptedIngredient[]> {
     const ingredients = await this.ingredientRepository.findAll();
-    const adaptedIngredients = ingredients.map(
-      item => this.adaptIngredient(item)
-    );
+    const adaptedIngredients = Promise.all(ingredients.map(
+      async item => await this.adaptIngredient(item)
+    ));
     return adaptedIngredients;
   }
 
   public async updateIngredient(id: Id, attributes: Attributes<AdaptedIngredient>) {
-    const updateUI = (ingredient: Ingredient) => {
-      const adaptedIngredient = this.adaptIngredient(ingredient);
+    const updateUI = async (ingredient: Ingredient) => {
+      const adaptedIngredient = await this.adaptIngredient(ingredient);
       this.uiCallbacks.updateUIOnUpdate(adaptedIngredient);
     }
     const updateIngredientUseCase = new UpdateIngredient(
@@ -108,7 +108,7 @@ export default class IngredientController {
       updateUI
     );
 
-    const modifiedIngredient: AdaptedIngredient = this.adaptIngredient(
+    const modifiedIngredient: AdaptedIngredient = await this.adaptIngredient(
       await this.ingredientRepository.find(id)
     );
 

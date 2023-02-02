@@ -5,8 +5,12 @@ import { Grid, GridItem } from "../components/MaterialGrid";
 import PageLayout from "./PageLayout";
 import { Link } from "react-router-dom";
 import Button from "../components/Button";
-import { Ingredient, Recipe } from "../types/Data";
 import { ModalContext } from "../context/ModalContext";
+import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes";
+import { IngredientContext } from "../context/IngredientContext";
+import { RecipeContext } from "../context/RecipeContextProvider";
+import IngredientController from "@controllers/IngredientController";
+import RecipeController from "@controllers/RecipeController";
 
 const Title = styled.h1`
   padding: 24px 0;
@@ -17,16 +21,16 @@ type PageProps = {
   variant: "Help";
 } | {
   variant: "Ingredients";
-  ingredients: Ingredient[];
 } | {
   variant: "Recipes";
-  recipes: Recipe[];
 }
 
 export default function Page(props: PageProps) {
   const { variant } = props;
 
   const { currentModal, setModal } = useContext(ModalContext);
+  const { ingredients, setIngredients } = useContext(IngredientContext);
+  const { recipes, setRecipes } = useContext(RecipeContext);
 
   const events = useMemo(() => ({
     ingredientEvents: {
@@ -54,7 +58,9 @@ export default function Page(props: PageProps) {
     }
     case "Ingredients": {
       const {
-        handleCreateClick, handleEditClick, handleDeleteClick
+        handleCreateClick,
+        handleEditClick,
+        handleDeleteClick
       } = events.ingredientEvents;
 
       return (
@@ -63,7 +69,7 @@ export default function Page(props: PageProps) {
           
           <Grid>
 
-            {props.ingredients.map((ingredient) => {
+            {ingredients.map((ingredient) => {
               return (
                 <GridItem span={4}>
                   <Card
@@ -93,7 +99,7 @@ export default function Page(props: PageProps) {
         <PageLayout>
           <Title>Receitas</Title>
           <Grid>
-            {props.recipes.map((recipe) => {
+            {recipes.map((recipe) => {
 
               return (
                 <GridItem span={4}>

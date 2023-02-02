@@ -4,7 +4,14 @@
     "module": "commonjs",
     "strict": true,
     "jsx": "react",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@domain/*": ["domain/*"],
+      "@infra/*": ["infra/*"],
+      "@types/*": ["types/*"],
+      "@controllers/*": ["controllers/*"]
+    }
   },
   "include": ["src", "node_modules"],
 }
