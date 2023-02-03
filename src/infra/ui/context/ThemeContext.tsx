@@ -18,6 +18,10 @@ export type Theme = {
     contrastV1: string;
     contrastV2?: string;
     contrastV3?: string;
+    green?: string;
+    orange?: string;
+    blue?: string;
+    red?: string;
   }
 }
 
@@ -25,6 +29,11 @@ type ThemesSet = {
   light: Theme;
   dark: Theme;
 }
+
+const green = "#07da63";
+const orange = "#ea6f1c";
+const blue = "#1184e2";
+const red = "#dd2323"
 
 export const themesSet: ThemesSet = {
   light: {
@@ -43,6 +52,10 @@ export const themesSet: ThemesSet = {
       contrastV1: "#111414",
       contrastV2: "#ffffff",
       contrastV3: "#ffffff",
+      green,
+      orange,
+      blue,
+      red
     }
   },
   dark: {
@@ -61,6 +74,10 @@ export const themesSet: ThemesSet = {
       contrastV1: "#ffffff",
       contrastV2: "#111414",
       contrastV3: "#111414",
+      green,
+      orange,
+      blue,
+      red
     }
   }
 }

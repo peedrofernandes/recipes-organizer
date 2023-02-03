@@ -75,19 +75,17 @@ export default function PageLayout(props: { children: ReactNode }) {
   const { recipes, setRecipes } = useContext(RecipeContext);
   const location = useLocation();
 
-  const ingredientController = useMemo(() => {
-    return ingredientHandler(
-      // Create
-      (ingredient: AdaptedIngredient) => setIngredients([...ingredients, ingredient]),
-      // Update
-      (ingredient: AdaptedIngredient) => {
-        const filteredIngredients = ingredients.filter(i => i.id !== ingredient.id)
-        setIngredients([...filteredIngredients, ingredient])
-      },
-      // Delete
-      (id: string) => setIngredients(ingredients.filter(i => i.id !== id))
-    )
-  }, []);
+  const ingredientController = ingredientHandler(
+    // Create
+    (ingredient: AdaptedIngredient) => setIngredients([...ingredients, ingredient]),
+    // Update
+    (ingredient: AdaptedIngredient) => {
+      const filteredIngredients = ingredients.filter(i => i.id !== ingredient.id)
+      setIngredients([...filteredIngredients, ingredient])
+    },
+    // Delete
+    (id: string) => setIngredients(ingredients.filter(i => i.id !== id))
+  )
   
   const recipeController = useMemo(() => {
     return recipeHandler(
@@ -103,26 +101,23 @@ export default function PageLayout(props: { children: ReactNode }) {
     )
   }, []);
 
-  const events = useMemo(() => {
-    return {
-      modalEvents: {
-        closeModal: () => setModal({ name: "none" }),
+  const events = {
+    modalEvents: {
+      closeModal: () => setModal({ name: "none" }),
 
-        handleCreateIngredient: (attr: Values<AdaptedIngredient>) => ingredientController.createIngredient(attr),
+      handleCreateIngredient: (values: Values<AdaptedIngredient>) => ingredientController.createIngredient(values),
 
-        handleUpdateIngredient: (id: string, attr: Values<AdaptedIngredient>) => ingredientController.updateIngredient(id, attr),
+      handleUpdateIngredient: (id: string, values: Values<AdaptedIngredient>) => ingredientController.updateIngredient(id, values),
 
-        handleDeleteIngredient: (id: string) => ingredientController.deleteIngredient(id),
+      handleDeleteIngredient: (id: string) => ingredientController.deleteIngredient(id),
 
-        handleCreateRecipe: (attr: Values<AdaptedRecipe>) => recipeController.createRecipe(attr),
+      handleCreateRecipe: (values: Values<AdaptedRecipe>) => recipeController.createRecipe(values),
 
-        handleUpdateRecipe: (id: string, attr: Values<AdaptedRecipe>) => recipeController.updateRecipe(id, attr),
+      handleUpdateRecipe: (id: string, values: Values<AdaptedRecipe>) => recipeController.updateRecipe(id, values),
 
-        handleDeleteRecipe: (id: string) => recipeController.deleteRecipe(id)
-      }
+      handleDeleteRecipe: (id: string) => recipeController.deleteRecipe(id)
     }
-  }, []);
-
+  }
   useEffect(() => {
     const fetchIngredients = async () => {
       const foundIngredients = await ingredientController.getAllIngredients();

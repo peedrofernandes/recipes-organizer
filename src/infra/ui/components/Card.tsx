@@ -64,6 +64,34 @@ const TypeSpan = styled.span`
   border-bottom-right-radius: 4px;
 `;
 
+const MacrosSpan = styled.span`
+  position: absolute;
+  bottom: 2px;
+  width: 75%;
+  background-color: ${({ theme }) => theme.main.primaryV2 + "7F"};
+  backdrop-filter: blur(2px);
+  font-weight: bold;
+  border-radius: inherit;
+  padding: 2px;
+
+  ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-evenly;
+
+    li:nth-child(1) {
+      color: ${({ theme }) => theme.color.green}
+    }
+    li:nth-child(2) {
+      color: ${({ theme }) => theme.color.blue}
+    }
+    li:nth-child(3) {
+      color: ${({ theme }) => theme.color.orange}
+    }
+
+  }
+`
+
 const ContentContainer = styled.div`
   position: relative;
   display: flex;
@@ -83,12 +111,13 @@ const ContentContainer = styled.div`
 const ImageContainer = styled.div<{
   imageUrl?: string
 }>`
+  position: relative;
   width: 100%;
   height: 70%;
   background: ${props => props.imageUrl ? `url(${props.imageUrl})` : `${props.theme.main.primaryV3}`};
   background-size: cover;
   background-position: center;
-  border-radius: 8px;
+  border-radius: inherit;
   
   display: flex;
   justify-content: center;
@@ -133,9 +162,25 @@ export default function Card(props: CardProps) {
 
       return (
       <CardContainer status="active">
+      
+
+            
         
       <ImageContainer imageUrl={imageUrl}>
-        {imageUrl && <Icon variant="NoRecipe" />}
+
+        {
+          macros && (
+            <MacrosSpan>
+              <ul>
+                <li>P: {macros[0]}</li>    
+                <li>C: {macros[1]}</li>    
+                <li>G: {macros[2]}</li>    
+              </ul>
+            </MacrosSpan>
+          )     
+        }
+
+        {!imageUrl && <Icon variant="NoRecipe" />}
       </ImageContainer>
 
       <ContentContainer>

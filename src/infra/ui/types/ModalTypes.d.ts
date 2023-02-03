@@ -27,35 +27,41 @@ export type ModalVariants = {
 type CreateIngredientProps = {
   events: {
     handleSubmit: (attr: Values<AdaptedIngredient>) => void;
+    closeModal: () => void;
   }
 }
 type UpdateIngredientProps = {
   id: number | string;
   events: {
     handleSubmit: (id: Id, attr: Values<AdaptedIngredient>) => void;
+    closeModal: () => void;
   }
 }
 type ConfirmIngredientDeleteProps = {
   id: Id;
   events: {
     handleConfirm: (id: Id) => void;
+    closeModal: () => void;
   }
 }
 type CreateRecipeProps = {
   events: {
     handleSubmit: (attr: Values<AdaptedRecipe>) => void;
+    closeModal: () => void;
   }
 }
 type UpdateRecipeProps = {
   id: Id;
   events: {
     handleSubmit: (id: Id, attr: Values<AdaptedRecipe>) => void;
+    closeModal: () => void;
   }
 }
 type ConfirmRecipeDeleteProps = {
   id: Id;
   events: {
     handleConfirm: (id: Id) => void;
+    closeModal: () => void;
   }
 }
 export type ComponentModalVariants = {

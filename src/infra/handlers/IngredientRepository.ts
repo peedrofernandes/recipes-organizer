@@ -57,7 +57,8 @@ export default class IngredientRepository implements IRepository<Ingredient> {
   delete(id: string): Promise<void> {
     const ingredients = this.getData();
     const foundIndex = ingredients.findIndex(i => i.id === id);
-    if (!foundIndex) throw new Error(`There's no ingredient with id ${id}.`);
+    console.log(`Found index: ${foundIndex}.`)
+    if (foundIndex === -1) throw new Error(`There's no ingredient with id ${id}.`);
     ingredients.splice(foundIndex, 1);
     this.setData(ingredients);
     return Promise.resolve();

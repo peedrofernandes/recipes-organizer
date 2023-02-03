@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack-dev-server --mode development",
-    "test": "jest --testPathPattern=tests"
+    "test": "jest --testPathPattern=tests",
+    "type-check": "tsc ./src/index.tsx --noEmit"
   },
   "keywords": [],
   "author": "",

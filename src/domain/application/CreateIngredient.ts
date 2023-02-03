@@ -1,7 +1,7 @@
 import Ingredient from "../entities/Ingredient";
 import IUseCase from "./IUseCase";
 import { IRepository } from "../repositories/IRepository";
-import { Attributes } from "../value-objects/Attributes";
+import { Values } from "@domain/value-objects/Values";
 
 export default class CreateIngredient implements IUseCase {
   constructor(
@@ -9,8 +9,8 @@ export default class CreateIngredient implements IUseCase {
     private updateUI: (newIngredient: Ingredient) => void
   ) { }
 
-  async execute(ingredientAttributes: Attributes<Ingredient>) {
-    const newIngredient = new Ingredient({ ...ingredientAttributes });
+  async execute(ingredientValues: Values<Ingredient>) {
+    const newIngredient = new Ingredient({ ...ingredientValues });
     await this.ingredientRepository.create(newIngredient);
     this.updateUI(newIngredient);
   }
