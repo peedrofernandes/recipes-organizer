@@ -15,7 +15,7 @@ type ButtonProps = ({
   color?: "red" | "green" | "blue";
 } | {
   variant: "icon";
-  icon: ReactElement<typeof Icon>;
+  children: ReactElement<typeof Icon>;
 } | {
   variant: "layout";
   selected?: boolean;
@@ -39,8 +39,9 @@ export default function Button(props: ButtonProps) {
       <IconButton
         onClick={props.onClick}
         onSubmit={props.onSubmit}
-        icon={props.icon}
-      />
+      >
+        {props.children}
+      </IconButton>
     )
   case "layout":
     return (

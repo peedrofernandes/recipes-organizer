@@ -25,7 +25,7 @@ const IconButtonContainer = styled.button`
 `
 
 interface IconButtonProps extends BaseButtonProps {
-  icon: ReactElement<typeof Icon>
+  children: ReactElement<typeof Icon>
 }
 
 export default function IconButton(props: IconButtonProps) {
@@ -34,7 +34,7 @@ export default function IconButton(props: IconButtonProps) {
       onClick={props.onClick}
       onSubmit={props.onSubmit}
     >
-      {props.icon}
+      {props.children}
     </IconButtonContainer>
   )
 }
