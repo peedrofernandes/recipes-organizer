@@ -1,5 +1,5 @@
 import Ingredient from "@domain/entities/Ingredient"
-import { Id } from "@domain/value-objects/Id"
+import { Id } from "@domain/utilities/types/Id"
 
 export type AdaptedIngredient = {
   id: Id,

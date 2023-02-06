@@ -1,13 +1,13 @@
-import Recipe from "../entities/Recipe";
-import IUseCase from "./IUseCase";
+import Recipe from "../entities/Recipe"
+import IUseCase from "./IUseCase"
 
-export default class RandomizeRecipes implements IUseCase {
+export default class RandomizeRecipes implements IUseCase<[Recipe[], Date], File> {
 
   constructor(
-    private generatePDF: (recipesWithDates: [Recipe, Date][]) => any
+    private generatePDF: (recipesWithDates: [Recipe, Date][]) => File
   ) { }
 
-  execute(recipes: Recipe[], date: Date): [Recipe, Date][] {
+  execute(recipes: Recipe[], date: Date): File {
     const weekRecipes = recipes.filter(
       r => r.type === "Week" || r.type === "Both"
     )
@@ -16,14 +16,14 @@ export default class RandomizeRecipes implements IUseCase {
     )
 
     const recipesWithDates: [Recipe, Date][] = []
-    const currentDate = date;
+    const currentDate = date
 
     while (weekRecipes.length !== 0 || weekendRecipes.length !== 0) {
       const currentDay = currentDate.getDay()
 
       if (currentDay === 0 || currentDay === 6) { // Weekends
         if (weekendRecipes.length !== 0) {
-          let randomIndex = Math.floor(Math.random() * weekendRecipes.length)
+          const randomIndex = Math.floor(Math.random() * weekendRecipes.length)
           const [chosenRecipe] = weekendRecipes.splice(randomIndex, 1)
           const originalIndex = recipes.findIndex(r => r.id === chosenRecipe.id)
           recipesWithDates.push([recipes[originalIndex], new Date(currentDate)])
@@ -31,7 +31,7 @@ export default class RandomizeRecipes implements IUseCase {
         }
       } else { // Weekdays
         if (weekRecipes.length !== 0) {
-          let randomIndex = Math.floor(Math.random() * weekRecipes.length)
+          const randomIndex = Math.floor(Math.random() * weekRecipes.length)
           const [chosenRecipe] = weekRecipes.splice(randomIndex, 1)
           const originalIndex = recipes.findIndex(r => r.id === chosenRecipe.id)
           recipesWithDates.push([recipes[originalIndex], new Date(currentDate)])
@@ -41,6 +41,6 @@ export default class RandomizeRecipes implements IUseCase {
       currentDate.setDate(currentDate.getDate() + 1)
     }
 
-    return this.generatePDF(recipesWithDates);
+    return this.generatePDF(recipesWithDates)
   }
 }

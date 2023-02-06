@@ -5,12 +5,12 @@
     "strict": true,
     "jsx": "react",
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@domain/*": ["domain/*"],
-      "@infra/*": ["infra/*"],
-      "@types/*": ["types/*"],
-      "@controllers/*": ["controllers/*"]
+      "@domain/*": ["./src/domain/*"],
+      "@infra/*": ["./src/infra/*"],
+      "@types/*": ["./src/types/*"],
+      "@controllers/*": ["./src/controllers/*"]
     }
   },
   "include": ["src", "node_modules"],

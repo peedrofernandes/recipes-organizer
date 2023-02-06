@@ -1,6 +1,6 @@
-import { AtLeastOne } from "../../types/AtLeastOne";
-import generateId from "../utilities/generateId";
-import { Id } from "../value-objects/Id";
+import { AtLeastOne } from "../../types/AtLeastOne"
+import generateId from "../utilities/algorithms/generateId"
+import { Id } from "../utilities/types/Id"
 
 export type IngredientMacros = {
   proteins: number,
@@ -14,8 +14,17 @@ type IngredientOptions = AtLeastOne<{
   imageUrl: string;
 }>
 
-export function isIngredientOptions(options: any): options is IngredientOptions {
-  return (options.description !== undefined || options.imageUrl !== undefined)
+export function isIngredientOptions(options: object): options is IngredientOptions {
+  return (
+    ("description" in options && typeof options.description === "string")
+    || ("imageUrl" in options && typeof options.imageUrl === "string")
+  )
+}
+
+export function ingredientHasMacros(ingredient: Ingredient): ingredient is Ingredient & {
+  macros: IngredientMacros
+} {
+  return "macros" in ingredient
 }
 
 export default class Ingredient {
@@ -31,18 +40,18 @@ export default class Ingredient {
     options?: IngredientOptions;
     macros?: IngredientMacros;
   }) {
-    const { id, name, options, macros } = props;
+    const { id, name, options, macros } = props
 
-    this._name = name;
+    this._name = name
 
-    if (id) this._id = id;
-    else this._id = generateId();
+    if (id) this._id = id
+    else this._id = generateId()
 
     if (options)
-      this._options = options;
+      this._options = options
 
     if (macros)
-      this._macros = macros;
+      this._macros = macros
   }
 
   calculateMacros(grams: number): Omit<IngredientMacros, "gramsPerServing"> {
@@ -51,7 +60,7 @@ export default class Ingredient {
         proteins: this._macros.proteins * grams / this._macros.gramsPerServing,
         carbs: this._macros.carbs * grams / this._macros.gramsPerServing,
         fats: this._macros.fats * grams / this._macros.gramsPerServing
-      }  
+      }
     }
 
     throw new Error(

@@ -1,5 +1,5 @@
 import Ingredient, { isIngredientOptions } from "@domain/entities/Ingredient"
-import { Values } from "@domain/value-objects/Values"
+import { Values } from "@domain/utilities/types/Values"
 import { AdaptedIngredient } from "./AdaptedTypes"
 
 export function getIngredientEntity(ingredient: AdaptedIngredient): Ingredient {
@@ -18,7 +18,7 @@ export function getIngredientEntity(ingredient: AdaptedIngredient): Ingredient {
       gramsPerServing: ingredient.macros[3]
     } : undefined),
     options: (isIngredientOptions(options) ? options : undefined)
-  });
+  })
 }
 
 export async function adaptIngredient(

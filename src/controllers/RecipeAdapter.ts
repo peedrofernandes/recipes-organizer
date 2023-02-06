@@ -1,6 +1,6 @@
-import Recipe, { isRecipeOptions } from "@domain/entities/Recipe";
-import { Values } from "@domain/value-objects/Values";
-import { AdaptedRecipe } from "./AdaptedTypes";
+import Recipe, { isRecipeOptions } from "@domain/entities/Recipe"
+import { Values } from "@domain/utilities/types/Values"
+import { AdaptedRecipe } from "./AdaptedTypes"
 
 export function getRecipeEntity(adaptedRecipe: AdaptedRecipe) {
   const options = {

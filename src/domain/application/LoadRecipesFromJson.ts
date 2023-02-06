@@ -1,23 +1,23 @@
-import Ingredient from "../entities/Ingredient";
-import Recipe from "../entities/Recipe";
-import { IRepository } from "../repositories/IRepository";
-import ExtractIngredients from "../services/ExtractIngredients";
-import IUseCase from "./IUseCase";
+import Ingredient from "../entities/Ingredient"
+import Recipe from "../entities/Recipe"
+import { IRepository } from "../repositories/IRepository"
+import IUseCase from "./IUseCase"
 
-import { exists } from "../utilities/binarySearch"
+import { exists } from "../utilities/algorithms/binarySearch"
+import ExtractIngredients from "@domain/utilities/services/ExtractIngredients"
 
-export default class LoadRecipesFromJson implements IUseCase {
+export default class LoadRecipesFromJson implements IUseCase<[unknown], void> {
   constructor(
     private ingredientRepository: IRepository<Ingredient>,
     private recipeRepository: IRepository<Recipe>
   ) { }
   
-  async execute(jsonFile: any) {
-    const recipes = await this.recipeRepository.load(jsonFile);
-    const ingredients = ExtractIngredients(recipes);
+  async execute(jsonFile: unknown) {
+    const recipes = await this.recipeRepository.load(jsonFile)
+    const ingredients = ExtractIngredients(recipes)
 
-    const existingRecipes = await this.recipeRepository.findAll();
-    const existingIngredients = await this.ingredientRepository.findAll();
+    const existingRecipes = await this.recipeRepository.findAll()
+    const existingIngredients = await this.ingredientRepository.findAll()
 
     const newRecipes = recipes.filter(
       r => !exists<Recipe>(existingRecipes, r, (r) => r.id)
@@ -26,9 +26,9 @@ export default class LoadRecipesFromJson implements IUseCase {
       i => !exists<Ingredient>(existingIngredients, i, (i) => i.id)
     )
 
-    await this.recipeRepository.createList(newRecipes);
-    await this.ingredientRepository.createList(newIngredients);
+    await this.recipeRepository.createList(newRecipes)
+    await this.ingredientRepository.createList(newIngredients)
 
-    return { newRecipes, newIngredients };
+    return { newRecipes, newIngredients }
   }
 }

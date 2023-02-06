@@ -1,5 +1,5 @@
-interface IUseCase {
-  execute: (...args: any[]) => any
+interface IUseCase<T extends unknown[], R> {
+  execute: (...args: T) => R;
 }
 
 export default IUseCase

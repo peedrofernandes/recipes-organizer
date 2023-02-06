@@ -1,17 +1,17 @@
-import UpdateIngredient from "../domain/application/UpdateIngredient";
-import CreateIngredient from "../domain/application/CreateIngredient";
-import DeleteIngredient from "../domain/application/DeleteIngredient";
-import Ingredient, { isIngredientOptions } from "../domain/entities/Ingredient";
-import { IRepository } from "../domain/repositories/IRepository";
-import { Id } from "../domain/value-objects/Id";
-import { AdaptedIngredient } from "./AdaptedTypes";
-import { Values } from "@domain/value-objects/Values";
-import { adaptIngredient, getIngredientEntityValues } from "./IngredientAdapter";
+import UpdateIngredient from "../domain/application/UpdateIngredient"
+import CreateIngredient from "../domain/application/CreateIngredient"
+import DeleteIngredient from "../domain/application/DeleteIngredient"
+import Ingredient from "../domain/entities/Ingredient"
+import { IRepository } from "../domain/repositories/IRepository"
+import { Id } from "../domain/utilities/types/Id"
+import { AdaptedIngredient } from "./AdaptedTypes"
+import { Values } from "@domain/utilities/types/Values"
+import { adaptIngredient, getIngredientEntityValues } from "./IngredientAdapter"
 
 export default class IngredientController {
 
   // ----------- CONSTRUCTOR ------------
-  
+
   constructor(
     private ingredientRepository: IRepository<Ingredient>,
     private uiCallbacks: {
@@ -24,12 +24,12 @@ export default class IngredientController {
       retrieveImage: (imageUrl: string) => Promise<File>
     }
   ) { }
-  
+
   // ------------------------------------
 
   // --------- PRIVATE METHODS ----------
   // ------------------------------------
-    
+
   // ------------ PUBLIC API ------------
 
   public async createIngredient(
@@ -39,45 +39,45 @@ export default class IngredientController {
       const adaptedIngredient = await adaptIngredient(
         ingredient,
         this.services.retrieveImage
-      );
-      this.uiCallbacks.updateUIOnCreate(adaptedIngredient);
+      )
+      this.uiCallbacks.updateUIOnCreate(adaptedIngredient)
     }
     const createIngredientUseCase = new CreateIngredient(
       this.ingredientRepository,
       updateUI
-    );
+    )
 
     if (values.imageFile) {
       values.imageUrl = await this.services.postImage(values.imageFile)
     }
 
-    const entityValues = getIngredientEntityValues(values);
+    const entityValues = getIngredientEntityValues(values)
 
-    await createIngredientUseCase.execute(entityValues);
-  } 
+    await createIngredientUseCase.execute(entityValues)
+  }
 
   public async getAllIngredients(): Promise<AdaptedIngredient[]> {
-    const ingredients = await this.ingredientRepository.findAll();
+    const ingredients = await this.ingredientRepository.findAll()
     const adaptedIngredients = Promise.all(ingredients.map(
       async item => await adaptIngredient(item, this.services.retrieveImage)
-    ));
-    return adaptedIngredients;
+    ))
+    return adaptedIngredients
   }
 
   public async updateIngredient(id: Id, values: Values<AdaptedIngredient>) {
     const updateUI = async (ingredient: Ingredient) => {
-      const adaptedIngredient = await adaptIngredient(ingredient, this.services.retrieveImage);
-      this.uiCallbacks.updateUIOnUpdate(adaptedIngredient);
+      const adaptedIngredient = await adaptIngredient(ingredient, this.services.retrieveImage)
+      this.uiCallbacks.updateUIOnUpdate(adaptedIngredient)
     }
     const updateIngredientUseCase = new UpdateIngredient(
       this.ingredientRepository,
       updateUI
-    );
+    )
 
     const modifiedIngredient: AdaptedIngredient = await adaptIngredient(
       await this.ingredientRepository.find(id),
       this.services.retrieveImage
-    );
+    )
 
     const mergedValues: Values<AdaptedIngredient> = {
       name: values.name ?? modifiedIngredient.name,
@@ -87,17 +87,17 @@ export default class IngredientController {
       macros: values.macros ?? modifiedIngredient.macros
     }
 
-    const newIngredientValues = getIngredientEntityValues(mergedValues);
+    const newIngredientValues = getIngredientEntityValues(mergedValues)
 
-    await updateIngredientUseCase.execute(id, newIngredientValues);
+    await updateIngredientUseCase.execute(id, newIngredientValues)
   }
 
   public async deleteIngredient(id: Id) {
     const deleteIngredientUseCase = new DeleteIngredient(
       this.ingredientRepository,
       this.uiCallbacks.updateUIOnDelete
-    );
-    await deleteIngredientUseCase.execute(id);
+    )
+    await deleteIngredientUseCase.execute(id)
   }
 
   // ------------------------------------
