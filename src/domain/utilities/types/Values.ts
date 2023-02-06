@@ -1,5 +1,5 @@
 type KeysWithoutFunction<T> = {
-  [K in keyof T]: T[K] extends Function ? never : K
+  [K in keyof T]: T[K] extends (...args: unknown[]) => unknown ? never : K
 }[keyof T]
 
 export type Values<T> = {
