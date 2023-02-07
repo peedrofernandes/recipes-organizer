@@ -1,11 +1,9 @@
 import { DeepPartial } from "./DeepPartial"
 
-type KeysWithoutFunction<T> = {
-  [K in keyof T]: T[K] extends Function ? never : K
+type KeysWithFunction<T> = {
+  [K in keyof T]: T[K] extends Function ? K : never
 }[keyof T]
 
-export type Values<T> = {
-  [K in Exclude<KeysWithoutFunction<T>, "id">]: T[K]
-}
+export type Values<T> = Omit<T, "id" | KeysWithFunction<T>>
 
 export type OptionalValues<T> = DeepPartial<Values<T>>;

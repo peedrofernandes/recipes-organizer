@@ -1,11 +1,9 @@
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import { OptionalValues } from "@domain/utilities/types/Values"
-import React from "react"
+import React, { HTMLAttributes } from "react"
 import styled from "styled-components"
-import ConfirmDeleteForm from "./ConfirmDeleteForm"
 import IngredientForm from "./IngredientForm"
-import CreateIngredientForm from "./IngredientForm"
 
 export const FormContainer = styled.form`
   display: flex;
@@ -21,7 +19,9 @@ export const FormContainer = styled.form`
     padding: 8px 4px;
     background-color: ${({ theme }) => theme.main.primaryV1 + "00"};
     color: ${({ theme }) => theme.main.contrastV1};
-    border: 1px solid ${({ theme }) => theme.main.contrastV1};
+    /* border: 1px solid ${({ theme }) => theme.main.contrastV1}; */
+    border: none;
+    box-shadow: ${({ theme }) => `inset 0 0 1px ${theme.main.contrastV1}, 0 0 1px ${theme.main.contrastV1}`};
     margin-top: 4px;
     min-width: 0;
     
@@ -42,18 +42,37 @@ export const FormContainer = styled.form`
   }
 `
 
-export const FieldSet = styled.fieldset`
+export const SmallInputContainer = styled.div`
   display: flex;
   justify-content: center;
   gap: 8px;
-  border: none;
 `
 
-export const InputBox = styled.div`
+export const InputFieldSet = styled.fieldset<{
+  error?: boolean
+}>`
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  border: none;
+  color: ${({ error, theme }) => error ? theme.color.red : "inherit"};
+
+  input {
+    box-shadow: ${({ error, theme }) => `inset 0 0 2px ${error ? theme.color.red : "inherit"}, 0 0 2px ${error ? theme.color.red : "inherit"}`};
+
+    &:focus {
+      box-shadow: ${({ error, theme }) => `inset 0 0 4px ${error ? theme.color.red : "inherit"}, 0 0 4px ${error ? theme.color.red : "inherit"}`};
+    }
+
+    &::placeholder {
+      color: ${({ error, theme }) => error ? theme.color.red + "90" : ""};
+    }
+  }
+
+  span {
+    font-size: 14px;
+  }
 `
 
 export const SubmitContainer = styled.div`
@@ -70,6 +89,12 @@ export const ConfirmButtonSet = styled.div`
   position: absolute;
   bottom: 0;
   margin-bottom: 16px;
+`
+
+export const Input = styled.input<{
+  error?: boolean;
+}>`
+  ${({ error, theme }) => error ? `border: 2px solid ${theme.color.red}` : ""};
 `
 
 type FormProps = {
