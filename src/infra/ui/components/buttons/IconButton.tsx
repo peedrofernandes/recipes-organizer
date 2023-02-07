@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react"
 import styled from "styled-components"
-import Icon from "../Icons/_Icon"
+import Icon from "../icons/_Icon"
 import { BaseButtonProps } from "./_Button"
 
 const IconButtonContainer = styled.button`
@@ -25,6 +25,7 @@ const IconButtonContainer = styled.button`
 `
 
 interface IconButtonProps extends BaseButtonProps {
+  type?: "submit"
   children: ReactElement<typeof Icon>
 }
 
@@ -32,7 +33,7 @@ export default function IconButton(props: IconButtonProps) {
   return (
     <IconButtonContainer
       onClick={props.onClick}
-      onSubmit={props.onSubmit}
+      type={props.type}
     >
       {props.children}
     </IconButtonContainer>

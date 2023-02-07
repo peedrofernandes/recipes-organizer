@@ -1,5 +1,5 @@
 import RandomizeRecipes from "../src/domain/application/RandomizeRecipes"
-import Ingredient from "../src/domain/entities/Ingredient";
+import Ingredient from "../src/domain/entities/Ingredient"
 import Recipe, { IngredientList, RecipeType } from "../src/domain/entities/Recipe"
 
 describe("Randomization of recipes logic test", () => {
@@ -8,7 +8,6 @@ describe("Randomization of recipes logic test", () => {
   // First half, ingredients with macros
   const firstHalfIngredientsList: Ingredient[] = Array.from({ length: 6 },
     (_, i) => new Ingredient({
-      id: i,
       name: `i${i}`,
       options: { description: `i${i}` },
       macros: { carbs: 0, proteins: 0, fats: 0, gramsPerServing: 100}
@@ -17,7 +16,6 @@ describe("Randomization of recipes logic test", () => {
   // Second half, ingredients without macros
   const secondHalfIngredientsList: Ingredient[] = Array.from({ length: 6 },
     (_, i) => new Ingredient({
-      id: i + 6,
       name: `i${i + 6}`,
       options: { description: `i${i+6}`}
     })
@@ -60,7 +58,6 @@ describe("Randomization of recipes logic test", () => {
       const type = optionsArray[random]
 
       return new Recipe({
-        id: i,
         name: `r${i}`,
         options: { description: `r${i}` },
         type,

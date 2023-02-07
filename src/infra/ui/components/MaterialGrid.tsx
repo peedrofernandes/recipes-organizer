@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react"
-import styled from "styled-components";
-import { AtLeastOne } from "../../../types/AtLeastOne";
-import { OnlyOne } from "../../../types/OnlyOne";
+import styled from "styled-components"
+import { AtLeastOne } from "../../../types/AtLeastOne"
+import { OnlyOne } from "../../../types/OnlyOne"
 
 const Container = styled.div`
   display: flex;

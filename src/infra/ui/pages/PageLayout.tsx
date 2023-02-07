@@ -1,20 +1,19 @@
-import React, { ReactNode, useContext, useEffect, useMemo } from "react";
-import { Link, useLocation } from "react-router-dom";
-import styled, { ThemeProvider } from "styled-components";
+import React, { ReactNode, useContext, useEffect, useMemo } from "react"
+import { Link, useLocation } from "react-router-dom"
+import styled, { ThemeProvider } from "styled-components"
 
-import { ThemeContext } from "../context/ThemeContext";
+import { ThemeContext } from "../context/ThemeContext"
 
-import Button from "../components/Button";
-import Icon from "../components/Icon";
-import Modal from "../components/Modal";
-import { ModalContext } from "../context/ModalContext";
-import { modalHasId } from "../types/typeGuards";
-import ingredientHandler from "../../handlers/IngredientHandler";
-import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes";
-import recipeHandler from "@infra/handlers/RecipeHandler";
-import { IngredientContext } from "../context/IngredientContext";
-import { RecipeContext } from "../context/RecipeContextProvider";
-import { Values } from "@domain/value-objects/Values";
+import Button from "../components/buttons/_Button"
+import Icon from "../components/icons/_Icon"
+import Modal from "../components/modals/_Modal"
+import ingredientHandler from "../../handlers/IngredientHandler"
+import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
+import recipeHandler from "@infra/handlers/RecipeHandler"
+import { OptionalValues, Values } from "@domain/utilities/types/Values"
+import { DataContext } from "../context/DataContext"
+import { FormContext } from "../context/FormContext"
+import Form from "../components/forms/_Form"
 
 const LayoutContainer = styled.div`
   position: relative;
@@ -67,97 +66,128 @@ const BottomNav = styled.nav`
 `
 
 export default function PageLayout(props: { children: ReactNode }) {
-  const { children } = props;
+  const { children } = props
 
-  const { theme, toggleTheme } = useContext(ThemeContext); 
-  const { currentModal, setModal } = useContext(ModalContext);
-  const { ingredients, setIngredients } = useContext(IngredientContext);
-  const { recipes, setRecipes } = useContext(RecipeContext);
-  const location = useLocation();
+  const { theme, toggleTheme } = useContext(ThemeContext)
+  const { dispatch } = useContext(DataContext)
+  const { form, setForm } = useContext(FormContext)
+  const location = useLocation()
 
   const ingredientController = ingredientHandler(
-    // Create
-    (ingredient: AdaptedIngredient) => setIngredients([...ingredients, ingredient]),
-    // Update
-    (ingredient: AdaptedIngredient) => {
-      const filteredIngredients = ingredients.filter(i => i.id !== ingredient.id)
-      setIngredients([...filteredIngredients, ingredient])
-    },
-    // Delete
-    (id: string) => setIngredients(ingredients.filter(i => i.id !== id))
+    // Update UI on Create
+    (ingredient: AdaptedIngredient) => dispatch({
+      type: "ADD_INGREDIENT", payload: { ingredient }
+    }),
+    // Update UI on Update
+    (ingredient: AdaptedIngredient) => dispatch({
+      type: "UPDATE_INGREDIENT", payload: { ingredient }
+    }),
+    // Update UI on Delete
+    (id: string) => dispatch({
+      type: "DELETE_INGREDIENT", payload: { id }
+    })
   )
-  
+
   const recipeController = useMemo(() => {
     return recipeHandler(
-      // Create
-      (recipe: AdaptedRecipe) => setRecipes([...recipes, recipe]),
-      // Update
-      (recipe: AdaptedRecipe) => {
-        const filteredRecipes = recipes.filter(r => r.id !== recipe.id);
-        setRecipes([...filteredRecipes, recipe]);
-      },
-      // Delete
-      (id: string) => setRecipes(recipes.filter(r => r.id !== id))
+      // Update UI on Create
+      (recipe: AdaptedRecipe) => dispatch({
+        type: "ADD_RECIPE", payload: { recipe }
+      }),
+      // Update UI on Update
+      (recipe: AdaptedRecipe) => dispatch({
+        type: "UPDATE_RECIPE", payload: { recipe }
+      }),
+      // Update UI on Delete
+      (id: string) => dispatch({
+        type: "DELETE_RECIPE", payload: { id }
+      })
     )
-  }, []);
+  }, [])
 
   const events = {
-    modalEvents: {
-      closeModal: () => setModal({ name: "none" }),
+    closeFormEvent: () => setForm({ variant: null }),
 
-      handleCreateIngredient: (values: Values<AdaptedIngredient>) => ingredientController.createIngredient(values),
-
-      handleUpdateIngredient: (id: string, values: Values<AdaptedIngredient>) => ingredientController.updateIngredient(id, values),
-
-      handleDeleteIngredient: (id: string) => ingredientController.deleteIngredient(id),
-
-      handleCreateRecipe: (values: Values<AdaptedRecipe>) => recipeController.createRecipe(values),
-
-      handleUpdateRecipe: (id: string, values: Values<AdaptedRecipe>) => recipeController.updateRecipe(id, values),
-
-      handleDeleteRecipe: (id: string) => recipeController.deleteRecipe(id)
+    IngredientCreation: {
+      submitEvent: (values: OptionalValues<AdaptedIngredient>) =>
+        ingredientController.createIngredient(values),
+    },
+    IngredientUpdate: {
+      submitEvent: (id: string, values: OptionalValues<AdaptedIngredient>) =>
+        ingredientController.updateIngredient(id, values),
+    },
+    IngredientDeletion: {
+      confirmEvent: (id: string) =>
+        ingredientController.deleteIngredient(id),
+    },
+    RecipeCreation: {
+      submitEvent: (values: OptionalValues<AdaptedRecipe>) =>
+        recipeController.createRecipe(values),
+    },
+    RecipeUpdate: {
+      submitEvent: (id: string, values: OptionalValues<AdaptedRecipe>) =>
+        recipeController.updateRecipe(id, values),
+    },
+    RecipeDeletion: {
+      confirmEvent: (id: string) => recipeController.deleteRecipe(id)
     }
+
   }
   useEffect(() => {
     const fetchIngredients = async () => {
-      const foundIngredients = await ingredientController.getAllIngredients();
-      setIngredients([...ingredients, ...foundIngredients]);
-      console.log(foundIngredients);
+      const ingredients = await ingredientController.getAllIngredients()
+      dispatch({ type: "SET_INGREDIENTS", payload: { ingredients }})
+      console.log(ingredients)
     }
     const fetchRecipes = async () => {
-      const foundRecipes = await recipeController.getAllRecipes();
-      setRecipes([...recipes, ...foundRecipes]);
+      const recipes = await recipeController.getAllRecipes()
+      dispatch({ type: "SET_RECIPES", payload: { recipes }})
     }
 
-    fetchIngredients();
-    fetchRecipes();
+    fetchIngredients()
+    fetchRecipes()
   }, [])
 
   return (
     <ThemeProvider theme={theme}>
 
-      {!modalHasId(currentModal) ? (
+      {/* {!modalHasId(currentModal) ? (
         <Modal
           variant={{ name: currentModal.name }}
           events={events.modalEvents}
         />
-        
+
       ) : (
         <Modal
           variant={{ name: currentModal.name, id: currentModal.id }}
           events={events.modalEvents}
         />
-      )}
+      )} */}
+
+      {form.variant !== null && (
+        <Modal
+          events={{ closeModalEvent: events.closeFormEvent }}
+          title="Title"
+        >
+          <Form
+            variant={form.variant}
+            id={"id" in form && form.id}
+            events={events[form.variant]}
+          />
+        </Modal>
+      )
+        
+      }
 
       <LayoutContainer>
 
         <ButtonSet>
           {location.pathname !== "/" && (
-          <Link to="/">
-            <Button variant="icon">
-              <Icon variant="Help" color={theme.color.primaryV1} />
-            </Button>
-          </Link>
+            <Link to="/">
+              <Button variant="icon">
+                <Icon variant="Help" color={theme.color.primaryV1} />
+              </Button>
+            </Link>
           )}
 
           <Button variant="icon" onClick={() => toggleTheme()} >
@@ -172,18 +202,18 @@ export default function PageLayout(props: { children: ReactNode }) {
         {location.pathname !== "/" && (
 
           <BottomNav>
-          <Link to="/recipes">
-            <Button variant="layout" selected={location.pathname === "/recipes"}>
-              <Icon variant="Menu Book" size={36} />
-              <span>Receitas</span>
-            </Button>
-          </Link>
-          <Link to="/ingredients">
-            <Button variant="layout" selected={location.pathname === "/ingredients"}>
-              <Icon variant="Ingredient" size={36} />
-              <span>Ingredientes</span>
-            </Button>
-          </Link>
+            <Link to="/recipes">
+              <Button variant="layout" selected={location.pathname === "/recipes"}>
+                <Icon variant="Menu Book" size={36} />
+                <span>Receitas</span>
+              </Button>
+            </Link>
+            <Link to="/ingredients">
+              <Button variant="layout" selected={location.pathname === "/ingredients"}>
+                <Icon variant="Ingredient" size={36} />
+                <span>Ingredientes</span>
+              </Button>
+            </Link>
           </BottomNav>
         )}
 

@@ -1,17 +1,13 @@
-import React, { useContext, useMemo } from "react";
-import styled from "styled-components";
-import Card from "../components/Card";
-import { Grid, GridItem } from "../components/MaterialGrid";
-import PageLayout from "./PageLayout";
-import { Link } from "react-router-dom";
-import Button from "../components/Button";
-import { ModalContext } from "../context/ModalContext";
-import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes";
-import { IngredientContext } from "../context/IngredientContext";
-import { RecipeContext } from "../context/RecipeContextProvider";
-import IngredientController from "@controllers/IngredientController";
-import RecipeController from "@controllers/RecipeController";
-import { Id } from "@domain/value-objects/Id";
+import React, { useContext, useMemo } from "react"
+import styled from "styled-components"
+import Card from "../components/cards/_Card"
+import { Grid, GridItem } from "../components/MaterialGrid"
+import PageLayout from "./PageLayout"
+import { Link } from "react-router-dom"
+import Button from "../components/buttons/_Button"
+import { Id } from "@domain/utilities/types/Id"
+import { DataContext } from "../context/DataContext"
+import { FormContext } from "../context/FormContext"
 
 const Title = styled.h1`
   padding: 24px 0;
@@ -27,97 +23,96 @@ type PageProps = {
 }
 
 export default function Page(props: PageProps) {
-  const { variant } = props;
+  const { variant } = props
 
-  const { currentModal, setModal } = useContext(ModalContext);
-  const { ingredients, setIngredients } = useContext(IngredientContext);
-  const { recipes, setRecipes } = useContext(RecipeContext);
+  const { data } = useContext(DataContext)
+  const { setForm } = useContext(FormContext)
 
   const events = useMemo(() => ({
     ingredientEvents: {
-      handleCreateClick: () => setModal({ name: "CreateIngredient" }),
-      handleEditClick: (id: Id) => setModal({ name: "UpdateIngredient", id }),
-      handleDeleteClick: (id: Id) => setModal({ name: "ConfirmIngredientDelete", id })
+      handleCreateClick: () => setForm({ variant: "IngredientCreation" }),
+      handleEditClick: (id: Id) => setForm({ variant: "IngredientUpdate", id }),
+      handleDeleteClick: (id: Id) => setForm({ variant: "IngredientDeletion", id })
     },
     recipeEvents: {
-      handleCreateClick: () => setModal({ name: "CreateRecipe" }),
-      handleEditClick: (id: Id) => setModal({ name: "UpdateRecipe", id }),
-      handleDeleteClick: (id: Id) => setModal({ name: "ConfirmRecipeDelete", id })
+      handleCreateClick: () => setForm({ variant: "RecipeCreation" }),
+      handleEditClick: (id: Id) => setForm({ variant: "RecipeUpdate", id }),
+      handleDeleteClick: (id: Id) => setForm({ variant: "RecipeDeletion", id })
     }
   }), [])
 
   switch (variant) {
-    case "Help": {
-      return (
-        <PageLayout>
+  case "Help": {
+    return (
+      <PageLayout>
         <h1>Start page</h1>
         <Link to="/recipes">
           <Button variant="styled" text="Go to dashboard" />
         </Link>
-        </PageLayout>
-      )
-    }
-    case "Ingredients": {
-      const {
-        handleCreateClick,
-        handleEditClick,
-        handleDeleteClick
-      } = events.ingredientEvents;
+      </PageLayout>
+    )
+  }
+  case "Ingredients": {
+    const {
+      handleCreateClick,
+      handleEditClick,
+      handleDeleteClick
+    } = events.ingredientEvents
 
-      return (
-        <PageLayout>
-          <Title>Ingredientes</Title>
-          
-          <Grid>
+    return (
+      <PageLayout>
+        <Title>Ingredientes</Title>
 
-            {ingredients.map((ingredient) => {
-              return (
-                <GridItem span={4}>
-                  <Card
-                    variant="Ingredient"
-                    ingredient={ingredient}
-                    events={{ handleEditClick, handleDeleteClick }}
-                  />
-                </GridItem>
-              )
-            })}
-            
+        <Grid>
+
+          {data.ingredients.map((ingredient) => {
+            return (
+              <GridItem span={4} key={ingredient.id}>
+                <Card
+                  variant="Ingredient"
+                  ingredient={ingredient}
+                  events={{ handleEditClick, handleDeleteClick }}
+                />
+              </GridItem>
+            )
+          })}
+
           <GridItem span={4}>
             <Card
               variant="CreateIngredient"
               events={{ handleCreateClick }}
             />
           </GridItem>
-            
-          </Grid>
-        </PageLayout>
-      )
-    }
-      
-    case "Recipes": {
 
-      return (
-        <PageLayout>
-          <Title>Receitas</Title>
-          <Grid>
-            {recipes.map((recipe) => {
+        </Grid>
+      </PageLayout>
+    )
+  }
 
-              return (
-                <GridItem span={4}>
-                  <Card
-                    variant="Recipe"
-                    recipe={recipe}
-                    events={events.recipeEvents}
-                  />
-                </GridItem>
-              )
-            })}
-            <GridItem span={4}>
-              <Card variant="CreateRecipe" events={events.recipeEvents} />
-            </GridItem>
-          </Grid>
-        </PageLayout>
-      )
-    }
+  case "Recipes": {
+
+    return (
+      <PageLayout>
+        <Title>Receitas</Title>
+        <Grid>
+          {data.recipes.map((recipe) => {
+
+            return (
+              <GridItem span={4} key={recipe.id}>
+                <Card
+                  variant="Recipe"
+                  recipe={recipe}
+                  events={events.recipeEvents}
+                />
+              </GridItem>
+            )
+          })}
+          <GridItem span={4}>
+            <Card variant="CreateRecipe" events={events.recipeEvents} />
+          </GridItem>
+        </Grid>
+      </PageLayout>
+    )
+  }
   }
 }

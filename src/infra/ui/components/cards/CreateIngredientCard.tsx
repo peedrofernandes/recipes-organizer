@@ -1,5 +1,5 @@
 import React from "react"
-import Icon from "../Icons/_Icon"
+import Icon from "../icons/_Icon"
 import { CardContainer } from "./_Card"
 
 type CreateIngredientCardProps = {

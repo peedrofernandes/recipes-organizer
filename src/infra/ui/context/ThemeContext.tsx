@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
-import { createContext, ReactNode, useState } from "react";
-import ThemeController from "../../../controllers/ThemeController";
+import React, { useEffect } from "react"
+import { createContext, ReactNode, useState } from "react"
+import ThemeController from "../../../controllers/ThemeController"
 
 export type Theme = {
   main: {
@@ -30,9 +30,9 @@ type ThemesSet = {
   dark: Theme;
 }
 
-const green = "#07da63";
-const orange = "#ea6f1c";
-const blue = "#1184e2";
+const green = "#07da63"
+const orange = "#ea6f1c"
+const blue = "#1184e2"
 const red = "#dd2323"
 
 export const themesSet: ThemesSet = {
@@ -89,29 +89,29 @@ export type ThemeContextValue = {
 
 export const ThemeContext = createContext<ThemeContextValue>({
   theme: themesSet.light,
-  toggleTheme: () => { }
+  toggleTheme: () => { return }
 })
 
 export default function ThemeContextProvider(props: { children: ReactNode }) {
-  const { children } = props;
+  const { children } = props
 
-  const themeController = new ThemeController();
+  const themeController = new ThemeController()
 
-  const [theme, setTheme] = useState<Theme>(themesSet.light);
+  const [theme, setTheme] = useState<Theme>(themesSet.light)
 
   useEffect(() => {
-    const existingTheme = themeController.loadTheme();
+    const existingTheme = themeController.loadTheme()
     if (existingTheme) {
       setTheme(existingTheme === "dark" ? themesSet.dark : themesSet.light)
     }
   }, [])
 
   const toggleTheme = () => {
-    const newTheme: Theme = (theme === themesSet.light) ? themesSet.dark : themesSet.light;
+    const newTheme: Theme = (theme === themesSet.light) ? themesSet.dark : themesSet.light
 
-    themeController.persistTheme(newTheme === themesSet.light ? "light" : "dark");
+    themeController.persistTheme(newTheme === themesSet.light ? "light" : "dark")
 
-    setTheme(newTheme);
+    setTheme(newTheme)
   }
 
   return (

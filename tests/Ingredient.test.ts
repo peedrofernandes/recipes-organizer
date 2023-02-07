@@ -1,4 +1,4 @@
-import Ingredient from "../src/domain/entities/Ingredient";
+import Ingredient, { hasMacros } from "../src/domain/entities/Ingredient"
 
 describe("Ingredient entity tests", () => {
   // const milk = new Ingredient(1, "Leite", "Leite Tirol Semidesnatado")
@@ -7,7 +7,6 @@ describe("Ingredient entity tests", () => {
 
   it("Can create an ingredient entity with options but without macros", () => {
     const ingredient = new Ingredient({
-      id: 1,
       name: "Leite",
       options: { description: "Leite Tirol Semidesnatado" }
     })
@@ -21,7 +20,6 @@ describe("Ingredient entity tests", () => {
 
   it("Can create ingredient entity with macros but without options", () => {
     const ingredient = new Ingredient({
-      id: 1,
       name: "Leite",
       macros: { proteins: 10, carbs: 4, fats: 3, gramsPerServing: 100 }
     })
@@ -32,7 +30,6 @@ describe("Ingredient entity tests", () => {
   it("Can build a complete ingredient", () => {
     // const milk = new Ingredient(2, "Leite", "Leite Tirol Semidesnatado", 10, 4, 3, 100)
     const ingredient = new Ingredient({
-      id: 2,
       name: "Leite",
       options: {
         description: "Leite Tirol Semidesnatado",
@@ -49,7 +46,11 @@ describe("Ingredient entity tests", () => {
     const keys = ["id", "name", "options", "macros"]
     keys.forEach((key) => expect(ingredient[key]).toBeDefined())
 
-    const { proteins, carbs, fats, gramsPerServing } = ingredient.macros!
-    expect(proteins + carbs + fats + gramsPerServing).toBeCloseTo(117)
+    expect(hasMacros(ingredient)).toBeTruthy()
+  
+    if (hasMacros(ingredient)) {
+      const { proteins, carbs, fats, gramsPerServing } = ingredient.macros
+      expect(proteins + carbs + fats + gramsPerServing).toBeCloseTo(117)
+    }
   })
 })

@@ -17,6 +17,7 @@ const StyledButtonContainer = styled.button`
 `
 
 interface StyledButtonProps extends BaseButtonProps {
+  type?: "submit"
   text: string;
   color?: "red" | "green" | "blue";
 }
@@ -26,7 +27,7 @@ export default function StyledButton(props: StyledButtonProps) {
     <StyledButtonContainer
       color={props.color}
       onClick={props.onClick}
-      onSubmit={props.onSubmit}
+      type={props.type}
     >
       {props.text}
     </StyledButtonContainer>

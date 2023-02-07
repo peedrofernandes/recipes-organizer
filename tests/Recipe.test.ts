@@ -1,27 +1,23 @@
-import Recipe, { IngredientList, RecipeType } from "../src/domain/entities/Recipe"
+import Recipe, { IngredientList } from "../src/domain/entities/Recipe"
 import Ingredient from "../src/domain/entities/Ingredient"
 
 describe("Recipe entity tests", () => {
   const egg = new Ingredient({
-    id: 1,
     name: "Egg",
     options: {description: "Ovo simples" },
     macros: { proteins: 6, carbs: 1, fats: 2, gramsPerServing: 50 }
   })
   const rice = new Ingredient({
-    id: 2,
     name: "Arroz",
     options: { description: "Arroz Urbano Parboilizado" },
     macros: { proteins: 3,  carbs: 40,  fats: 3, gramsPerServing: 100 }
-  });
+  })
   const ham = new Ingredient({
-    id: 3,
     name: "Presunto",
     options: {description: "Presunto Cozido Seara" },
     macros: { proteins: 10,  carbs: 20, fats: 30, gramsPerServing: 100 }
-  });
+  })
   const oil = new Ingredient({
-    id: 4,
     name: "Óleo de coco",
     options: { description: "Óleo de coco SALADA" },
     macros: { proteins: 0.4, carbs: 10, fats: 80, gramsPerServing: 100 }
@@ -47,7 +43,6 @@ describe("Recipe entity tests", () => {
   ]
 
   const RiceWithEgg = new Recipe({
-    id: 1,
     name: "Arroz com ovo",
     type: "Week",
     options: { description: "Uma receita simples de arroz com ovo" },
@@ -63,7 +58,6 @@ describe("Recipe entity tests", () => {
 
   it("Should have accordingly macros after adding a new ingredient", () => {
     const butter = new Ingredient({
-      id: 5,
       name: "Manteiga",
       options: { description: "Manteiga TIROL com sal" },
       macros: { proteins: 2, carbs: 5, fats: 40, gramsPerServing: 100 }

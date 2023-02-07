@@ -1,12 +1,12 @@
 import React, { ReactNode, ReactElement } from "react"
-import Icon from "../Icons/_Icon"
+import Icon from "../icons/_Icon"
 import IconButton from "./IconButton"
 import LayoutButton from "./LayoutButton"
 import StyledButton from "./StyledButton"
 
 export interface BaseButtonProps {
   onClick?: () => void;
-  onSubmit?: () => void;
+  type?: "submit"
 }
 
 type ButtonProps = ({
@@ -29,16 +29,16 @@ export default function Button(props: ButtonProps) {
     return (
       <StyledButton
         onClick={props.onClick}
-        onSubmit={props.onSubmit}
         color={props.color}
         text={props.text}
+        type={props.type}
       />
     )
   case "icon":
     return (
       <IconButton
         onClick={props.onClick}
-        onSubmit={props.onSubmit}
+        type={props.type}
       >
         {props.children}
       </IconButton>
@@ -48,7 +48,7 @@ export default function Button(props: ButtonProps) {
       <LayoutButton
         selected={props.selected ?? false}
         onClick={props.onClick}
-        onSubmit={props.onSubmit}
+        type={props.type}
       >
         {props.children}
       </LayoutButton>
