@@ -22,9 +22,10 @@ export default function App() {
       
       <ThemeContextProvider>
         <FormContextProvider>
-  
           <DataContextProvider>
+
             <GlobalStyles />
+            
             <Router>
               <Routes>
                 <Route
@@ -53,8 +54,8 @@ export default function App() {
                 />
               </Routes>
             </Router>
+
           </DataContextProvider>
-  
         </FormContextProvider>
       </ThemeContextProvider>
 

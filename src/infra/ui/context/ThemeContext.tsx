@@ -52,10 +52,10 @@ export const themesSet: ThemesSet = {
       contrastV1: "#111414",
       contrastV2: "#ffffff",
       contrastV3: "#ffffff",
-      green,
-      orange,
-      blue,
-      red
+      green: "#076e34",
+      orange: "#002d81",
+      blue: "#913a00",
+      red: "#570202"
     }
   },
   dark: {
@@ -74,10 +74,10 @@ export const themesSet: ThemesSet = {
       contrastV1: "#ffffff",
       contrastV2: "#111414",
       contrastV3: "#111414",
-      green,
-      orange,
-      blue,
-      red
+      green: "#07da63",
+      orange: "#1184e2",
+      blue: "#ea6f1c",
+      red: "#dd2323"
     }
   }
 }

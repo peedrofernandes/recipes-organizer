@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useReducer } from "react"
+import React, { createContext, ReactChild, ReactChildren, ReactNode, useReducer } from "react"
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 
@@ -69,9 +69,11 @@ function dataReducer(state: DataState, action: DataAction) {
     )
     if (indexFound === -1)
       throw new Error("Index of updating ingredient was not found!")
+    const newIngredients = [...state.ingredients]
+    newIngredients[indexFound] = action.payload.ingredient
     return {
       ...state,
-      ingredients: state.ingredients.splice(indexFound, 1, action.payload.ingredient)
+      ingredients: newIngredients
     }
   }
   case "DELETE_INGREDIENT": {
@@ -96,9 +98,11 @@ function dataReducer(state: DataState, action: DataAction) {
     const indexFound = state.recipes.findIndex(r => r.id === action.payload.recipe.id) 
     if (indexFound === -1)
       throw new Error("Index of updating recipe was not found!")
+    const newRecipes = [...state.recipes]
+    newRecipes[indexFound] = action.payload.recipe
     return {
       ...state,
-      recipes: state.recipes.splice(indexFound, 1, action.payload.recipe)
+      recipes: newRecipes
     }
   }
   case "DELETE_RECIPE": {

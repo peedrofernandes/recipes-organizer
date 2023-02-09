@@ -1,4 +1,6 @@
+import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
+import { Values } from "@domain/utilities/types/Values"
 import React, { createContext, ReactNode, useState } from "react"
 
 type FormState = {
@@ -8,6 +10,7 @@ type FormState = {
 } | {
   variant: "IngredientUpdate"
   id: Id
+  currentValues: Values<AdaptedIngredient>
 } | {
   variant: "IngredientDeletion"
   id: Id
@@ -16,6 +19,7 @@ type FormState = {
 } | {
   variant: "RecipeUpdate"
   id: Id
+  currentValues: Values<AdaptedRecipe>
 } | {
   variant: "RecipeDeletion"
   id: Id
@@ -26,7 +30,8 @@ type FormContext = {
   setForm: (state: FormState) => void 
 }
 
-const initialState: FormState = { variant: null }
+// const initialState: FormState = { variant: null }
+const initialState: FormState = { variant: "RecipeCreation" }
 
 export const FormContext = createContext<FormContext>({
   form: initialState,

@@ -10,7 +10,7 @@ import Modal from "../components/modals/_Modal"
 import ingredientHandler from "../../handlers/IngredientHandler"
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import recipeHandler from "@infra/handlers/RecipeHandler"
-import { OptionalValues, Values } from "@domain/utilities/types/Values"
+import { Values } from "@domain/utilities/types/Values"
 import { DataContext } from "../context/DataContext"
 import { FormContext } from "../context/FormContext"
 import Form from "../components/forms/_Form"
@@ -69,7 +69,7 @@ export default function PageLayout(props: { children: ReactNode }) {
   const { children } = props
 
   const { theme, toggleTheme } = useContext(ThemeContext)
-  const { dispatch } = useContext(DataContext)
+  const { data, dispatch } = useContext(DataContext)
   const { form, setForm } = useContext(FormContext)
   const location = useLocation()
 
@@ -106,33 +106,32 @@ export default function PageLayout(props: { children: ReactNode }) {
   }, [])
 
   const events = {
-    closeFormEvent: () => setForm({ variant: null }),
-
-    IngredientCreation: {
-      submitEvent: (values: OptionalValues<AdaptedIngredient>) =>
-        ingredientController.createIngredient(values),
+    createIngredientEvent: async (values: Values<AdaptedIngredient>) => {
+      setForm({ variant: null })
+      await ingredientController.createIngredient(values)
     },
-    IngredientUpdate: {
-      submitEvent: (id: string, values: OptionalValues<AdaptedIngredient>) =>
-        ingredientController.updateIngredient(id, values),
+    updateIngredientEvent: async (id: string, values: Values<AdaptedIngredient>) => {
+      setForm({ variant: null })
+      await ingredientController.updateIngredient(id, values)
     },
-    IngredientDeletion: {
-      confirmEvent: (id: string) =>
-        ingredientController.deleteIngredient(id),
+    deleteIngredientEvent: async (id: string) => {
+      setForm({ variant: null })
+      await ingredientController.deleteIngredient(id)
     },
-    RecipeCreation: {
-      submitEvent: (values: OptionalValues<AdaptedRecipe>) =>
-        recipeController.createRecipe(values),
+    createRecipeEvent: async (values: Values<AdaptedRecipe>) => {
+      setForm({ variant: null })
+      await recipeController.createRecipe(values)
     },
-    RecipeUpdate: {
-      submitEvent: (id: string, values: OptionalValues<AdaptedRecipe>) =>
-        recipeController.updateRecipe(id, values),
+    updateRecipeEvent: async (id: string, values: Values<AdaptedRecipe>) => {
+      setForm({ variant: null })
+      await recipeController.updateRecipe(id, values)
     },
-    RecipeDeletion: {
-      confirmEvent: (id: string) => recipeController.deleteRecipe(id)
+    deleteRecipeEvent: async (id: string) => {
+      setForm({ variant: null })
+      await recipeController.deleteRecipe(id)
     }
-
   }
+
   useEffect(() => {
     const fetchIngredients = async () => {
       const ingredients = await ingredientController.getAllIngredients()
@@ -148,36 +147,100 @@ export default function PageLayout(props: { children: ReactNode }) {
     fetchRecipes()
   }, [])
 
-  return (
-    <ThemeProvider theme={theme}>
-
-      {/* {!modalHasId(currentModal) ? (
+  const CurrentForm = useMemo(() => {
+    switch (form.variant) {
+    case "IngredientCreation":
+      return (
         <Modal
-          variant={{ name: currentModal.name }}
-          events={events.modalEvents}
-        />
-
-      ) : (
-        <Modal
-          variant={{ name: currentModal.name, id: currentModal.id }}
-          events={events.modalEvents}
-        />
-      )} */}
-
-      {form.variant !== null && (
-        <Modal
-          events={{ closeModalEvent: events.closeFormEvent }}
-          title="Title"
+          events={{ closeModalEvent: () => setForm({ variant: null }) }}
+          title="Criar novo ingrediente"
         >
           <Form
-            variant={form.variant}
-            id={"id" in form && form.id}
-            events={events[form.variant]}
+            variant="IngredientCreation"
+            events={{ submitEvent: events.createIngredientEvent }}
+          />
+        </Modal>)
+    case "IngredientUpdate":
+      return (
+        <Modal
+          events={{ closeModalEvent: () => setForm({ variant: null }) }}
+          title="Editar ingrediente"
+        >
+          <Form
+            id={form.id}
+            variant="IngredientUpdate"
+            currentValues={form.currentValues}
+            events={{ submitEvent: events.updateIngredientEvent }}
+          />
+        </Modal>)
+    case "IngredientDeletion":
+      return (
+        <Modal
+          events={{ closeModalEvent: () => setForm({ variant: null }) }}
+          title="Tem certeza que deseja excluir o ingrediente?"
+        >
+          <Form
+            variant="IngredientDeletion"
+            id={form.id}
+            events={{
+              confirmEvent: events.deleteIngredientEvent,
+              cancelEvent: () => setForm({ variant: null })
+            }}
+          />
+        </Modal>)
+    case "RecipeCreation":
+      console.log(`Ingredients at PageLayout: ${data.ingredients}`)
+        
+      return (
+        <Modal
+          events={{ closeModalEvent: () => setForm({ variant: null }) }}
+          title="Criar nova receita"
+        >
+          <Form
+            variant="RecipeCreation"
+            events={{ submitEvent: events.createRecipeEvent }}
+            ingredients={data.ingredients}
+          />
+        </Modal>)
+    case "RecipeUpdate":
+      return (
+        <Modal
+          events={{ closeModalEvent: () => setForm({ variant: null }) }}
+          title="Editar receita"
+        >
+          <Form
+            variant="RecipeUpdate"
+            id={form.id}
+            currentValues={form.currentValues}
+            events={{ submitEvent: events.updateRecipeEvent }}
+            ingredients={data.ingredients}
+          />
+        </Modal>)
+    case "RecipeDeletion":
+      return (
+        <Modal
+          events={{ closeModalEvent: () => setForm({ variant: null }) }}
+          title="Tem certeza que deseja excluir a receita?"
+        >
+          <Form
+            variant="RecipeDeletion"
+            id={form.id}
+            events={{
+              confirmEvent: events.deleteRecipeEvent,
+              cancelEvent: () => setForm({ variant: null })
+            }}
           />
         </Modal>
       )
-        
-      }
+    default:
+      return null
+    }
+  }, [form])
+
+  return (
+    <ThemeProvider theme={theme}>
+
+      {CurrentForm}
 
       <LayoutContainer>
 

@@ -8,6 +8,8 @@ import Button from "../components/buttons/_Button"
 import { Id } from "@domain/utilities/types/Id"
 import { DataContext } from "../context/DataContext"
 import { FormContext } from "../context/FormContext"
+import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
+import { Values } from "@domain/utilities/types/Values"
 
 const Title = styled.h1`
   padding: 24px 0;
@@ -30,14 +32,16 @@ export default function Page(props: PageProps) {
 
   const events = useMemo(() => ({
     ingredientEvents: {
-      handleCreateClick: () => setForm({ variant: "IngredientCreation" }),
-      handleEditClick: (id: Id) => setForm({ variant: "IngredientUpdate", id }),
-      handleDeleteClick: (id: Id) => setForm({ variant: "IngredientDeletion", id })
+      createEvent: () => setForm({ variant: "IngredientCreation" }),
+      updateEvent: (id: Id, currentValues: Values<AdaptedIngredient>) =>
+        setForm({ variant: "IngredientUpdate", id, currentValues }),
+      deleteEvent: (id: Id) => setForm({ variant: "IngredientDeletion", id })
     },
     recipeEvents: {
-      handleCreateClick: () => setForm({ variant: "RecipeCreation" }),
-      handleEditClick: (id: Id) => setForm({ variant: "RecipeUpdate", id }),
-      handleDeleteClick: (id: Id) => setForm({ variant: "RecipeDeletion", id })
+      createEvent: () => setForm({ variant: "RecipeCreation" }),
+      updateEvent: (id: Id, currentValues: Values<AdaptedRecipe>) =>
+        setForm({ variant: "RecipeUpdate", id, currentValues }),
+      deleteEvent: (id: Id) => setForm({ variant: "RecipeDeletion", id })
     }
   }), [])
 
@@ -54,9 +58,9 @@ export default function Page(props: PageProps) {
   }
   case "Ingredients": {
     const {
-      handleCreateClick,
-      handleEditClick,
-      handleDeleteClick
+      createEvent,
+      updateEvent,
+      deleteEvent
     } = events.ingredientEvents
 
     return (
@@ -71,7 +75,7 @@ export default function Page(props: PageProps) {
                 <Card
                   variant="Ingredient"
                   ingredient={ingredient}
-                  events={{ handleEditClick, handleDeleteClick }}
+                  events={{ updateEvent, deleteEvent }}
                 />
               </GridItem>
             )
@@ -80,7 +84,7 @@ export default function Page(props: PageProps) {
           <GridItem span={4}>
             <Card
               variant="CreateIngredient"
-              events={{ handleCreateClick }}
+              events={{ createEvent }}
             />
           </GridItem>
 

@@ -1,5 +1,6 @@
 import { AdaptedIngredient } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
+import { Values } from "@domain/utilities/types/Values"
 import React from "react"
 import Button from "../buttons/_Button"
 import Icon from "../icons/_Icon"
@@ -8,13 +9,18 @@ import { CardContainer, ContentContainer, ImageContainer, MacrosSpan } from "./_
 type IngredientCardProps = {
   ingredient: AdaptedIngredient;
   events: {
-    handleEditClick: (id: Id) => void;
-    handleDeleteClick: (id: Id) => void;
+    updateEvent: (id: Id, currentValues: Values<AdaptedIngredient>) => void;
+    deleteEvent: (id: Id) => void;
   }
 }
 
 export default function IngredientCard(props: IngredientCardProps) {
-  const { id, name, description, macros, imageUrl } = props.ingredient
+  const { id, name, description, macros, imageUrl, imageFile } = props.ingredient
+  const values: Values<AdaptedIngredient> = {
+    name, description, macros, imageUrl, imageFile
+  }
+
+  const validMacros = macros && macros.every(elem => elem !== -1)
 
   return (
     <CardContainer status="active">
@@ -22,12 +28,12 @@ export default function IngredientCard(props: IngredientCardProps) {
       <ImageContainer imageUrl={imageUrl}>
 
         {
-          macros && (
+          validMacros && (
             <MacrosSpan>
               <ul>
-                <li>P: {macros[0]}</li>
-                <li>C: {macros[1]}</li>
-                <li>G: {macros[2]}</li>
+                <li>P: {macros[0].toFixed(2)}g</li>
+                <li>C: {macros[1].toFixed(2)}g</li>
+                <li>G: {macros[2].toFixed(2)}g</li>
               </ul>
             </MacrosSpan>
           )
@@ -42,10 +48,10 @@ export default function IngredientCard(props: IngredientCardProps) {
           {description && <p>{description}</p>}
         </div>
         <div>
-          <Button variant="icon" onClick={() => props.events.handleEditClick(id)}>
+          <Button variant="icon" onClick={() => props.events.updateEvent(id, values)}>
             <Icon variant="Edit" size={24} />
           </Button>
-          <Button variant="icon" onClick={() => props.events.handleDeleteClick(id)}>
+          <Button variant="icon" onClick={() => props.events.deleteEvent(id)}>
             <Icon variant="Delete" size={24} color="red" />
           </Button>
         </div>
