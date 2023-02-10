@@ -30,26 +30,6 @@ const ModalBox = styled.div`
   border-radius: 8px;
   max-height: 80vh;
   overflow-y: auto;
-
-  &::-webkit-scrollbar {
-     width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    margin: 8px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: ${({ theme }) => theme.main.contrastV3};
-    border-radius: 64px;
-
-    &:hover {
-      background-color: ${({ theme }) => theme.main.contrastV1};
-    }
-  }
-  
-  &::-webkit-scrollbar-thumb:hover {
-  }
 `
 
 const TopContainer = styled.div`

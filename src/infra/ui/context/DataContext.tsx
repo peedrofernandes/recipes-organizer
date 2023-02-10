@@ -1,13 +1,19 @@
-import React, { createContext, ReactChild, ReactChildren, ReactNode, useReducer } from "react"
+import React, { createContext, ReactNode, useReducer } from "react"
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 
 type DataState = {
+  loadingIngredients: boolean
   ingredients: AdaptedIngredient[]
+  loadingRecipes: boolean
   recipes: AdaptedRecipe[]
 }
 
 type DataAction = {
+  type: "TOGGLE_LOADING_INGREDIENTS"
+} | {
+  type: "TOGGLE_LOADING_RECIPES"
+} | {
   type: "SET_INGREDIENTS"
   payload: {
     ingredients: AdaptedIngredient[]
@@ -51,15 +57,29 @@ type DataAction = {
 
 function dataReducer(state: DataState, action: DataAction) {
   switch (action.type) {
+  case "TOGGLE_LOADING_INGREDIENTS": {
+    return {
+      ...state,
+      loadingIngredients: true
+    }
+  }
+  case "TOGGLE_LOADING_RECIPES": {
+    return {
+      ...state,
+      loadingIngredients: true
+    }
+  }
   case "SET_INGREDIENTS": {
     return {
       ...state,
+      loadingIngredients: false,
       ingredients: action.payload.ingredients
     }
   }
   case "ADD_INGREDIENT": {   
     return {
       ...state,
+      loadingIngredients: false,
       ingredients: [...state.ingredients, action.payload.ingredient]
     }
   }
@@ -73,24 +93,28 @@ function dataReducer(state: DataState, action: DataAction) {
     newIngredients[indexFound] = action.payload.ingredient
     return {
       ...state,
+      loadingIngredients: false,
       ingredients: newIngredients
     }
   }
   case "DELETE_INGREDIENT": {
     return {
       ...state,
+      loadingRecipes: false,
       ingredients: state.ingredients.filter(i => i.id !== action.payload.id)
     }
   }
   case "SET_RECIPES": {
     return {
       ...state,
+      loadingRecipes: false,
       recipes: action.payload.recipes
     }
   }
   case "ADD_RECIPE": {
     return {
       ...state,
+      loadingRecipes: false,
       recipes: [...state.recipes, action.payload.recipe]
     }
   }
@@ -102,12 +126,14 @@ function dataReducer(state: DataState, action: DataAction) {
     newRecipes[indexFound] = action.payload.recipe
     return {
       ...state,
+      loading: false,
       recipes: newRecipes
     }
   }
   case "DELETE_RECIPE": {
     return {
       ...state,
+      loading: false,
       recipes: state.recipes.filter(r => r.id !== action.payload.id)
     }
   }
@@ -119,7 +145,9 @@ function dataReducer(state: DataState, action: DataAction) {
 
 const initialState: DataState = {
   ingredients: [],
-  recipes: []
+  loadingIngredients: false,
+  recipes: [],
+  loadingRecipes: false
 }
 
 type DataContext = {

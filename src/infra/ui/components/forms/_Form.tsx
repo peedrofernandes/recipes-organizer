@@ -28,13 +28,23 @@ type FormProps = {
   }
 } | {
   variant: "RecipeCreation",
-  ingredients: AdaptedIngredient[]
+  data: {
+    loading: true
+  } | {
+    loading: false
+    ingredients: AdaptedIngredient[]
+  }
   events: {
     submitEvent: (values: Values<AdaptedRecipe>) => Promise<void>
   }
 } | {
   variant: "RecipeUpdate",
-  ingredients: AdaptedIngredient[]
+  data: {
+    loading: true
+  } | {
+    loading: false
+    ingredients: AdaptedIngredient[]
+  }
   id: Id,
   currentValues: Values<AdaptedRecipe>
   events: {
@@ -70,10 +80,12 @@ export default function Form(props: FormProps) {
       id={props.id}
     />
   case "RecipeCreation":
-    console.log(`Ingredients at Form: ${props.ingredients}`)
     return <RecipeForm
       variant="Create"
-      ingredients={props.ingredients}
+      data={props.data.loading
+        ? { loading: true }
+        : { loading: false, ingredients: props.data.ingredients }
+      }
     />
   case "RecipeUpdate":
     return <FormContainer />

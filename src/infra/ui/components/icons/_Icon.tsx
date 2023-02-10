@@ -1,9 +1,36 @@
 import React, { ReactNode, useContext } from "react"
+import styled from "styled-components"
 import { ThemeContext } from "../../context/ThemeContext"
+
+const SpinnerCircle = styled.circle<{ size?: number }>`
+  fill: none;
+  stroke-width: ${({ size }) => size ? size / 12 : 2};
+  stroke: ${({ theme }) => theme.main.contrastV1};
+  stroke-linecap: round;
+  stroke-dasharray: ${({ size }) => size ? 2.18 * size : 105};
+  animation: dash 3s ease infinite, rotate 1s linear infinite;
+  transform-origin: 50% 50%;
+
+
+  @keyframes dash {
+    0% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: ${({ size }) => size ? 2 * 2.18 * size : 210};
+    }
+  }
+
+  @keyframes rotate {
+    100% {
+      transform: rotate(-1turn)
+    }
+  }
+`
 
 
 export type IconProps = {
-  variant: "Delete" | "Edit" | "NoRecipe" | "NoImage" | "AddRecipe" | "Plus" | "DarkMode" | "Help" | "Menu Book" | "Ingredient" | "Close"; 
+  variant: "Delete" | "Edit" | "NoRecipe" | "NoImage" | "AddRecipe" | "Plus" | "DarkMode" | "Help" | "Menu Book" | "Ingredient" | "Close" | "Search" | "Spinner"; 
   size?: number;
   color?: string;
 }
@@ -23,7 +50,6 @@ export default function Icon(props: IconProps) {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="none"
         height={size ?? "48"}
         width={size ?? "48"}
         viewBox={`${v1} ${v2} ${v3} ${v4}`}
@@ -95,6 +121,21 @@ export default function Icon(props: IconProps) {
         <path fill={color ?? theme.main.contrastV1} d="m12.45 37.65-2.1-2.1L21.9 24 10.35 12.45l2.1-2.1L24 21.9l11.55-11.55 2.1 2.1L26.1 24l11.55 11.55-2.1 2.1L24 26.1Z"/>
       </Svg>
     )
+  case "Search":
+    return (
+      <Svg size={size} viewBox={[0, 0, 48, 48]}>
+        <path fill={color ?? theme.main.contrastV1} d="M39.8 41.95 26.65 28.8q-1.5 1.3-3.5 2.025-2 .725-4.25.725-5.4 0-9.15-3.75T6 18.75q0-5.3 3.75-9.05 3.75-3.75 9.1-3.75 5.3 0 9.025 3.75 3.725 3.75 3.725 9.05 0 2.15-.7 4.15-.7 2-2.1 3.75L42 39.75Zm-20.95-13.4q4.05 0 6.9-2.875Q28.6 22.8 28.6 18.75t-2.85-6.925Q22.9 8.95 18.85 8.95q-4.1 0-6.975 2.875T9 18.75q0 4.05 2.875 6.925t6.975 2.875Z"/>
+      </Svg>
+    )
+  case "Spinner":
+    return <Svg size={size} viewBox={[0, 0, size ?? 48, size ?? 48]}>
+      <SpinnerCircle
+        cx={size ? size / 2 : "24"}
+        cy={size ? size / 2 : "24"}
+        r={size ? size / 2 - size / 12 : "20"}
+        size={size}
+      />
+    </Svg>
   default:
     return null
   }

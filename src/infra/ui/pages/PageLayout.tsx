@@ -27,6 +27,38 @@ const LayoutContainer = styled.div`
     padding: 0 0 128px 0;
   }
 
+  * {
+    &::-webkit-scrollbar {
+      width: 8px;
+      background-color: "inherit";
+    }
+
+    &::-webkit-scrollbar-track {
+      margin: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: ${({ theme }) => theme.main.contrastV2};
+      border-radius: 64px;
+
+      &:hover {
+        background-color: ${({ theme }) => theme.main.contrastV1};
+      }
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+    }
+  }
+
+  input, select {
+    background-color: inherit;
+    outline: none;
+    border: none;
+    height: 100%;
+    width: 100%;
+    color: inherit;
+  }
+
 `
 
 const ButtonSet = styled.div`
@@ -107,26 +139,32 @@ export default function PageLayout(props: { children: ReactNode }) {
 
   const events = {
     createIngredientEvent: async (values: Values<AdaptedIngredient>) => {
+      dispatch({ type: "TOGGLE_LOADING_INGREDIENTS"})
       setForm({ variant: null })
       await ingredientController.createIngredient(values)
     },
     updateIngredientEvent: async (id: string, values: Values<AdaptedIngredient>) => {
+      dispatch({ type: "TOGGLE_LOADING_INGREDIENTS"})
       setForm({ variant: null })
       await ingredientController.updateIngredient(id, values)
     },
     deleteIngredientEvent: async (id: string) => {
+      dispatch({ type: "TOGGLE_LOADING_INGREDIENTS"})
       setForm({ variant: null })
       await ingredientController.deleteIngredient(id)
     },
     createRecipeEvent: async (values: Values<AdaptedRecipe>) => {
+      dispatch({ type: "TOGGLE_LOADING_RECIPES" })
       setForm({ variant: null })
       await recipeController.createRecipe(values)
     },
     updateRecipeEvent: async (id: string, values: Values<AdaptedRecipe>) => {
+      dispatch({ type: "TOGGLE_LOADING_RECIPES"})
       setForm({ variant: null })
       await recipeController.updateRecipe(id, values)
     },
     deleteRecipeEvent: async (id: string) => {
+      dispatch({ type: "TOGGLE_LOADING_RECIPES"})
       setForm({ variant: null })
       await recipeController.deleteRecipe(id)
     }
@@ -134,11 +172,14 @@ export default function PageLayout(props: { children: ReactNode }) {
 
   useEffect(() => {
     const fetchIngredients = async () => {
-      const ingredients = await ingredientController.getAllIngredients()
-      dispatch({ type: "SET_INGREDIENTS", payload: { ingredients }})
-      console.log(ingredients)
+      dispatch({ type: "TOGGLE_LOADING_INGREDIENTS" })
+      setTimeout(async () => { 
+        const ingredients = await ingredientController.getAllIngredients()
+        dispatch({ type: "SET_INGREDIENTS", payload: { ingredients }})
+      }, 10000)
     }
     const fetchRecipes = async () => {
+      dispatch({ type: "TOGGLE_LOADING_RECIPES"})
       const recipes = await recipeController.getAllRecipes()
       dispatch({ type: "SET_RECIPES", payload: { recipes }})
     }
@@ -146,6 +187,10 @@ export default function PageLayout(props: { children: ReactNode }) {
     fetchIngredients()
     fetchRecipes()
   }, [])
+
+  useEffect(() => {
+    console.log(`loadingIngredients in PageLayout: ${data.loadingIngredients}`)
+  }, [data.loadingIngredients])
 
   const CurrentForm = useMemo(() => {
     switch (form.variant) {
@@ -189,8 +234,6 @@ export default function PageLayout(props: { children: ReactNode }) {
           />
         </Modal>)
     case "RecipeCreation":
-      console.log(`Ingredients at PageLayout: ${data.ingredients}`)
-        
       return (
         <Modal
           events={{ closeModalEvent: () => setForm({ variant: null }) }}
@@ -199,7 +242,10 @@ export default function PageLayout(props: { children: ReactNode }) {
           <Form
             variant="RecipeCreation"
             events={{ submitEvent: events.createRecipeEvent }}
-            ingredients={data.ingredients}
+            data={data.loadingIngredients
+              ? { loading: true }
+              : { loading: false, ingredients: data.ingredients }
+            }
           />
         </Modal>)
     case "RecipeUpdate":
@@ -213,7 +259,10 @@ export default function PageLayout(props: { children: ReactNode }) {
             id={form.id}
             currentValues={form.currentValues}
             events={{ submitEvent: events.updateRecipeEvent }}
-            ingredients={data.ingredients}
+            data={data.loadingIngredients
+              ? { loading: true }
+              : { loading: false, ingredients: data.ingredients }
+            }
           />
         </Modal>)
     case "RecipeDeletion":
@@ -235,14 +284,14 @@ export default function PageLayout(props: { children: ReactNode }) {
     default:
       return null
     }
-  }, [form])
+  }, [form, data])
 
   return (
     <ThemeProvider theme={theme}>
-
-      {CurrentForm}
-
       <LayoutContainer>
+
+        {CurrentForm}
+
 
         <ButtonSet>
           {location.pathname !== "/" && (

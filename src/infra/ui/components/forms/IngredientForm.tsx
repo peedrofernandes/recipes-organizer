@@ -1,7 +1,7 @@
 import { AdaptedIngredient } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import { Values } from "@domain/utilities/types/Values"
-import { FieldSet, FormContainer, Input, InputGroup, SubmitContainer } from "@infra/ui/styles/formStyles"
+import { FieldSet, FormContainer, InputGroup, SubmitContainer } from "@infra/ui/styles/formStyles"
 import React, { useState } from "react"
 import Button from "../buttons/_Button"
 
@@ -85,9 +85,6 @@ export default function IngredientForm(props: IngredientFormProps) {
 
   const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     setImageFile(e.target.files?.[0])
-    console.log("File name:", imageFile?.name)
-    console.log("File size:", imageFile?.size, "bytes")
-    console.log("File type:", imageFile?.type)
   }
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,7 +140,7 @@ export default function IngredientForm(props: IngredientFormProps) {
     <FormContainer onSubmit={handleSubmit}>
       <FieldSet error={submitError.nameError}>
         <label>Nome*</label>
-        <Input
+        <input 
           type="text" id="nome" name="nome"
           placeholder="Nome"
           value={name}
@@ -154,7 +151,7 @@ export default function IngredientForm(props: IngredientFormProps) {
 
       <FieldSet>
         <label>Descrição</label>
-        <Input
+        <input 
           type="text" id="description" name="description"
           placeholder="Descrição" value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -166,7 +163,7 @@ export default function IngredientForm(props: IngredientFormProps) {
       <InputGroup>
         <FieldSet error={submitError.macrosError}>
           <label>Proteínas</label>
-          <Input
+          <input 
             type="number" id="proteins" name="proteins"
             step="any" min="0" 
             placeholder="g" value={macros[0] !== -1 ? macros[0] : undefined}
@@ -175,7 +172,7 @@ export default function IngredientForm(props: IngredientFormProps) {
         </FieldSet>
         <FieldSet error={submitError.macrosError}>
           <label>Carboidratos</label>
-          <Input
+          <input 
             type="number" id="proteins" name="proteins"
             step="any" min="0"
             placeholder="g" value={macros[1] !== -1 ? macros[1] : undefined}
@@ -184,7 +181,7 @@ export default function IngredientForm(props: IngredientFormProps) {
         </FieldSet>
         <FieldSet error={submitError.macrosError}>
           <label>Gorduras</label>
-          <Input
+          <input 
             type="number" id="proteins" name="proteins"
             step="any" min="0"  
             placeholder="g" value={macros[2] !== -1 ? macros[2] : undefined}
@@ -196,7 +193,7 @@ export default function IngredientForm(props: IngredientFormProps) {
 
       <FieldSet error={submitError.macrosError}>
         <label>Gramas totais</label>
-        <Input
+        <input 
           type="number" id="totalGrams" name="totalGrams"
           step="any" min="0" placeholder="g"
           value={macros[3] !== -1 ? macros[3] : undefined}
@@ -207,7 +204,7 @@ export default function IngredientForm(props: IngredientFormProps) {
 
       <FieldSet>
         <label>Imagem</label>
-        <Input
+        <input 
           type="file" id="Image" name="Image"
           accept="image/png, image/gif, image/jpeg" title="Selecione"
           onChange={handleChangeFile}

@@ -25,9 +25,14 @@ export const FormContainer = styled.form`
   }
 `
 
-export const InputStyles = css`
+export const InputFieldStyles = css`
+  position: relative;
+  display: flex;
+  justify-content: stretch;
+  align-items: center;
+  gap: 4px;
+
   width: 100%;
-  display: inline-block;
   padding: 8px 4px;
   background-color: ${({ theme }) => theme.main.primaryV1 + "00"};
   color: ${({ theme }) => theme.main.contrastV1};
@@ -35,18 +40,18 @@ export const InputStyles = css`
   box-shadow: ${({ theme }) => `inset 0 0 1px ${theme.main.contrastV1}, 0 0 1px ${theme.main.contrastV1}`};
   min-width: 0;
   margin-top: 8px;
-
+  
   &:hover {
     box-shadow: ${({ theme }) => `inset 0 0 2px ${theme.main.contrastV1}, 0 0 2px ${theme.main.contrastV1}`};
   }
   
-  &:focus {
+  &:focus-within {
     outline: none;
     box-shadow: ${({ theme }) => `inset 0 0 4px ${theme.main.contrastV1}, 0 0 4px ${theme.main.contrastV1}`};
   }
 `
-export const Input = styled.input`
-  ${InputStyles}
+export const InputField = styled.div`
+  ${InputFieldStyles}
 `
 
 export const InputGroup = styled.div`
@@ -99,7 +104,7 @@ export const SelectTitle = styled.span<{
   error?: boolean;
   selected?: boolean;
 }>`
-  ${InputStyles}
+  ${InputFieldStyles}
 
   font-size: 14px;
   color: ${({ error, theme, selected }) => error
@@ -110,14 +115,19 @@ export const SelectTitle = styled.span<{
   cursor: pointer;
 `
 
-export const Select = styled.ul``
+export const Select = styled.ul`
+  background-color: ${({ theme }) => theme.main.primaryV1};
+  border-radius: 0 8px 8px 0;
+  padding: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+`
 
 export const Option = styled.li<{
   active?: boolean
 }>`
   margin: 0;
   padding: 12px 8px;
-  box-shadow: ${({ theme }) => `inset 0 0 1px ${theme.main.contrastV1}, 0 0 1px ${theme.main.contrastV1}`};
   background-color: ${({ active, theme }) =>
     active ? theme.color.green : theme.main.primaryV1};
   color: ${({ active, theme }) =>

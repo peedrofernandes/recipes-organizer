@@ -1,12 +1,10 @@
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import { Values } from "@domain/utilities/types/Values"
-import { FieldSet, FormContainer, Input, InputStyles, Option, Select, SelectTitle, SubmitContainer } from "@infra/ui/styles/formStyles"
-import React, { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react"
+import { FieldSet, FormContainer, InputField, Option, Select, SelectTitle, SubmitContainer } from "@infra/ui/styles/formStyles"
+import React, { ChangeEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
 import Button from "../buttons/_Button"
-
-console.log(`Input Styles at third file: ${InputStyles}`)
-console.log(`Input component: ${Input}`)
+import Icon from "../icons/_Icon"
 
 type RecipeFormProps = {
   variant: "Create"
@@ -84,28 +82,43 @@ export default function RecipeForm(props: RecipeFormProps) {
     else
       setIngOptions(props.data.ingredients.filter(i => i.name.includes(search)))
   }, [search, loading])
+
   return (
     <FormContainer onClick={(e) => handleCloseDropdowns(e)}>
 
       <FieldSet>
         <label>Nome</label>
-        <Input type="text" id="nome" name="nome"
-          placeholder="Nome"
-          value={name}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-        />
+        <InputField>
+          <input type="text" id="nome" name="nome"
+            placeholder="Nome"
+            value={name}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+          />
+        </InputField>
       </FieldSet>
 
       <FieldSet>
         <label>Ingredientes</label>
-        <Input type="text" id="searchIngredients" name="searchIngredients"
-          placeholder="Pesquisar"
-          value={search}
-          onChange={handleChangeSearch}
-        />
-        {ingOptions.length > 0 && (
+        <InputField>
+          
+          {useMemo(() => <Icon variant={loading ? "Spinner" : "Search"} size={20} />, [loading])}
+          <input type="text" id="searchIngredients" name="searchIngredients"
+            placeholder="Pesquisar"
+            value={search}
+            onChange={handleChangeSearch}
+          />  
+          
+
+        </InputField>
+        {!loading && ingOptions.length > 0 && (
           <Select>
-            {ingOptions.map(opt => <Option key={opt.id}>{opt.name}</Option>)}
+            {ingOptions.map(
+              opt => (
+                <Option key={opt.id}>
+                  {opt.name}
+                </Option>
+              )
+            )}
           </Select>
         )}
       </FieldSet>
@@ -136,11 +149,13 @@ export default function RecipeForm(props: RecipeFormProps) {
 
       <FieldSet>
         <label>Descrição</label>
-        <Input type="text" id="description" name="description"
-          placeholder="Descrição"
-          value={description}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
-        />
+        <InputField>
+          <input type="text" id="description" name="description"
+            placeholder="Descrição"
+            value={description}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
+          />
+        </InputField>
       </FieldSet>
 
       <SubmitContainer>
