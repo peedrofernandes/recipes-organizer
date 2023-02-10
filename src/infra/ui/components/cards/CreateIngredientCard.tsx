@@ -1,6 +1,6 @@
+import { CardContainer } from "@infra/ui/styles/cardStyles";
 import React from "react"
 import Icon from "../icons/_Icon"
-import { CardContainer } from "./_Card"
 
 type CreateIngredientCardProps = {
   events: {

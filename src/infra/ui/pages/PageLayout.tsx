@@ -49,16 +49,6 @@ const LayoutContainer = styled.div`
     &::-webkit-scrollbar-thumb:hover {
     }
   }
-
-  input, select {
-    background-color: inherit;
-    outline: none;
-    border: none;
-    height: 100%;
-    width: 100%;
-    color: inherit;
-  }
-
 `
 
 const ButtonSet = styled.div`
@@ -176,7 +166,7 @@ export default function PageLayout(props: { children: ReactNode }) {
       setTimeout(async () => { 
         const ingredients = await ingredientController.getAllIngredients()
         dispatch({ type: "SET_INGREDIENTS", payload: { ingredients }})
-      }, 10000)
+      }, 500)
     }
     const fetchRecipes = async () => {
       dispatch({ type: "TOGGLE_LOADING_RECIPES"})

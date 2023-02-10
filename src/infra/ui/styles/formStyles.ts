@@ -25,14 +25,39 @@ export const FormContainer = styled.form`
   }
 `
 
+export const FieldSet = styled.fieldset<{
+  error?: boolean
+}>`
+  position: relative;
+  width: 100%;
+  display: block;
+  border: none;
+  color: ${({ error, theme }) => error ? theme.color.red : "inherit"};
+
+  input[type=text], input[type=number], select {
+    background-color: inherit;
+    outline: none;
+    border: none;
+    color: inherit;
+    width: 100%;
+
+    &::placeholder {
+      color: ${({ error, theme }) => error ? theme.color.red + "90" : theme.main.contrastV1 + "90"};
+      font-size: 14px;
+    }
+  }
+
+  ul {
+    list-style: none;
+  }
+`
+
 export const InputFieldStyles = css`
   position: relative;
   display: flex;
   justify-content: stretch;
   align-items: center;
   gap: 4px;
-
-  width: 100%;
   padding: 8px 4px;
   background-color: ${({ theme }) => theme.main.primaryV1 + "00"};
   color: ${({ theme }) => theme.main.contrastV1};
@@ -58,30 +83,6 @@ export const InputGroup = styled.div`
   display: flex;
   justify-content: center;
   gap: 8px;
-`
-
-export const FieldSet = styled.fieldset<{
-  error?: boolean
-}>`
-  position: relative;
-  width: 100%;
-  display: block;
-  border: none;
-  color: ${({ error, theme }) => error ? theme.color.red : "inherit"};
-
-  input {
-    &::placeholder {
-      color: ${({ error, theme }) => error ? theme.color.red + "90" : theme.main.contrastV1 + "90"};
-      font-size: 14px;
-    }
-  }
-
-  ul {
-    list-style: none;
-    position: absolute;
-    width: 100%;
-    z-index: 1;
-  }
 `
 
 export const SubmitContainer = styled.div`
@@ -115,7 +116,10 @@ export const SelectTitle = styled.span<{
   cursor: pointer;
 `
 
-export const Select = styled.ul`
+export const Dropdown = styled.ul`
+  position: absolute;
+  z-index: 1;
+  width: 100%;
   background-color: ${({ theme }) => theme.main.primaryV1};
   border-radius: 0 8px 8px 0;
   padding: 4px;
@@ -123,20 +127,51 @@ export const Select = styled.ul`
   overflow-y: auto;
 `
 
-export const Option = styled.li<{
+export const DropdownItem = styled.li<{
   active?: boolean
 }>`
   margin: 0;
   padding: 12px 8px;
-  background-color: ${({ active, theme }) =>
-    active ? theme.color.green : theme.main.primaryV1};
   color: ${({ active, theme }) =>
-    active ? theme.main.primaryV1 : theme.main.contrastV1};
+    active ? theme.color.green : theme.main.contrastV1};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-  &:hover {
-    background-color: ${({ theme }) => theme.main.contrastV1};
-    color: ${({ theme }) => theme.main.primaryV1};
-    cursor: pointer;
+  p {
+    color: ${({ theme, active }) => active ? theme.color.green : "unset"} !important;
+  }
+  path {
+    fill: ${({ theme, active }) => active ? theme.color.green : theme.main.contrastV1};
   }
 
+  &:hover {
+    background-color: ${({ theme }) => theme.main.primaryV3};
+    cursor: pointer;
+  }
+`
+
+export const IngredientMacrosSpan = styled.ul`
+  display: flex;
+  justify-content: space-evenly;
+  position: relative;
+  gap: 16px;
+  font-weight: bold;
+
+  li:nth-child(1) {
+    color: ${({ theme }) => theme.color.green + "90"}
+  }
+  li:nth-child(2) {
+    color: ${({ theme }) => theme.color.blue + "90"}
+  }
+  li:nth-child(3) {
+    color: ${({ theme }) => theme.color.orange + "90"}
+  }
+`
+
+export const IngredientListItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
 `

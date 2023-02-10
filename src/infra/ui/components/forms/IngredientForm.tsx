@@ -1,7 +1,7 @@
 import { AdaptedIngredient } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import { Values } from "@domain/utilities/types/Values"
-import { FieldSet, FormContainer, InputGroup, SubmitContainer } from "@infra/ui/styles/formStyles"
+import { FieldSet, FormContainer, InputField, InputGroup, SubmitContainer } from "@infra/ui/styles/formStyles"
 import React, { useState } from "react"
 import Button from "../buttons/_Button"
 
@@ -138,24 +138,30 @@ export default function IngredientForm(props: IngredientFormProps) {
 
   return (
     <FormContainer onSubmit={handleSubmit}>
+
+
       <FieldSet error={submitError.nameError}>
         <label>Nome*</label>
-        <input 
-          type="text" id="nome" name="nome"
-          placeholder="Nome"
-          value={name}
-          onChange={handleChangeName}
-        />
+        <InputField>
+          <input
+            type="text" id="nome" name="nome"
+            placeholder="Nome"
+            value={name}
+            onChange={handleChangeName}
+          />
+        </InputField>
         {submitError.nameError && <span>{submitError.nameErrorMessage}</span>}
       </FieldSet>
 
       <FieldSet>
         <label>Descrição</label>
-        <input 
-          type="text" id="description" name="description"
-          placeholder="Descrição" value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+        <InputField>
+          <input
+            type="text" id="description" name="description"
+            placeholder="Descrição" value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </InputField>
       </FieldSet>
 
       <legend>Macronutrientes</legend>
@@ -163,42 +169,50 @@ export default function IngredientForm(props: IngredientFormProps) {
       <InputGroup>
         <FieldSet error={submitError.macrosError}>
           <label>Proteínas</label>
-          <input 
-            type="number" id="proteins" name="proteins"
-            step="any" min="0" 
-            placeholder="g" value={macros[0] !== -1 ? macros[0] : undefined}
-            onChange={(e) => handleChangeMacros("proteins", e)}
-          />
+          <InputField>
+            <input
+              type="number" id="proteins" name="proteins"
+              step="any" min="0"
+              placeholder="g" value={macros[0] !== -1 ? macros[0] : undefined}
+              onChange={(e) => handleChangeMacros("proteins", e)}
+            />
+          </InputField>
         </FieldSet>
         <FieldSet error={submitError.macrosError}>
           <label>Carboidratos</label>
-          <input 
-            type="number" id="proteins" name="proteins"
-            step="any" min="0"
-            placeholder="g" value={macros[1] !== -1 ? macros[1] : undefined}
-            onChange={(e) => handleChangeMacros("carbs", e)}
-          />
+          <InputField>
+            <input
+              type="number" id="proteins" name="proteins"
+              step="any" min="0"
+              placeholder="g" value={macros[1] !== -1 ? macros[1] : undefined}
+              onChange={(e) => handleChangeMacros("carbs", e)}
+            />
+          </InputField>
         </FieldSet>
         <FieldSet error={submitError.macrosError}>
           <label>Gorduras</label>
-          <input 
-            type="number" id="proteins" name="proteins"
-            step="any" min="0"  
-            placeholder="g" value={macros[2] !== -1 ? macros[2] : undefined}
-            onChange={(e) => handleChangeMacros("fats", e)}
-          />
+          <InputField>
+            <input
+              type="number" id="proteins" name="proteins"
+              step="any" min="0"
+              placeholder="g" value={macros[2] !== -1 ? macros[2] : undefined}
+              onChange={(e) => handleChangeMacros("fats", e)}
+            />
+          </InputField>
         </FieldSet>
 
       </InputGroup>
 
       <FieldSet error={submitError.macrosError}>
         <label>Gramas totais</label>
-        <input 
-          type="number" id="totalGrams" name="totalGrams"
-          step="any" min="0" placeholder="g"
-          value={macros[3] !== -1 ? macros[3] : undefined}
-          onChange={(e) => handleChangeMacros("totalGrams", e)}
-        />
+        <InputField>
+          <input
+            type="number" id="totalGrams" name="totalGrams"
+            step="any" min="0" placeholder="g"
+            value={macros[3] !== -1 ? macros[3] : undefined}
+            onChange={(e) => handleChangeMacros("totalGrams", e)}
+          />
+        </InputField>
         {submitError.macrosError && <span>{submitError.macrosErrorMessage}</span>}
       </FieldSet>
 

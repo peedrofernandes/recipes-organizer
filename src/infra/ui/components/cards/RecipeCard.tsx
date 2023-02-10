@@ -1,10 +1,10 @@
 import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import { Values } from "@domain/utilities/types/Values"
+import { CardContainer, ContentContainer, ImageContainer, TypeSpan } from "@infra/ui/styles/cardStyles"
 import React from "react"
 import Button from "../buttons/_Button"
 import Icon from "../icons/_Icon"
-import { CardContainer, ContentContainer, ImageContainer, TypeSpan } from "./_Card"
 
 type RecipeCardProps = {
   recipe: AdaptedRecipe;
