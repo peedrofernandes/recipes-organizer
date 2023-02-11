@@ -1,4 +1,4 @@
-import { CardContainer } from "@infra/ui/styles/cardStyles";
+import { CardContainer } from "@infra/ui/styles/cardStyles"
 import React from "react"
 import Icon from "../icons/_Icon"
 

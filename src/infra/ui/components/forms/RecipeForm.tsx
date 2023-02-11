@@ -3,30 +3,36 @@ import { Id } from "@domain/utilities/types/Id"
 import { Values } from "@domain/utilities/types/Values"
 import { Dropdown, DropdownItem, FieldSet, FormContainer, IngredientListItem, IngredientMacrosSpan, InputField, SelectTitle, SubmitContainer } from "@infra/ui/styles/formStyles"
 import { Span, Subtitle, Text } from "@infra/ui/styles/generalStyles"
-import React, { ChangeEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
+import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
 import Button from "../buttons/_Button"
 import Icon from "../icons/_Icon"
 
-type RecipeFormProps = {
+
+
+
+type RecipeFormProps = ({
   variant: "Create"
-  data: {
-    loading: true
-  } | {
-    loading: false
-    ingredients: AdaptedIngredient[]
+  events: {
+    submitEvent: (values: Values<AdaptedRecipe>) => void
   }
 } | {
   variant: "Update"
   id: Id
   currentValues: Values<AdaptedRecipe>
+  events: {
+    submitEvent: (id: Id, values: Values<AdaptedRecipe>) => void
+  }
+}) & ({
   data: {
     loading: true
   } | {
     loading: false
     ingredients: AdaptedIngredient[]
   }
-  ingredients: AdaptedIngredient[]
-}
+})
+
+
+
 
 const typeTranslator = {
   "Week": "Receita de semana",
@@ -34,93 +40,213 @@ const typeTranslator = {
   "Both": "Indiferente"
 }
 
+
+
+
+type SubmitErrors = ({
+  name: false
+} | {
+  name: true
+  nameMessage: string
+}) & ({
+  ingredients: false
+} | {
+  ingredients: true
+  ingredientsMessage: string
+}) & ({
+  type: false
+} | {
+  type: true
+  typeMessage: string
+})
+
+
+
+
 export default function RecipeForm(props: RecipeFormProps) {
   const { loading } = props.data
 
-  const [name, setName] = useState<string>()
-  const [type, setType] = useState<"Week" | "Weekend" | "Both" | undefined>()
-  const [description, setDescription] = useState<string>("")
-  const [search, setSearch] = useState<string>("Arr")
-  const [ingOptions, setIngOptions] = useState<AdaptedIngredient[]>([])
-  const [selectedIngs, setSelectedIngs] = useState<AdaptedIngredient[]>([])
+
+
   
-  const [showTypes, setShowTypes] = useState<boolean>(false)
-  const [showIngOptions, setShowIngOptions] = useState<boolean>(false)
-  const typesTitleRef = useRef<HTMLFieldSetElement>(null)
-  const searchOptionsRef = useRef<HTMLUListElement>(null)
-  const searchInputRef = useRef<HTMLDivElement>(null)
-  function handleCloseDropdowns(e: MouseEvent) {
-    if (!typesTitleRef.current?.contains(e.target as Node)) {
-      setShowTypes(false)
-    }
-    if (!searchOptionsRef.current?.contains(e.target as Node)
-      && !searchInputRef.current?.contains(e.target as Node)) {
-      setShowIngOptions(false)
-    }
+  // Data States and handlers
+
+  const [name, setName] = useState<string>("")
+  const [type, setType] = useState<"Week" | "Weekend" | "Both" | "">("")
+  const [description, setDescription] = useState<string>("")
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [ingredients, setIngredients] = useState<[AdaptedIngredient, string][]>([])
+  const [submitError, setSubmitError] = useState<SubmitErrors>({
+    name: false,
+    ingredients: false,
+    type: false
+  })
+
+  function handleChangeName(e: ChangeEvent<HTMLInputElement>) {
+    setSubmitError(state => ({
+      ...state,
+      name: false
+    }))
+    setName(e.target.value)
   }
 
   function handleChangeType(t: "Week" | "Weekend" | "Both") {
     switch (t) {
     case "Week": {
-      const newType = (type !== "Week") ? "Week" : undefined
+      const newType = (type !== "Week") ? "Week" : ""
       return setType(newType)
     }
     case "Weekend": {
-      const newType = (type !== "Weekend") ? "Weekend" : undefined
+      const newType = (type !== "Weekend") ? "Weekend" : ""
       return setType(newType)
     }
     case "Both": {
-      const newType = (type !== "Both") ? "Both" : undefined
+      const newType = (type !== "Both") ? "Both" : ""
       return setType(newType)
     }
     default: {
-      return setType(undefined)
+      return setType("")
     }
     }
   }
 
+  function handleChangeIngredients(ing: AdaptedIngredient) {
+    if (ingredients.some(i => i[0].id === ing.id))
+      setIngredients(ingredients.filter(i => i[0].id !== ing.id))
+    else
+      setIngredients([...ingredients, [ing, ""]])
+  }
+
+  function handleChangeGrams(e: ChangeEvent<HTMLInputElement>, id: Id) {
+    const index = ingredients.findIndex(item => item[0].id === id)
+    const ing = ingredients[index]
+    if (!ing) {
+      setSubmitError(state => ({
+        ...state,
+        ingredients: true,
+        ingredientsMessage: "Erro - Não foi possível encontrar o ingrediente (contatar desenvolvedor)"
+      }))
+      return
+    }
+    ing[1] = e.target.value
+    ingredients[index] = ing
+    setIngredients(ingredients)
+  }
+
+  function handleChangeFile(e: ChangeEvent<HTMLInputElement>) {
+    setImageFile(e.target.files?.[0] || null)
+  }
+
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    const invalidName = !name
+    const invalidType = !type
+    const invalidIngredients = ingredients.some(i => !i[1])
+
+    if (invalidName || invalidIngredients || invalidType) {
+      if (invalidName)
+        setSubmitError(state => ({
+          ...state,
+          name: true,
+          nameMessage: "A receita deve ter um nome!"
+        }))
+      if (invalidIngredients)
+        setSubmitError(state => ({
+          ...state,
+          ingredients: true,
+          ingredientsMessage: "Todos os ingredientes devem ter uma quantidade em gramas!"
+        }))
+      if (invalidType)
+        setSubmitError(state => ({
+          ...state,
+          type: true,
+          typeMessage: "A receita deve ter um tipo!"
+        }))
+      return
+    }
+
+    const adaptedRecipe: Values<AdaptedRecipe> = {
+      name, type, description,
+      ...(imageFile ? { imageFile } : null),
+      ...(!invalidIngredients ? {
+        ingredients: ingredients.map(i => [i[0], parseFloat(i[1])])
+      } : null)
+    }
+
+    if (props.variant === "Create")
+      props.events.submitEvent(adaptedRecipe)
+    else
+      props.events.submitEvent(props.id, adaptedRecipe)
+  }
+
+
+
+
+  // Auxiliar states, variables, handlers and effects
+  
+  const [search, setSearch] = useState<string>("Arr")
+  const [ingOptions, setIngOptions] = useState<AdaptedIngredient[]>([])
+  const [showTypesDropdown, setShowTypesDropdown] = useState<boolean>(false)
+  const [showIngOptionsDropdown, setShowIngOptionsDropdown] = useState<boolean>(false)
+
+  const typesTitleRef = useRef<HTMLFieldSetElement>(null)
+  const searchOptionsRef = useRef<HTMLUListElement>(null)
+  const searchInputRef = useRef<HTMLDivElement>(null)
+  function handleCloseDropdowns(e: MouseEvent) {
+    if (!typesTitleRef.current?.contains(e.target as Node)) {
+      setShowTypesDropdown(false)
+    }
+    if (!searchOptionsRef.current?.contains(e.target as Node)
+      && !searchInputRef.current?.contains(e.target as Node)) {
+      setShowIngOptionsDropdown(false)
+    }
+  }
   function handleChangeSearch(e: ChangeEvent<HTMLInputElement>) {
-    setShowIngOptions(true)
+    setSubmitError(state => ({
+      ...state,
+      ingredients: false
+    }))
     setSearch(e.target.value)
   }
 
-  function handleSelectedIngredients(ing: AdaptedIngredient) {
-    if (selectedIngs.includes(ing))
-      setSelectedIngs(selectedIngs.filter(i => i.id !== ing.id))
-    else
-      setSelectedIngs([...selectedIngs, ing])
-      
-  }
-
   useEffect(() => {
-    if (loading) return
-
-    if (search === "")
-      setIngOptions([])
-    else
-      setIngOptions(props.data.ingredients.filter(i => i.name.includes(search)))
+    if (props.data.loading || !search) return setIngOptions([])
+    setIngOptions(props.data.ingredients.filter(
+      i => i.name.includes(search)))
+    setShowIngOptionsDropdown(true)
   }, [search, loading])
 
   return (
-    <FormContainer onClick={(e) => handleCloseDropdowns(e)}>
+    <FormContainer onClick={(e) => handleCloseDropdowns(e)} onSubmit={handleSubmit}>
 
-      {/* Input de Nome */}
-      <FieldSet>
+      
+
+
+      {/* Name Input */}
+      <FieldSet error={submitError.name}>
         <label>Nome</label>
-        <InputField>
+        <InputField error={submitError.name}>
           <input type="text" id="nome" name="nome"
             placeholder="Nome"
             value={name}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+            onChange={handleChangeName}
           />
         </InputField>
+        {submitError.name && <span>{submitError.nameMessage}</span>}
       </FieldSet>
 
-      {/* Seleção de Ingredientes */}
-      <FieldSet>
-        <label>Ingredientes</label>
+      
+      
 
-        <InputField ref={searchInputRef} onClick={() => setShowIngOptions(true)}>
+      {/* Ingredients Input */}
+      <FieldSet error={submitError.ingredients}>
+        <label>Ingredientes</label>
+        <InputField
+          ref={searchInputRef}
+          onClick={() => setShowIngOptionsDropdown(true)}
+          error={submitError.ingredients}
+        >
           {useMemo(() => (
             <Icon variant={loading ? "Spinner" : "Search"} size={20} />
           ), [loading])}
@@ -130,20 +256,19 @@ export default function RecipeForm(props: RecipeFormProps) {
             onChange={handleChangeSearch}
           />  
         </InputField>
-
-        {showIngOptions && !loading && ingOptions.length > 0 && (
+        {submitError.ingredients && <span>{submitError.ingredientsMessage}</span>}
+        {showIngOptionsDropdown && !loading && ingOptions.length > 0 && (
           <Dropdown ref={searchOptionsRef}>
             {ingOptions.map(
               opt => (
                 <DropdownItem key={opt.id}
-                  active={selectedIngs.includes(opt)}
-                  onClick={() => handleSelectedIngredients(opt)}
+                  active={ingredients.some(i => i[0].id === opt.id)}
+                  onClick={() => handleChangeIngredients(opt)}
                 >
                   <div>
                     <Text>{opt.name}</Text>
                     <Subtitle>{opt.description}</Subtitle>
                   </div>
-
                   {opt.macros && (
                     <IngredientMacrosSpan>
                       <li><Span>P: {opt.macros[0].toFixed(2)}g</Span></li>
@@ -151,42 +276,52 @@ export default function RecipeForm(props: RecipeFormProps) {
                       <li><Span>G: {opt.macros[2].toFixed(2)}g</Span></li>
                     </IngredientMacrosSpan>
                   )}
-
-                  <Icon variant={selectedIngs.includes(opt) ? "Check" : "CheckEmpty"} size={20} />
+                  <Icon
+                    variant={
+                      ingredients.some(i => i[0].id === opt.id)
+                        ? "Check"
+                        : "CheckEmpty"
+                    } size={20}
+                  />
                 </DropdownItem>
               ))}
           </Dropdown>
         )}
-
-        {selectedIngs.length > 0 && (
+        {ingredients.length > 0 && (
           <div>
-            {selectedIngs.map(i => (
-              <IngredientListItem key={i.id}>
+            {ingredients.map(i => (
+              <IngredientListItem key={i[0].id}>
                 <div>
-                  <Text>{i.name}</Text>
-                  <Subtitle>{i.description}</Subtitle>
+                  <Text>{i[0].name}</Text>
+                  <Subtitle>{i[0].description}</Subtitle>
                 </div>
-                <InputField>
-                  <input type="number" placeholder="Gramas totais" />
+                <InputField error={submitError.ingredients}>
+                  <input
+                    type="number"
+                    placeholder="Gramas totais"
+                    onChange={(e) => handleChangeGrams(e, i[0].id)}
+                  />
                 </InputField>
               </IngredientListItem>
             ))}
           </div>
         )}
-
       </FieldSet>
 
-      {/* Seleção de tipo */}
+      
+
+
+      {/* Type selection */}
       <FieldSet>
         <label>Tipo</label>
         <SelectTitle
-          onClick={() => setShowTypes(true)}
+          onClick={() => setShowTypesDropdown(true)}
           ref={typesTitleRef}
           selected={type !== undefined}
         >
-          {type !== undefined ? typeTranslator[type] : "Selecione"}
+          {type ? typeTranslator[type] : "Selecione"}
         </SelectTitle>
-        {showTypes && (
+        {showTypesDropdown && (
           <Dropdown>
             <DropdownItem active={type === "Week"} onClick={() => handleChangeType("Week")}>
               {typeTranslator["Week"]}
@@ -201,7 +336,10 @@ export default function RecipeForm(props: RecipeFormProps) {
         )}
       </FieldSet>
 
-      {/* Input da descrição */}
+      
+
+      
+      {/* Description selection */}
       <FieldSet>
         <label>Descrição</label>
         <InputField>
@@ -213,11 +351,27 @@ export default function RecipeForm(props: RecipeFormProps) {
         </InputField>
       </FieldSet>
 
+      
+
+      
+      {/* Image selection */}
+      <FieldSet>
+        <label>Imagem</label>
+        <input
+          type="file" accept="image/png, image/gif, image/jpeg"
+          onChange={handleChangeFile}
+        />
+      </FieldSet>
+
+      
+
+
       {/* Submit */}
       <SubmitContainer>
-        <Button variant="styled" text="Criar"></Button>
+        <Button type="submit" variant="styled" text="Criar" />
       </SubmitContainer>
 
+      
       
     </FormContainer>
   )

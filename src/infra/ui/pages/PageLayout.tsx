@@ -178,10 +178,6 @@ export default function PageLayout(props: { children: ReactNode }) {
     fetchRecipes()
   }, [])
 
-  useEffect(() => {
-    console.log(`loadingIngredients in PageLayout: ${data.loadingIngredients}`)
-  }, [data.loadingIngredients])
-
   const CurrentForm = useMemo(() => {
     switch (form.variant) {
     case "IngredientCreation":

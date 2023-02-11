@@ -20,15 +20,13 @@ export default function IngredientCard(props: IngredientCardProps) {
     name, description, macros, imageUrl, imageFile
   }
 
-  const validMacros = macros && macros.every(elem => elem !== -1)
-
   return (
     <CardContainer status="active">
 
       <ImageContainer imageUrl={imageUrl}>
 
         {
-          validMacros && (
+          macros && (
             <MacrosSpan>
               <ul>
                 <li>P: {macros[0].toFixed(2)}g</li>

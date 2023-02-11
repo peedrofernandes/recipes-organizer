@@ -52,7 +52,9 @@ export const FieldSet = styled.fieldset<{
   }
 `
 
-export const InputFieldStyles = css`
+export const InputFieldStyles = css<{
+  error?: boolean
+}>`
   position: relative;
   display: flex;
   justify-content: stretch;
@@ -62,17 +64,24 @@ export const InputFieldStyles = css`
   background-color: ${({ theme }) => theme.main.primaryV1 + "00"};
   color: ${({ theme }) => theme.main.contrastV1};
   border: none;
-  box-shadow: ${({ theme }) => `inset 0 0 1px ${theme.main.contrastV1}, 0 0 1px ${theme.main.contrastV1}`};
   min-width: 0;
   margin-top: 8px;
+
+  box-shadow: ${({ theme, error }) =>
+    `inset 0 0 1px ${error ? theme.color.red : theme.main.contrastV1},
+     0 0 1px ${error ? theme.color.red : theme.main.contrastV1}`};
   
   &:hover {
-    box-shadow: ${({ theme }) => `inset 0 0 2px ${theme.main.contrastV1}, 0 0 2px ${theme.main.contrastV1}`};
+    box-shadow: ${({ theme, error }) =>
+    `inset 0 0 2px ${error ? theme.color.red : theme.main.contrastV1},
+     0 0 2px ${error ? theme.color.red : theme.main.contrastV1}`};
   }
   
   &:focus-within {
     outline: none;
-    box-shadow: ${({ theme }) => `inset 0 0 4px ${theme.main.contrastV1}, 0 0 4px ${theme.main.contrastV1}`};
+    box-shadow: ${({ theme, error }) =>
+    `inset 0 0 4px ${error ? theme.color.red : theme.main.contrastV1},
+     0 0 4px ${error ? theme.color.red : theme.main.contrastV1}`};
   }
 `
 export const InputField = styled.div`

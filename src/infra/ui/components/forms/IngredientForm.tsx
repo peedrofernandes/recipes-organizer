@@ -2,7 +2,7 @@ import { AdaptedIngredient } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import { Values } from "@domain/utilities/types/Values"
 import { FieldSet, FormContainer, InputField, InputGroup, SubmitContainer } from "@infra/ui/styles/formStyles"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import Button from "../buttons/_Button"
 
 type IngredientFormProps = {
@@ -19,76 +19,73 @@ type IngredientFormProps = {
   }
 }
 
+type StringTuple = [string, string, string, string]
+
 type SubmitErrors = ({
-  nameError?: false
+  name: false;
 } | {
-  nameError: true;
-  nameErrorMessage: string
+  name: true;
+  nameMessage: string;
 }) & ({
-  macrosError?: false
+  macros: false;
 } | {
-  macrosError: true
-  macrosErrorMessage: string
+  macros: true;
+  macrosMessage: string;
 })
 
 export default function IngredientForm(props: IngredientFormProps) {
-  const { variant } = props
-  const isUpdateVariant = (variant === "Update")
-
-  const initialName = isUpdateVariant
-    ? props.currentValues.name : ""
+  let initialName = ""
+  let initialDescription = ""
+  let initialMacros: StringTuple = ["", "", "", ""]
+  let initialImageFile: File | null = null
+  if (props.variant === "Update") {
+    initialName = props.currentValues.name
+    initialDescription = props.currentValues.description || ""
+    initialMacros = props.currentValues.macros?.map(item => item.toString()) as StringTuple || ["", "", "", ""]
+    initialImageFile = props.currentValues.imageFile || null
+  }
+  
   const [name, setName] = useState<string>(initialName)
-
-  const initialDescription = isUpdateVariant
-    ? (props.currentValues.description || "") : ""
   const [description, setDescription] = useState<string>(initialDescription)
-
-  const initialMacros: [number, number, number, number] = isUpdateVariant
-    ? (props.currentValues.macros || [-1, -1, -1, -1]) : [-1, -1, -1, -1]
-  const [macros, setMacros] = useState<[number, number, number, number]>(initialMacros)
-
-  const initialImageFile = isUpdateVariant
-    ? (props.currentValues.imageFile || undefined) : undefined
-  const [imageFile, setImageFile] = useState<File | undefined>(initialImageFile)
-
+  const [macros, setMacros] = useState<[string, string, string, string]>(initialMacros)
+  const [imageFile, setImageFile] = useState<File | null>(initialImageFile)
   const [submitError, setSubmitError] = useState<SubmitErrors>({
-    nameError: false,
-    macrosError: false
+    name: false,
+    macros: false
   })
+
+
 
   const handleChangeMacros = (
     type: "proteins" | "carbs" | "fats" | "totalGrams",
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setSubmitError(state => ({ ...state, macrosError: false }))
-
-    const v = Number.isNaN(e.target.valueAsNumber) ? -1 : e.target.valueAsNumber
-
+    setSubmitError((state): SubmitErrors => ({ ...state, macros: false }))
     setMacros((prevMacros) => {
       const newMacros: typeof prevMacros = [...prevMacros]
       switch (type) {
       case "proteins":
-        newMacros[0] = v
+        newMacros[0] = e.target.value
         return newMacros
       case "carbs":
-        newMacros[1] = v
+        newMacros[1] = e.target.value
         return newMacros
       case "fats":
-        newMacros[2] = v
+        newMacros[2] = e.target.value
         return newMacros
       case "totalGrams":
-        newMacros[3] = v
+        newMacros[3] = e.target.value
         return newMacros
       }
     })
   }
 
   const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImageFile(e.target.files?.[0])
+    setImageFile(e.target.files?.[0] || null)
   }
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSubmitError(state => ({ ...state, nameError: false }))
+    setSubmitError((state): SubmitErrors => ({ ...state, name: false }))
     setName(e.target.value)
   }
 
@@ -96,23 +93,23 @@ export default function IngredientForm(props: IngredientFormProps) {
     e.preventDefault()
     const invalidName = !name
     const invalidMacros = macros.some(
-      elem => elem !== -1
+      elem => !elem
     ) && macros.some(
-      elem => elem === -1
+      elem => !!elem
     )
     if (invalidName || invalidMacros) {
       if (invalidMacros) {
-        setSubmitError(state => ({
+        setSubmitError((state): SubmitErrors => ({
           ...state,
-          macrosError: true,
-          macrosErrorMessage: "Macronutrientes devem ser completamente preenchidos!"
+          macros: true,
+          macrosMessage: "Macronutrientes devem ser completamente preenchidos!"
         }))
       }
       if (invalidName) {
-        setSubmitError(state => ({
+        setSubmitError((state): SubmitErrors => ({
           ...state,
-          nameError: true,
-          nameErrorMessage: "O ingrediente deve ter nome!"
+          name: true,
+          nameMessage: "O ingrediente deve ter nome!"
         }))
       }
       return
@@ -121,8 +118,12 @@ export default function IngredientForm(props: IngredientFormProps) {
     const ingredientValues: Values<AdaptedIngredient> = {
       name,
       description,
-      imageFile,
-      macros
+      ...(imageFile ? { imageFile } : null),
+      ...(macros.every(m => !!m) ? {
+        macros: macros.map(
+          item => parseFloat(item)
+        ) as [number, number, number, number]
+      } : null)
     }
 
     switch (props.variant) {
@@ -136,13 +137,16 @@ export default function IngredientForm(props: IngredientFormProps) {
 
   }
 
+  useEffect(() => console.log(submitError), [submitError.name, submitError.macros])
+
   return (
     <FormContainer onSubmit={handleSubmit}>
 
 
-      <FieldSet error={submitError.nameError}>
+      
+      <FieldSet error={submitError.name}>
         <label>Nome*</label>
-        <InputField>
+        <InputField error={submitError.name}>
           <input
             type="text" id="nome" name="nome"
             placeholder="Nome"
@@ -150,8 +154,10 @@ export default function IngredientForm(props: IngredientFormProps) {
             onChange={handleChangeName}
           />
         </InputField>
-        {submitError.nameError && <span>{submitError.nameErrorMessage}</span>}
+        {submitError.name && <span>{submitError.nameMessage}</span>}
       </FieldSet>
+
+      
 
       <FieldSet>
         <label>Descrição</label>
@@ -164,57 +170,62 @@ export default function IngredientForm(props: IngredientFormProps) {
         </InputField>
       </FieldSet>
 
-      <legend>Macronutrientes</legend>
+      
 
+      <legend>Macronutrientes</legend>
       <InputGroup>
-        <FieldSet error={submitError.macrosError}>
+        <FieldSet error={submitError.macros}>
           <label>Proteínas</label>
-          <InputField>
+          <InputField error={submitError.macros}>
             <input
               type="number" id="proteins" name="proteins"
               step="any" min="0"
-              placeholder="g" value={macros[0] !== -1 ? macros[0] : undefined}
+              placeholder="g" value={macros[0]}
               onChange={(e) => handleChangeMacros("proteins", e)}
             />
           </InputField>
         </FieldSet>
-        <FieldSet error={submitError.macrosError}>
+        <FieldSet error={submitError.macros}>
           <label>Carboidratos</label>
-          <InputField>
+          <InputField error={submitError.macros}>
             <input
               type="number" id="proteins" name="proteins"
               step="any" min="0"
-              placeholder="g" value={macros[1] !== -1 ? macros[1] : undefined}
+              placeholder="g" value={macros[1]}
               onChange={(e) => handleChangeMacros("carbs", e)}
             />
           </InputField>
         </FieldSet>
-        <FieldSet error={submitError.macrosError}>
+        <FieldSet error={submitError.macros}>
           <label>Gorduras</label>
-          <InputField>
+          <InputField error={submitError.macros}>
             <input
               type="number" id="proteins" name="proteins"
               step="any" min="0"
-              placeholder="g" value={macros[2] !== -1 ? macros[2] : undefined}
+              placeholder="g" value={macros[2]}
               onChange={(e) => handleChangeMacros("fats", e)}
             />
           </InputField>
         </FieldSet>
-
       </InputGroup>
 
-      <FieldSet error={submitError.macrosError}>
+
+      
+      <FieldSet error={submitError.macros}>
         <label>Gramas totais</label>
-        <InputField>
+        <InputField error={submitError.macros}>
           <input
             type="number" id="totalGrams" name="totalGrams"
             step="any" min="0" placeholder="g"
-            value={macros[3] !== -1 ? macros[3] : undefined}
+            value={macros[3]}
             onChange={(e) => handleChangeMacros("totalGrams", e)}
           />
         </InputField>
-        {submitError.macrosError && <span>{submitError.macrosErrorMessage}</span>}
+        {submitError.macros && <span>{submitError.macrosMessage}</span>}
       </FieldSet>
+
+      
+
 
       <FieldSet>
         <label>Imagem</label>
@@ -225,6 +236,9 @@ export default function IngredientForm(props: IngredientFormProps) {
         />
       </FieldSet>
 
+      
+
+
       <SubmitContainer>
         <Button
           variant="styled"
@@ -232,18 +246,9 @@ export default function IngredientForm(props: IngredientFormProps) {
           type="submit"
         />
       </SubmitContainer>
+      
 
-      <h1>Content</h1>
-      <h1>Content</h1>
-      <h1>Content</h1>
-      <h1>Content</h1>
-      <h1>Content</h1>
-      <h1>Content</h1>
-      <h1>Content</h1>
-      <h1>Content</h1>
-      <h1>Content</h1>
-      <h1>Content</h1>
-
+      
     </FormContainer>
   )
 }

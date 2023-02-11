@@ -2,7 +2,7 @@ import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import { Values } from "@domain/utilities/types/Values"
 import { FormContainer } from "@infra/ui/styles/formStyles"
-import React, { useEffect } from "react"
+import React from "react"
 import ConfirmDeleteForm from "./ConfirmDeleteForm"
 import IngredientForm from "./IngredientForm"
 import RecipeForm from "./RecipeForm"
@@ -86,6 +86,7 @@ export default function Form(props: FormProps) {
         ? { loading: true }
         : { loading: false, ingredients: props.data.ingredients }
       }
+      events={props.events}
     />
   case "RecipeUpdate":
     return <FormContainer />
