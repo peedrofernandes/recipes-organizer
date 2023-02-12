@@ -25,7 +25,7 @@ export default function RecipeCard(props: RecipeCardProps) {
       }
 
       <ImageContainer imageUrl={imageUrl}>
-        {imageUrl && <Icon variant="NoRecipe" />}
+        {!imageUrl && <Icon variant="NoRecipe" />}
       </ImageContainer>
 
       <ContentContainer>

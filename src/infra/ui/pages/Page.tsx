@@ -80,12 +80,19 @@ export default function Page(props: PageProps) {
             )
           })}
 
+          {data.loadingIngredients && (
+            <GridItem span={4}>
+              <Card variant="Loading" />
+            </GridItem>
+          )}
+
           <GridItem span={4}>
             <Card
               variant="CreateIngredient"
               events={{ createEvent }}
             />
           </GridItem>
+
 
         </Grid>
       </PageLayout>
@@ -98,6 +105,7 @@ export default function Page(props: PageProps) {
       <PageLayout>
         <Title>Receitas</Title>
         <Grid>
+
           {data.recipes.map((recipe) => {
 
             return (
@@ -110,6 +118,13 @@ export default function Page(props: PageProps) {
               </GridItem>
             )
           })}
+
+          {data.loadingRecipes && (
+            <GridItem span={4}>
+              <Card variant="Loading" />
+            </GridItem>
+          )}
+
           <GridItem span={4}>
             <Card variant="CreateRecipe" events={events.recipeEvents} />
           </GridItem>

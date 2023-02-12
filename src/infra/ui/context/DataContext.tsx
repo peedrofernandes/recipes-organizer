@@ -66,7 +66,7 @@ function dataReducer(state: DataState, action: DataAction) {
   case "TOGGLE_LOADING_RECIPES": {
     return {
       ...state,
-      loadingIngredients: true
+      loadingRecipes: true
     }
   }
   case "SET_INGREDIENTS": {

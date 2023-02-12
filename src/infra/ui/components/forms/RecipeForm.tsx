@@ -64,16 +64,27 @@ type SubmitErrors = ({
 export default function RecipeForm(props: RecipeFormProps) {
   const { loading } = props.data
 
-
+  let initialName = ""
+  let initialType: "Week" | "Weekend" | "Both" | "" = ""
+  let initialDescription = ""
+  let initialIngredients: [AdaptedIngredient, string][] = []
+  if (props.variant === "Update") {
+    initialName = props.recipe.name
+    initialType = props.recipe.type
+    initialDescription = props.recipe.description || ""
+    initialIngredients = props.recipe.ingredients?.map(
+      item => [item[0], item[1].toString()]
+    ) || []
+  }
 
   
   // Data States and handlers
 
-  const [name, setName] = useState<string>("")
-  const [type, setType] = useState<"Week" | "Weekend" | "Both" | "">("")
-  const [description, setDescription] = useState<string>("")
+  const [name, setName] = useState<string>(initialName)
+  const [type, setType] = useState<"Week" | "Weekend" | "Both" | "">(initialType)
+  const [description, setDescription] = useState<string>(initialDescription)
   const [imageFile, setImageFile] = useState<File | null>(null)
-  const [ingredients, setIngredients] = useState<[AdaptedIngredient, string][]>([])
+  const [ingredients, setIngredients] = useState<[AdaptedIngredient, string][]>(initialIngredients)
   const [submitError, setSubmitError] = useState<SubmitErrors>({
     name: false,
     ingredients: false,
@@ -89,6 +100,10 @@ export default function RecipeForm(props: RecipeFormProps) {
   }
 
   function handleChangeType(t: "Week" | "Weekend" | "Both") {
+    setSubmitError((state): SubmitErrors => ({
+      ...state,
+      type: false
+    }))
     switch (t) {
     case "Week": {
       const newType = (type !== "Week") ? "Week" : ""
@@ -168,7 +183,7 @@ export default function RecipeForm(props: RecipeFormProps) {
       return
     }
 
-    const adaptedRecipe: RecipeInput = {
+    const recipeInput: RecipeInput = {
       name, type, description,
       ...(imageFile ? { imageFile } : null),
       ...(!invalidIngredients ? {
@@ -177,9 +192,9 @@ export default function RecipeForm(props: RecipeFormProps) {
     }
 
     if (props.variant === "Create")
-      props.events.submitEvent(adaptedRecipe)
+      props.events.submitEvent(recipeInput)
     else
-      props.events.submitEvent({ id: props.recipe.id, ...adaptedRecipe })
+      props.events.submitEvent({ id: props.recipe.id, ...recipeInput })
   }
 
 
@@ -187,7 +202,7 @@ export default function RecipeForm(props: RecipeFormProps) {
 
   // Auxiliar states, variables, handlers and effects
   
-  const [search, setSearch] = useState<string>("Arr")
+  const [search, setSearch] = useState<string>("")
   const [ingOptions, setIngOptions] = useState<AdaptedIngredient[]>([])
   const [showTypesDropdown, setShowTypesDropdown] = useState<boolean>(false)
   const [showIngOptionsDropdown, setShowIngOptionsDropdown] = useState<boolean>(false)
@@ -291,7 +306,7 @@ export default function RecipeForm(props: RecipeFormProps) {
         )}
         {ingredients.length > 0 && (
           <div>
-            {ingredients.map(i => (
+            {ingredients.map((i, index) => (
               <IngredientListItem key={i[0].id}>
                 <div>
                   <Text>{i[0].name}</Text>
@@ -302,6 +317,7 @@ export default function RecipeForm(props: RecipeFormProps) {
                     type="number"
                     placeholder="Gramas totais"
                     onChange={(e) => handleChangeGrams(e, i[0].id)}
+                    value={ingredients[index][1]}
                   />
                 </InputField>
               </IngredientListItem>

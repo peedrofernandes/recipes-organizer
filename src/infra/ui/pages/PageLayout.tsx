@@ -109,22 +109,20 @@ export default function PageLayout(props: { children: ReactNode }) {
     })
   )
 
-  const recipeController = useMemo(() => {
-    return recipeHandler(
-      // Update UI on Create
-      (recipe: AdaptedRecipe) => dispatch({
-        type: "ADD_RECIPE", payload: { recipe }
-      }),
-      // Update UI on Update
-      (recipe: AdaptedRecipe) => dispatch({
-        type: "UPDATE_RECIPE", payload: { recipe }
-      }),
-      // Update UI on Delete
-      (id: string) => dispatch({
-        type: "DELETE_RECIPE", payload: { id }
-      })
-    )
-  }, [])
+  const recipeController = recipeHandler(
+    // Update UI on Create
+    (recipe: AdaptedRecipe) => dispatch({
+      type: "ADD_RECIPE", payload: { recipe }
+    }),
+    // Update UI on Update
+    (recipe: AdaptedRecipe) => dispatch({
+      type: "UPDATE_RECIPE", payload: { recipe }
+    }),
+    // Update UI on Delete
+    (id: string) => dispatch({
+      type: "DELETE_RECIPE", payload: { id }
+    })
+  )
 
   const events = {
     createIngredientEvent: async (ingredientInput: IngredientInput) => {
@@ -176,6 +174,10 @@ export default function PageLayout(props: { children: ReactNode }) {
     fetchIngredients()
     fetchRecipes()
   }, [])
+
+  useEffect(() => { 
+    console.log(`Loading Ingredients set to ${data.loadingIngredients}`)
+  }, [data.loadingIngredients])
 
   const CurrentForm = useMemo(() => {
     switch (form.variant) {

@@ -1,6 +1,5 @@
 import { AdaptedIngredient, AdaptedRecipe, IngredientInput, RecipeInput } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { FormContainer } from "@infra/ui/styles/formStyles"
 import React from "react"
 import ConfirmDeleteForm from "./ConfirmDeleteForm"
 import IngredientForm from "./IngredientForm"
@@ -85,8 +84,19 @@ export default function Form(props: FormProps) {
       events={props.events}
     />
   case "RecipeUpdate":
-    return <FormContainer />
+    return <RecipeForm
+      variant="Update"
+      data={props.data.loading
+        ? { loading: true }
+        : { loading: false, ingredients: props.data.ingredients }}
+      events={props.events}
+      recipe={props.recipe}
+    />
   case "RecipeDeletion":
-    return <FormContainer />
+    return <ConfirmDeleteForm
+      variant="Recipe"
+      id={props.id}
+      events={props.events}
+    />
   }
 }

@@ -5,6 +5,7 @@ import React from "react"
 import CreateIngredientCard from "./CreateIngredientCard"
 import CreateRecipeCard from "./CreateRecipeCard"
 import IngredientCard from "./IngredientCard"
+import LoadingCard from "./LoadingCard"
 import RecipeCard from "./RecipeCard"
 
 // --------- Visual Elements ----------
@@ -35,6 +36,8 @@ type CardProps = {
   events: {
     createEvent: () => void;
   }
+} | {
+  variant: "Loading"
 };
 
 // ------------------------------------
@@ -49,5 +52,7 @@ export default function Card(props: CardProps) {
     return <RecipeCard recipe={props.recipe} events={props.events} />
   case "CreateRecipe":
     return <CreateRecipeCard events={props.events} />
+  case "Loading":
+    return <LoadingCard />
   }
 }
