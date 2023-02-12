@@ -125,7 +125,8 @@ function dataReducer(state: DataState, action: DataAction): DataState {
         ...state.loading,
         createIngredient: false,
         updateIngredient: false,
-        deleteIngredient: false
+        deleteIngredient: false,
+        fetchIngredients: false
       },
       ingredients: action.payload.ingredients
     }
@@ -163,6 +164,7 @@ function dataReducer(state: DataState, action: DataAction): DataState {
       ...state,
       loading: {
         ...state.loading,
+        fetchRecipes: false,
         createRecipe: false,
         updateRecipe: false,
         deleteRecipe: false
