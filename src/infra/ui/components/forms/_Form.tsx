@@ -8,6 +8,7 @@ import RecipeForm from "./RecipeForm"
 
 export default function Form() {
   const { form } = useFormContext()
+  
   const {
     createIngredient,
     updateIngredient,
@@ -17,6 +18,7 @@ export default function Form() {
     deleteRecipe,
     cancelRequest
   } = useEvents()
+
   const { data } = useDataContext()
 
   switch (form.variant) {

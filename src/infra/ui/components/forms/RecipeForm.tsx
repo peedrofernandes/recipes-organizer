@@ -18,7 +18,7 @@ type RecipeFormProps = ({
   variant: "Update"
   recipe: AdaptedRecipe
   events: {
-    submitEvent: (adaptedRecipe: AdaptedRecipe) => void
+    submitEvent: (input: RecipeInput, id: Id) => void
   }
 }) & ({
   data: {
@@ -194,7 +194,7 @@ export default function RecipeForm(props: RecipeFormProps) {
     if (props.variant === "Create")
       props.events.submitEvent(recipeInput)
     else
-      props.events.submitEvent({ id: props.recipe.id, ...recipeInput })
+      props.events.submitEvent(recipeInput, props.recipe.id)
   }
 
 

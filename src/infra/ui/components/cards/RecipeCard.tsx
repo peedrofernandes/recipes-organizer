@@ -11,6 +11,7 @@ type RecipeCardProps = {
     updateEvent: (adaptedRecipe: AdaptedRecipe) => void;
     deleteEvent: (id: Id) => void;
   }
+  loadingUpdate: boolean
 }
 
 export default function RecipeCard(props: RecipeCardProps) {
@@ -25,7 +26,9 @@ export default function RecipeCard(props: RecipeCardProps) {
       }
 
       <ImageContainer imageUrl={imageUrl}>
-        {!imageUrl && <Icon variant="NoRecipe" />}
+        {props.loadingUpdate ? (
+          <Icon variant="Spinner"/>
+        ) : !imageUrl && <Icon variant="NoRecipe" />}
       </ImageContainer>
 
       <ContentContainer>

@@ -1,4 +1,5 @@
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
+import useDataContext from "@infra/ui/hooks/useDataContext"
 import useEvents from "@infra/ui/hooks/useEvents"
 import React from "react"
 
@@ -38,6 +39,8 @@ export default function Card(props: CardProps) {
     deleteRecipeRequest
   } = useEvents()
 
+  const { data } = useDataContext()
+
   switch (props.variant) {
   case "Ingredient":
     return <IngredientCard
@@ -46,6 +49,7 @@ export default function Card(props: CardProps) {
         updateEvent: updateIngredientRequest,
         deleteEvent: deleteIngredientRequest
       }}
+      loadingUpdate={data.loading.updateIngredient === props.ingredient.id}
     />
   case "CreateIngredient":
     return <CreateIngredientCard
@@ -58,6 +62,7 @@ export default function Card(props: CardProps) {
         updateEvent: updateRecipeRequest,
         deleteEvent: deleteRecipeRequest
       }}
+      loadingUpdate={data.loading.updateRecipe === props.recipe.id}
     />
   case "CreateRecipe":
     return <CreateRecipeCard

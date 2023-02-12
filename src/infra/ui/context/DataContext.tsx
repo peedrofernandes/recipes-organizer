@@ -6,11 +6,11 @@ type DataState = {
   loading: {
     fetchIngredients: boolean
     createIngredient: boolean
-    updateIngredient: boolean
+    updateIngredient: Id | null
     deleteIngredient: boolean
     fetchRecipes: boolean
     createRecipe: boolean
-    updateRecipe: boolean
+    updateRecipe: Id | null
     deleteRecipe: boolean
   }
   ingredients: AdaptedIngredient[]
@@ -21,12 +21,16 @@ type DataAction = {
   type:
     | "LOADING_FETCH_INGREDIENTS"
     | "LOADING_CREATE_INGREDIENT"
-    | "LOADING_UPDATE_INGREDIENT"
-    | "LOADING_DELETE_INGREDIENT" 
+    | "LOADING_DELETE_INGREDIENT"
     | "LOADING_FETCH_RECIPES"
     | "LOADING_CREATE_RECIPE"
-    | "LOADING_UPDATE_RECIPE"
     | "LOADING_DELETE_RECIPE"
+} | {
+  type: "LOADING_UPDATE_INGREDIENT"
+  payload: { id: Id }
+} | {
+  type: "LOADING_UPDATE_RECIPE"
+  payload: { id: Id }
 } | {
   type: "SET_INGREDIENTS"
   payload: {
@@ -85,13 +89,13 @@ function dataReducer(state: DataState, action: DataAction): DataState {
   case "LOADING_UPDATE_INGREDIENT": {
     return {
       ...state,
-      loading: { ...state.loading, updateIngredient: true }
+      loading: { ...state.loading, updateIngredient: action.payload.id }
     }
   }
   case "LOADING_DELETE_INGREDIENT": {
     return {
       ...state,
-      loading: { ...state.loading, updateIngredient: true }
+      loading: { ...state.loading, deleteIngredient: true }
     }
   }
   case "LOADING_FETCH_RECIPES": {
@@ -109,7 +113,7 @@ function dataReducer(state: DataState, action: DataAction): DataState {
   case "LOADING_UPDATE_RECIPE": {
     return {
       ...state,
-      loading: { ...state.loading, updateRecipe: true }
+      loading: { ...state.loading, updateRecipe: action.payload.id }
     }
   }
   case "LOADING_DELETE_RECIPE": {
@@ -124,7 +128,7 @@ function dataReducer(state: DataState, action: DataAction): DataState {
       loading: {
         ...state.loading,
         createIngredient: false,
-        updateIngredient: false,
+        updateIngredient: null,
         deleteIngredient: false,
         fetchIngredients: false
       },
@@ -148,7 +152,7 @@ function dataReducer(state: DataState, action: DataAction): DataState {
     newIngredients[indexFound] = action.payload.ingredient
     return {
       ...state,
-      loading: { ...state.loading, updateIngredient: false },
+      loading: { ...state.loading, updateIngredient: null },
       ingredients: newIngredients
     }
   }
@@ -166,7 +170,7 @@ function dataReducer(state: DataState, action: DataAction): DataState {
         ...state.loading,
         fetchRecipes: false,
         createRecipe: false,
-        updateRecipe: false,
+        updateRecipe: null,
         deleteRecipe: false
       },
       recipes: action.payload.recipes
@@ -187,7 +191,7 @@ function dataReducer(state: DataState, action: DataAction): DataState {
     newRecipes[indexFound] = action.payload.recipe
     return {
       ...state,
-      loading: { ...state.loading, updateRecipe: false },
+      loading: { ...state.loading, updateRecipe: null },
       recipes: newRecipes
     }
   }
@@ -209,11 +213,11 @@ const initialState: DataState = {
   loading: {
     fetchIngredients: false,
     createIngredient: false,
-    updateIngredient: false,
+    updateIngredient: null,
     deleteIngredient: false,
     fetchRecipes: false,
     createRecipe: false,
-    updateRecipe: false,
+    updateRecipe: null,
     deleteRecipe: false
   },
   recipes: []

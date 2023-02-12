@@ -1,5 +1,6 @@
 import Ingredient from "@domain/entities/Ingredient"
 import Recipe, { isRecipeOptions } from "@domain/entities/Recipe"
+import { Id } from "@domain/utilities/types/Id"
 import { AdaptedIngredient, AdaptedRecipe, RecipeInput } from "./AdaptedTypes"
 
 export class RecipeAdapter {
@@ -10,7 +11,7 @@ export class RecipeAdapter {
   ) { }
 
   // EntityInput => Entity
-  async createRecipeEntity(recipeInput: RecipeInput): Promise<Recipe> {
+  async createRecipeEntity(recipeInput: RecipeInput, id?: Id): Promise<Recipe> {
     const { name, description, type, imageFile, ingredients } = recipeInput
 
     const options = {
@@ -19,6 +20,7 @@ export class RecipeAdapter {
     }
   
     return new Recipe({
+      id,
       name,
       type,
       options: (isRecipeOptions(options) ? options : undefined),

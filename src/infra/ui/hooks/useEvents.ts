@@ -34,10 +34,10 @@ export default function useEvents() {
       await ingredientController.createIngredient(ingredientInput)
     },
 
-    updateIngredient: async (adaptedIngredient: AdaptedIngredient) => {
-      dispatch({ type: "LOADING_UPDATE_INGREDIENT"})
+    updateIngredient: async (input: IngredientInput, id: Id) => {
+      dispatch({ type: "LOADING_UPDATE_INGREDIENT", payload: { id }})
       setForm({ variant: null })
-      await ingredientController.updateIngredient(adaptedIngredient)
+      await ingredientController.updateIngredient(input, id)
     },
 
     deleteIngredient: async (id: string) => {
@@ -52,10 +52,10 @@ export default function useEvents() {
       await recipeController.createRecipe(recipeInput)
     },
 
-    updateRecipe: async (adaptedRecipe: AdaptedRecipe) => {
-      dispatch({ type: "LOADING_UPDATE_RECIPE"})
+    updateRecipe: async (input: RecipeInput, id: Id) => {
+      dispatch({ type: "LOADING_UPDATE_RECIPE", payload: { id }})
       setForm({ variant: null })
-      await recipeController.updateRecipe(adaptedRecipe)
+      await recipeController.updateRecipe(input, id)
     },
 
     deleteRecipe: async (id: string) => {

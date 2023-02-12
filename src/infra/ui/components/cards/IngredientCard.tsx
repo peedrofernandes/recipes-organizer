@@ -11,6 +11,7 @@ type IngredientCardProps = {
     updateEvent: (adaptedIngredient: AdaptedIngredient) => void;
     deleteEvent: (id: Id) => void;
   }
+  loadingUpdate: boolean
 }
 
 export default function IngredientCard(props: IngredientCardProps) {
@@ -21,19 +22,25 @@ export default function IngredientCard(props: IngredientCardProps) {
 
       <ImageContainer imageUrl={imageUrl}>
 
-        {
-          macros && (
-            <MacrosSpan>
-              <ul>
-                <li>P: {macros[0].toFixed(2)}g</li>
-                <li>C: {macros[1].toFixed(2)}g</li>
-                <li>G: {macros[2].toFixed(2)}g</li>
-              </ul>
-            </MacrosSpan>
-          )
-        }
+        {props.loadingUpdate ? (
+          <Icon variant="Spinner"/>
+        ) : (
+          <>
+            {macros && (
+              <MacrosSpan>
+                <ul>
+                  <li>P: {macros[0].toFixed(2)}g</li>
+                  <li>C: {macros[1].toFixed(2)}g</li>
+                  <li>G: {macros[2].toFixed(2)}g</li>
+                </ul>
+              </MacrosSpan>
+            )}
+            {!imageUrl && <Icon variant="NoRecipe" />}
+          </> 
+        )}
 
-        {!imageUrl && <Icon variant="NoRecipe" />}
+        
+
       </ImageContainer>
 
       <ContentContainer>

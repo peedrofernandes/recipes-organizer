@@ -70,13 +70,14 @@ export default class RecipeController {
     return adaptedRecipes
   }
 
-  public async updateRecipe(adaptedRecipe: AdaptedRecipe) {
+  public async updateRecipe(input: RecipeInput, id: Id) {
     const updateUI = (recipe: Recipe) => {
       const adaptedRecipe = this.recipeAdapter.adaptRecipe(recipe)
       this.uiCallbacks.updateUIOnUpdate(adaptedRecipe)
     }
     const updateRecipeUseCase = new UpdateRecipe(this.recipeRepository, updateUI)
-    const recipe = this.recipeAdapter.retrieveRecipe(adaptedRecipe)
+
+    const recipe = await this.recipeAdapter.createRecipeEntity(input, id)
     await updateRecipeUseCase.execute(recipe)
   }
 

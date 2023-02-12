@@ -1,4 +1,5 @@
 import { AdaptedIngredient, IngredientInput } from "@controllers/AdaptedTypes"
+import { Id } from "@domain/utilities/types/Id"
 import { FieldSet, FormContainer, InputField, InputGroup, SubmitContainer } from "@infra/ui/styles/formStyles"
 import React, { useEffect, useState } from "react"
 import Button from "../buttons/_Button"
@@ -6,13 +7,13 @@ import Button from "../buttons/_Button"
 type IngredientFormProps = {
   variant: "Create"
   events: {
-    submitEvent: (ingredientInput: IngredientInput) => void;
+    submitEvent: (input: IngredientInput) => void;
   }
 } | {
   variant: "Update"
   ingredient: AdaptedIngredient
   events: {
-    submitEvent: (adaptedIngredint: AdaptedIngredient) => void;
+    submitEvent: (input: IngredientInput, id: Id) => void;
   }
 }
 
@@ -126,10 +127,7 @@ export default function IngredientForm(props: IngredientFormProps) {
       props.events.submitEvent(inputData)
       break
     case "Update":
-      props.events.submitEvent({
-        id: props.ingredient.id,
-        ...inputData
-      })
+      props.events.submitEvent(inputData, props.ingredient.id)
       break
     }
 

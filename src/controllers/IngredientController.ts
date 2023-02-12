@@ -54,7 +54,7 @@ export default class IngredientController {
     return adaptedIngredients
   }
 
-  public async updateIngredient(adaptedIngredient: AdaptedIngredient) {
+  public async updateIngredient(input: IngredientInput, id: Id) {
     const updateUI = (ingredient: Ingredient) => {
       const adaptedIngredient = this.ingredientAdapter.adaptIngredient(ingredient)
       this.uiCallbacks.updateUIOnUpdate(adaptedIngredient)
@@ -62,7 +62,8 @@ export default class IngredientController {
     const updateIngredientUseCase = new UpdateIngredient(
       this.ingredientRepository, updateUI
     )
-    const ingredient = this.ingredientAdapter.retrieveIngredient(adaptedIngredient)
+
+    const ingredient = await this.ingredientAdapter.createIngredientEntity(input, id)
     await updateIngredientUseCase.execute(ingredient)
   }
 
