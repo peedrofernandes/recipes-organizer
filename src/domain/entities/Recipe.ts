@@ -142,7 +142,7 @@ export default class Recipe {
     if (options) this._options = options
 
     // Ingredient List
-    if (ingredientList) {
+    if (ingredientList && ingredientList.length > 0) {
       this._ingredientList = ingredientList
 
       const everyIngredientHasMacros = ingredientList.every(

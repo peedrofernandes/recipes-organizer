@@ -1,6 +1,6 @@
 import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { CardContainer, ContentContainer, ImageContainer, TypeSpan } from "@infra/ui/styles/cardStyles"
+import { CardContainer, ContentContainer, ImageContainer, MacrosSpan, TypeSpan } from "@infra/ui/styles/cardStyles"
 import React from "react"
 import Button from "../buttons/_Button"
 import Icon from "../icons/_Icon"
@@ -15,7 +15,7 @@ type RecipeCardProps = {
 }
 
 export default function RecipeCard(props: RecipeCardProps) {
-  const { id, type, name, description, imageUrl  } = props.recipe
+  const { id, type, name, description, imageUrl, macros  } = props.recipe
 
   return (
     <CardContainer status="active">
@@ -26,9 +26,25 @@ export default function RecipeCard(props: RecipeCardProps) {
       }
 
       <ImageContainer imageUrl={imageUrl}>
+
         {props.loadingUpdate ? (
           <Icon variant="Spinner"/>
-        ) : !imageUrl && <Icon variant="NoRecipe" />}
+        ) : (
+          <>
+            {macros && (
+              <MacrosSpan>
+                <ul>
+                  <li>P: {macros[0].toFixed(2)}g</li>
+                  <li>C: {macros[1].toFixed(2)}g</li>
+                  <li>G: {macros[2].toFixed(2)}g</li>
+                </ul>
+              </MacrosSpan>
+            )}
+            {!imageUrl && <Icon variant="NoRecipe" />}
+          </> 
+        )}
+
+
       </ImageContainer>
 
       <ContentContainer>

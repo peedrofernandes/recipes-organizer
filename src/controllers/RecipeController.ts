@@ -58,7 +58,9 @@ export default class RecipeController {
       this.uiCallbacks.updateUIOnCreate(adaptedRecipe)
     }
     const createRecipeUseCase = new CreateRecipe(this.recipeRepository, updateUI)
+    console.trace(input)
     const recipe = await this.recipeAdapter.createRecipeEntity(input)
+    console.trace(recipe)
     await createRecipeUseCase.execute(recipe)
   }
 
