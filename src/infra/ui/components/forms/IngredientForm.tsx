@@ -1,6 +1,4 @@
-import { AdaptedIngredient } from "@controllers/AdaptedTypes"
-import { Id } from "@domain/utilities/types/Id"
-import { Values } from "@domain/utilities/types/Values"
+import { AdaptedIngredient, IngredientInput } from "@controllers/AdaptedTypes"
 import { FieldSet, FormContainer, InputField, InputGroup, SubmitContainer } from "@infra/ui/styles/formStyles"
 import React, { useEffect, useState } from "react"
 import Button from "../buttons/_Button"
@@ -8,14 +6,13 @@ import Button from "../buttons/_Button"
 type IngredientFormProps = {
   variant: "Create"
   events: {
-    submitEvent: (values: Values<AdaptedIngredient>) => void;
+    submitEvent: (ingredientInput: IngredientInput) => void;
   }
 } | {
   variant: "Update"
-  currentValues: Values<AdaptedIngredient>
-  id: Id,
+  ingredient: AdaptedIngredient
   events: {
-    submitEvent: (id: Id, values: Values<AdaptedIngredient>) => void;
+    submitEvent: (adaptedIngredint: AdaptedIngredient) => void;
   }
 }
 
@@ -37,18 +34,16 @@ export default function IngredientForm(props: IngredientFormProps) {
   let initialName = ""
   let initialDescription = ""
   let initialMacros: StringTuple = ["", "", "", ""]
-  let initialImageFile: File | null = null
   if (props.variant === "Update") {
-    initialName = props.currentValues.name
-    initialDescription = props.currentValues.description || ""
-    initialMacros = props.currentValues.macros?.map(item => item.toString()) as StringTuple || ["", "", "", ""]
-    initialImageFile = props.currentValues.imageFile || null
+    initialName = props.ingredient.name
+    initialDescription = props.ingredient.description || ""
+    initialMacros = props.ingredient.macros?.map(item => item.toString()) as StringTuple || ["", "", "", ""]
   }
   
   const [name, setName] = useState<string>(initialName)
   const [description, setDescription] = useState<string>(initialDescription)
   const [macros, setMacros] = useState<[string, string, string, string]>(initialMacros)
-  const [imageFile, setImageFile] = useState<File | null>(initialImageFile)
+  const [imageFile, setImageFile] = useState<File | null>()
   const [submitError, setSubmitError] = useState<SubmitErrors>({
     name: false,
     macros: false
@@ -115,7 +110,7 @@ export default function IngredientForm(props: IngredientFormProps) {
       return
     }
 
-    const ingredientValues: Values<AdaptedIngredient> = {
+    const inputData: IngredientInput = {
       name,
       description,
       ...(imageFile ? { imageFile } : null),
@@ -128,10 +123,13 @@ export default function IngredientForm(props: IngredientFormProps) {
 
     switch (props.variant) {
     case "Create":
-      props.events.submitEvent(ingredientValues)
+      props.events.submitEvent(inputData)
       break
     case "Update":
-      props.events.submitEvent(props.id, ingredientValues)
+      props.events.submitEvent({
+        id: props.ingredient.id,
+        ...inputData
+      })
       break
     }
 

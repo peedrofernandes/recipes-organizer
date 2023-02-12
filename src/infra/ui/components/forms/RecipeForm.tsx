@@ -1,7 +1,6 @@
-import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
+import { AdaptedIngredient, AdaptedRecipe, RecipeInput } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { Values } from "@domain/utilities/types/Values"
-import { Dropdown, DropdownItem, FieldSet, FormContainer, IngredientListItem, IngredientMacrosSpan, InputField, SelectTitle, SubmitContainer } from "@infra/ui/styles/formStyles"
+import { Dropdown, DropdownItem, FieldSet, FormContainer, IngredientListItem, IngredientMacrosSpan, InputField, SelectField, SubmitContainer } from "@infra/ui/styles/formStyles"
 import { Span, Subtitle, Text } from "@infra/ui/styles/generalStyles"
 import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
 import Button from "../buttons/_Button"
@@ -13,14 +12,13 @@ import Icon from "../icons/_Icon"
 type RecipeFormProps = ({
   variant: "Create"
   events: {
-    submitEvent: (values: Values<AdaptedRecipe>) => void
+    submitEvent: (input: RecipeInput) => void
   }
 } | {
   variant: "Update"
-  id: Id
-  currentValues: Values<AdaptedRecipe>
+  recipe: AdaptedRecipe
   events: {
-    submitEvent: (id: Id, values: Values<AdaptedRecipe>) => void
+    submitEvent: (adaptedRecipe: AdaptedRecipe) => void
   }
 }) & ({
   data: {
@@ -83,7 +81,7 @@ export default function RecipeForm(props: RecipeFormProps) {
   })
 
   function handleChangeName(e: ChangeEvent<HTMLInputElement>) {
-    setSubmitError(state => ({
+    setSubmitError((state): SubmitErrors => ({
       ...state,
       name: false
     }))
@@ -118,10 +116,14 @@ export default function RecipeForm(props: RecipeFormProps) {
   }
 
   function handleChangeGrams(e: ChangeEvent<HTMLInputElement>, id: Id) {
+    setSubmitError((state): SubmitErrors => ({
+      ...state,
+      ingredients: false
+    }))
     const index = ingredients.findIndex(item => item[0].id === id)
     const ing = ingredients[index]
     if (!ing) {
-      setSubmitError(state => ({
+      setSubmitError((state): SubmitErrors => ({
         ...state,
         ingredients: true,
         ingredientsMessage: "Erro - Não foi possível encontrar o ingrediente (contatar desenvolvedor)"
@@ -146,19 +148,19 @@ export default function RecipeForm(props: RecipeFormProps) {
 
     if (invalidName || invalidIngredients || invalidType) {
       if (invalidName)
-        setSubmitError(state => ({
+        setSubmitError((state): SubmitErrors => ({
           ...state,
           name: true,
           nameMessage: "A receita deve ter um nome!"
         }))
       if (invalidIngredients)
-        setSubmitError(state => ({
+        setSubmitError((state): SubmitErrors => ({
           ...state,
           ingredients: true,
           ingredientsMessage: "Todos os ingredientes devem ter uma quantidade em gramas!"
         }))
       if (invalidType)
-        setSubmitError(state => ({
+        setSubmitError((state): SubmitErrors => ({
           ...state,
           type: true,
           typeMessage: "A receita deve ter um tipo!"
@@ -166,7 +168,7 @@ export default function RecipeForm(props: RecipeFormProps) {
       return
     }
 
-    const adaptedRecipe: Values<AdaptedRecipe> = {
+    const adaptedRecipe: RecipeInput = {
       name, type, description,
       ...(imageFile ? { imageFile } : null),
       ...(!invalidIngredients ? {
@@ -177,7 +179,7 @@ export default function RecipeForm(props: RecipeFormProps) {
     if (props.variant === "Create")
       props.events.submitEvent(adaptedRecipe)
     else
-      props.events.submitEvent(props.id, adaptedRecipe)
+      props.events.submitEvent({ id: props.recipe.id, ...adaptedRecipe })
   }
 
 
@@ -203,7 +205,7 @@ export default function RecipeForm(props: RecipeFormProps) {
     }
   }
   function handleChangeSearch(e: ChangeEvent<HTMLInputElement>) {
-    setSubmitError(state => ({
+    setSubmitError((state): SubmitErrors => ({
       ...state,
       ingredients: false
     }))
@@ -312,15 +314,17 @@ export default function RecipeForm(props: RecipeFormProps) {
 
 
       {/* Type selection */}
-      <FieldSet>
+      <FieldSet error={submitError.type}>
         <label>Tipo</label>
-        <SelectTitle
+        <SelectField
           onClick={() => setShowTypesDropdown(true)}
           ref={typesTitleRef}
           selected={type !== undefined}
+          error={submitError.type}
         >
           {type ? typeTranslator[type] : "Selecione"}
-        </SelectTitle>
+        </SelectField>
+        {submitError.type && <span>{submitError.typeMessage}</span>}
         {showTypesDropdown && (
           <Dropdown>
             <DropdownItem active={type === "Week"} onClick={() => handleChangeType("Week")}>

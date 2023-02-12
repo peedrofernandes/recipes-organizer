@@ -3,7 +3,7 @@
 import Ingredient from "../entities/Ingredient"
 import { IRepository } from "../repositories/IRepository"
 import { Id } from "../utilities/types/Id"
-import IUseCase from "./IUseCase"
+import IUseCase from "./_IUseCase"
 
 export default class DeleteIngredient implements IUseCase<[Id], void> {
   constructor(

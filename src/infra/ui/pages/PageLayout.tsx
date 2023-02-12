@@ -8,9 +8,8 @@ import Button from "../components/buttons/_Button"
 import Icon from "../components/icons/_Icon"
 import Modal from "../components/modals/_Modal"
 import ingredientHandler from "../../handlers/IngredientHandler"
-import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
+import { AdaptedIngredient, AdaptedRecipe, IngredientInput, RecipeInput } from "@controllers/AdaptedTypes"
 import recipeHandler from "@infra/handlers/RecipeHandler"
-import { Values } from "@domain/utilities/types/Values"
 import { DataContext } from "../context/DataContext"
 import { FormContext } from "../context/FormContext"
 import Form from "../components/forms/_Form"
@@ -128,30 +127,30 @@ export default function PageLayout(props: { children: ReactNode }) {
   }, [])
 
   const events = {
-    createIngredientEvent: async (values: Values<AdaptedIngredient>) => {
+    createIngredientEvent: async (ingredientInput: IngredientInput) => {
       dispatch({ type: "TOGGLE_LOADING_INGREDIENTS"})
       setForm({ variant: null })
-      await ingredientController.createIngredient(values)
+      await ingredientController.createIngredient(ingredientInput)
     },
-    updateIngredientEvent: async (id: string, values: Values<AdaptedIngredient>) => {
+    updateIngredientEvent: async (adaptedIngredient: AdaptedIngredient) => {
       dispatch({ type: "TOGGLE_LOADING_INGREDIENTS"})
       setForm({ variant: null })
-      await ingredientController.updateIngredient(id, values)
+      await ingredientController.updateIngredient(adaptedIngredient)
     },
     deleteIngredientEvent: async (id: string) => {
       dispatch({ type: "TOGGLE_LOADING_INGREDIENTS"})
       setForm({ variant: null })
       await ingredientController.deleteIngredient(id)
     },
-    createRecipeEvent: async (values: Values<AdaptedRecipe>) => {
+    createRecipeEvent: async (recipeInput: RecipeInput) => {
       dispatch({ type: "TOGGLE_LOADING_RECIPES" })
       setForm({ variant: null })
-      await recipeController.createRecipe(values)
+      await recipeController.createRecipe(recipeInput)
     },
-    updateRecipeEvent: async (id: string, values: Values<AdaptedRecipe>) => {
+    updateRecipeEvent: async (adaptedRecipe: AdaptedRecipe) => {
       dispatch({ type: "TOGGLE_LOADING_RECIPES"})
       setForm({ variant: null })
-      await recipeController.updateRecipe(id, values)
+      await recipeController.updateRecipe(adaptedRecipe)
     },
     deleteRecipeEvent: async (id: string) => {
       dispatch({ type: "TOGGLE_LOADING_RECIPES"})
@@ -198,9 +197,8 @@ export default function PageLayout(props: { children: ReactNode }) {
           title="Editar ingrediente"
         >
           <Form
-            id={form.id}
             variant="IngredientUpdate"
-            currentValues={form.currentValues}
+            ingredient={form.ingredient}
             events={{ submitEvent: events.updateIngredientEvent }}
           />
         </Modal>)
@@ -242,8 +240,7 @@ export default function PageLayout(props: { children: ReactNode }) {
         >
           <Form
             variant="RecipeUpdate"
-            id={form.id}
-            currentValues={form.currentValues}
+            recipe={form.recipe}
             events={{ submitEvent: events.updateRecipeEvent }}
             data={data.loadingIngredients
               ? { loading: true }

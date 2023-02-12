@@ -1,18 +1,17 @@
 import { Id } from "../utilities/types/Id"
 import Recipe from "../entities/Recipe"
-import IUseCase from "./IUseCase"
+import IUseCase from "./_IUseCase"
 import { IRepository } from "../repositories/IRepository"
-import { Values } from "@domain/utilities/types/Values"
 
-export default class UpdateRecipe implements IUseCase<[Id, Values<Recipe>],void> {
+export default class UpdateRecipe implements IUseCase<[Recipe],void> {
   constructor(
     private recipeRepository: IRepository<Recipe>,
     private updateUI: (newRecipe: Recipe) => void
   ) { }
 
-  async execute(recipeId: Id, newValues: Values<Recipe>) {
-    await this.recipeRepository.update(recipeId, newValues)
-    const newRecipe = await this.recipeRepository.find(recipeId)
+  async execute(recipe: Recipe) {
+    await this.recipeRepository.update(recipe)
+    const newRecipe = await this.recipeRepository.find(recipe.id)
     this.updateUI(newRecipe)
   }
 }

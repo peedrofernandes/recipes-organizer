@@ -2,7 +2,7 @@ import { AdaptedIngredient } from "@controllers/AdaptedTypes"
 import IngredientController from "@controllers/IngredientController"
 import { Id } from "@domain/utilities/types/Id"
 import IngredientRepository from "./IngredientRepository"
-import { services } from "./services"
+import services from "./services"
 
 export default function ingredientHandler(
   updateUIOnCreate: (ingredient: AdaptedIngredient) => void,

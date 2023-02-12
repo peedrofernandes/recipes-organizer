@@ -1,6 +1,6 @@
 import axios from "axios"
 
-export const services = {
+export default {
   async postImage(image: File): Promise<string> {
     try {
       const response = await axios({

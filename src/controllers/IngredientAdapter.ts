@@ -1,63 +1,64 @@
 import Ingredient, { isIngredientOptions } from "@domain/entities/Ingredient"
-import { Values } from "@domain/utilities/types/Values"
-import { AdaptedIngredient } from "./AdaptedTypes"
+import { AdaptedIngredient, IngredientInput } from "./AdaptedTypes"
 
-export function getIngredientEntity(ingredient: AdaptedIngredient): Ingredient {
-  const options = {
-    description: ingredient.description,
-    imageUrl: ingredient.imageUrl
+export class IngredientAdapter {
+  constructor(
+    private postImage: (file: File) => Promise<string>
+  ) { } 
+
+  // EntityInput => Entity
+  async createIngredientEntity(ingredient: IngredientInput): Promise<Ingredient> {
+    const { name, description, imageFile, macros } = ingredient
+
+    const options = {
+      description,
+      imageUrl: imageFile ? await this.postImage(imageFile) : null
+    }
+  
+    return new Ingredient({
+      name,
+      macros: (macros ? {
+        proteins: macros[0],
+        carbs: macros[1],
+        fats: macros[2],
+        gramsPerServing: macros[3]
+      } : undefined),
+      options: (isIngredientOptions(options) ? options : undefined)
+    })
   }
 
-  return new Ingredient({
-    id: ingredient.id,
-    name: ingredient.name,
-    macros: (ingredient.macros ? {
-      proteins: ingredient.macros[0],
-      carbs: ingredient.macros[1],
-      fats: ingredient.macros[2],
-      gramsPerServing: ingredient.macros[3]
-    } : undefined),
-    options: (isIngredientOptions(options) ? options : undefined)
-  })
-}
+  // Entity => AdaptedEntity
+  adaptIngredient(ingredient: Ingredient): AdaptedIngredient {
+    const { id, name, macros, options } = ingredient
 
-export async function adaptIngredient(
-  ingredient: Ingredient,
-  getImageFile: (imageUrl: string) => Promise<File>
-): Promise<AdaptedIngredient> {
-  return {
-    id: ingredient.id,
-    name: ingredient.name,
-    description: ingredient.options?.description,
-    imageFile: (ingredient.options?.imageUrl ? (
-      await getImageFile(ingredient.options.imageUrl)
-    ) : undefined),
-    imageUrl: ingredient.options?.imageUrl,
-    macros: (ingredient.macros ? [
-      ingredient.macros.proteins,
-      ingredient.macros.carbs,
-      ingredient.macros.fats,
-      ingredient.macros.gramsPerServing
-    ] : undefined)
-  }
-}
-
-export function getIngredientEntityValues(
-  adaptedValues: Values<AdaptedIngredient>
-): Values<Ingredient> {
-  const options = {
-    description: adaptedValues.description,
-    imageUrl: adaptedValues.imageUrl
+    return {
+      id, name,
+      description: options?.description,
+      imageUrl: options?.imageUrl,
+      macros: (macros ? [
+        macros.proteins,
+        macros.carbs,
+        macros.fats,
+        macros.gramsPerServing
+      ] : undefined)
+    }
   }
 
-  return {
-    name: adaptedValues.name,
-    macros: (adaptedValues.macros ? {
-      proteins: adaptedValues.macros[0],
-      carbs: adaptedValues.macros[1],
-      fats: adaptedValues.macros[2],
-      gramsPerServing: adaptedValues.macros[3],
-    } : undefined),
-    options: (isIngredientOptions(options) ? options : undefined),
+  // AdaptedEntity => Entity
+  retrieveIngredient(adaptedIngredient: AdaptedIngredient): Ingredient {
+    const { id, name, description, imageUrl, macros } = adaptedIngredient
+ 
+    const options = { description, imageUrl }
+
+    return new Ingredient({
+      id, name,
+      options: (isIngredientOptions(options) ? options : undefined),
+      macros: (macros ? {
+        proteins: macros[0],
+        carbs: macros[1],
+        fats: macros[2],
+        gramsPerServing: macros[3]
+      } : undefined)
+    })
   }
 }

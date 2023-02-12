@@ -1,7 +1,7 @@
 import Ingredient from "../entities/Ingredient"
 import Recipe from "../entities/Recipe"
 import { IRepository } from "../repositories/IRepository"
-import IUseCase from "./IUseCase"
+import IUseCase from "./_IUseCase"
 
 import { exists } from "../utilities/algorithms/binarySearch"
 import ExtractIngredients from "@domain/utilities/services/ExtractIngredients"

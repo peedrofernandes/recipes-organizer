@@ -1,6 +1,5 @@
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { Values } from "@domain/utilities/types/Values"
 import React from "react"
 
 import CreateIngredientCard from "./CreateIngredientCard"
@@ -16,14 +15,14 @@ type CardProps = {
   variant: "Ingredient";
   ingredient: AdaptedIngredient;
   events: {
-    updateEvent: (id: Id, currentValues: Values<AdaptedIngredient>) => void;
+    updateEvent: (adaptedIngredient: AdaptedIngredient) => void;
     deleteEvent: (id: Id) => void;
   }
 } | {
   variant: "Recipe";
   recipe: AdaptedRecipe;
   events: {
-    updateEvent: (id: Id, currentValues: Values<AdaptedRecipe>) => void;
+    updateEvent: (adaptedRecipe: AdaptedRecipe) => void;
     deleteEvent: (id: Id) => void;
   }
 } | {

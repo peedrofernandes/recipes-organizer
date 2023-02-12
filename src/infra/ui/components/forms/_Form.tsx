@@ -1,6 +1,5 @@
-import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
+import { AdaptedIngredient, AdaptedRecipe, IngredientInput, RecipeInput } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { Values } from "@domain/utilities/types/Values"
 import { FormContainer } from "@infra/ui/styles/formStyles"
 import React from "react"
 import ConfirmDeleteForm from "./ConfirmDeleteForm"
@@ -10,14 +9,13 @@ import RecipeForm from "./RecipeForm"
 type FormProps = {
   variant: "IngredientCreation",
   events: {
-    submitEvent: (values: Values<AdaptedIngredient>) => Promise<void>
+    submitEvent: (ingredientInput: IngredientInput) => Promise<void>
   }
 } | {
   variant: "IngredientUpdate",
-  id: Id,
-  currentValues: Values<AdaptedIngredient>
+  ingredient: AdaptedIngredient
   events: {
-    submitEvent: (id: Id, values: Values<AdaptedIngredient>) => Promise<void>
+    submitEvent: (adaptedIngredient: AdaptedIngredient) => Promise<void>
   }
 } | {
   variant: "IngredientDeletion",
@@ -35,7 +33,7 @@ type FormProps = {
     ingredients: AdaptedIngredient[]
   }
   events: {
-    submitEvent: (values: Values<AdaptedRecipe>) => Promise<void>
+    submitEvent: (recipeInput: RecipeInput) => Promise<void>
   }
 } | {
   variant: "RecipeUpdate",
@@ -45,10 +43,9 @@ type FormProps = {
     loading: false
     ingredients: AdaptedIngredient[]
   }
-  id: Id,
-  currentValues: Values<AdaptedRecipe>
+  recipe: AdaptedRecipe
   events: {
-    submitEvent: (id: Id, values: Values<AdaptedRecipe>) => Promise<void>
+    submitEvent: (adaptedRecipe: AdaptedRecipe) => Promise<void>
   }
 } | {
   variant: "RecipeDeletion",
@@ -69,8 +66,7 @@ export default function Form(props: FormProps) {
   case "IngredientUpdate":
     return <IngredientForm
       variant="Update"
-      id={props.id}
-      currentValues={props.currentValues}
+      ingredient={props.ingredient}
       events={props.events}
     />
   case "IngredientDeletion":

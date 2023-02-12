@@ -1,5 +1,5 @@
 import Recipe from "../entities/Recipe"
-import IUseCase from "./IUseCase"
+import IUseCase from "./_IUseCase"
 
 export default class RandomizeRecipes implements IUseCase<[Recipe[], Date], File> {
 

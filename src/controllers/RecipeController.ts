@@ -1,4 +1,3 @@
-import { Values } from "@domain/utilities/types/Values"
 import CreateRecipe from "../domain/application/CreateRecipe"
 import DeleteRecipe from "../domain/application/DeleteRecipe"
 import GenerateJson from "../domain/application/GenerateJson"
@@ -7,12 +6,17 @@ import RandomizeRecipes from "../domain/application/RandomizeRecipes"
 import UpdateRecipe from "../domain/application/UpdateRecipe"
 import Ingredient from "../domain/entities/Ingredient"
 import Recipe from "../domain/entities/Recipe"
+
 import { IRepository } from "../domain/repositories/IRepository"
 import { Id } from "../domain/utilities/types/Id"
-import { AdaptedRecipe } from "./AdaptedTypes"
-import { adaptRecipe, getRecipeEntityValues } from "./RecipeAdapter"
+import { AdaptedRecipe, RecipeInput } from "./AdaptedTypes"
+import { IngredientAdapter } from "./IngredientAdapter"
+import { RecipeAdapter } from "./RecipeAdapter"
 
 export default class RecipeController {
+  private ingredientAdapter: IngredientAdapter
+  private recipeAdapter: RecipeAdapter
+
   // ----------- CONSTRUCTOR ------------
 
   constructor(
@@ -29,7 +33,16 @@ export default class RecipeController {
       postImage: (image: File) => Promise<string>,
       retrieveImage: (imageUrl: string) => Promise<File>
     }
-  ) { }
+  ) { 
+    this.ingredientAdapter = new IngredientAdapter(
+      this.services.postImage)
+    this.recipeAdapter = new RecipeAdapter(
+      this.services.postImage,
+      this.ingredientAdapter.retrieveIngredient,
+      this.ingredientAdapter.adaptIngredient
+    )
+  }
+
 
   // ------------------------------------
 
@@ -39,93 +52,60 @@ export default class RecipeController {
 
   // ------------ PUBLIC API ------------
 
-  public async createRecipe(
-    adaptedValues: Values<AdaptedRecipe>
-  ): Promise<void> {
+  public async createRecipe(input: RecipeInput): Promise<void> {
     const updateUI = async (recipe: Recipe) => {
-      const adaptedRecipe = await adaptRecipe(recipe, this.services.retrieveImage)
+      const adaptedRecipe = this.recipeAdapter.adaptRecipe(recipe)
       this.uiCallbacks.updateUIOnCreate(adaptedRecipe)
     }
-    const createRecipeUseCase = new CreateRecipe(
-      this.recipeRepository,
-      updateUI
-    )
-
-    const attributes = getRecipeEntityValues(adaptedValues)
-    await createRecipeUseCase.execute(attributes)
+    const createRecipeUseCase = new CreateRecipe(this.recipeRepository, updateUI)
+    const recipe = await this.recipeAdapter.createRecipeEntity(input)
+    await createRecipeUseCase.execute(recipe)
   }
 
   public async getAllRecipes(): Promise<AdaptedRecipe[]> {
     const recipes = await this.recipeRepository.findAll()
-    const adaptedRecipes = Promise.all(recipes.map(
-      async (recipe) => await adaptRecipe(recipe, this.services.retrieveImage)
-    ))
+    const adaptedRecipes = recipes.map(
+      recipe => this.recipeAdapter.adaptRecipe(recipe)
+    )
     return adaptedRecipes
   }
 
-  public async updateRecipe(id: Id, newValues: Values<AdaptedRecipe>) {
-    const updateUI = async (recipe: Recipe) => {
-      const adaptedRecipe = await adaptRecipe(recipe, this.services.retrieveImage)
+  public async updateRecipe(adaptedRecipe: AdaptedRecipe) {
+    const updateUI = (recipe: Recipe) => {
+      const adaptedRecipe = this.recipeAdapter.adaptRecipe(recipe)
       this.uiCallbacks.updateUIOnUpdate(adaptedRecipe)
     }
-    const updateRecipeUseCase = new UpdateRecipe(
-      this.recipeRepository,
-      updateUI
-    )
-
-    const modifiedRecipe = await adaptRecipe(
-      await this.recipeRepository.find(id),
-      this.services.retrieveImage
-    )
-
-    const adaptedMergedValues: Values<AdaptedRecipe> = {
-      name: newValues.name ?? modifiedRecipe.name,
-      type: newValues.type ?? modifiedRecipe.type,
-      description: newValues.description ?? modifiedRecipe.description,
-      imageUrl: newValues.imageUrl ?? modifiedRecipe.imageUrl,
-      imageFile: newValues.imageFile ?? modifiedRecipe.imageFile,
-      ingredients: newValues.ingredients ?? modifiedRecipe.ingredients,
-      macros: newValues.macros ?? modifiedRecipe.macros
-    }
-
-    const newRecipeValues = getRecipeEntityValues(adaptedMergedValues)
-
-    await updateRecipeUseCase.execute(id, newRecipeValues)
+    const updateRecipeUseCase = new UpdateRecipe(this.recipeRepository, updateUI)
+    const recipe = this.recipeAdapter.retrieveRecipe(adaptedRecipe)
+    await updateRecipeUseCase.execute(recipe)
   }
 
   public async deleteRecipe(id: Id) {
     const deleteRecipeUseCase = new DeleteRecipe(
-      this.recipeRepository,
-      this.uiCallbacks.updateUIOnDelete
+      this.recipeRepository, this.uiCallbacks.updateUIOnDelete
     )
     await deleteRecipeUseCase.execute(id)
   }
 
   public async turnRecipesIntoJson(adaptedRecipes: AdaptedRecipe[]) {
     const turnIntoJsonMethod = async (recipes: Recipe[]) => {
-      const transformedRecipes = await Promise.all(recipes.map(async r => await adaptRecipe(r, this.services.retrieveImage)))
-      return this.turnIntoJsonMethod(transformedRecipes)
+      const adaptedRecipes = recipes.map(
+        r => this.recipeAdapter.adaptRecipe(r)
+      )
+      return this.turnIntoJsonMethod(adaptedRecipes)
     }
     const generateJsonUseCase = new GenerateJson(turnIntoJsonMethod)
-
-    const recipes: Recipe[] = adaptedRecipes.map(
-      item => new Recipe({
-        id: item.id,
-        ...getRecipeEntityValues(item as Values<AdaptedRecipe>)
-      })
+    const recipes = adaptedRecipes.map(
+      r => this.recipeAdapter.retrieveRecipe(r)
     )
-
     await generateJsonUseCase.execute(recipes)
   }
 
   public async loadRecipesFromJson(jsonFile: any) {
     const loadRecipesFromJsonUseCase = new LoadRecipesFromJson(
-      this.ingredientRepository,
-      this.recipeRepository
+      this.ingredientRepository, this.recipeRepository
     )
-
     const { newIngredients, newRecipes } = await loadRecipesFromJsonUseCase.execute(jsonFile)
-
     return { newIngredients, newRecipes }
   }
 
@@ -136,9 +116,7 @@ export default class RecipeController {
       )
       return this.generatePDFMethod(adaptedParams)
     }
-
     const randomizeRecipesUseCase = new RandomizeRecipes(generatePDF)
-
     randomizeRecipesUseCase.execute(recipes, date)
   }
 

@@ -1,65 +1,62 @@
+import Ingredient from "@domain/entities/Ingredient"
 import Recipe, { isRecipeOptions } from "@domain/entities/Recipe"
-import { Values } from "@domain/utilities/types/Values"
-import { AdaptedRecipe } from "./AdaptedTypes"
+import { AdaptedIngredient, AdaptedRecipe, RecipeInput } from "./AdaptedTypes"
 
-export function getRecipeEntity(adaptedRecipe: AdaptedRecipe) {
-  const options = {
-    description: adaptedRecipe.description,
-    imageUrl: adaptedRecipe.imageUrl
+export class RecipeAdapter {
+  constructor(
+    private postImage: (file: File) => Promise<string>,
+    private retrieveIngredient: (adaptedIngredient: AdaptedIngredient) => Ingredient,
+    private adaptIngredient: (ingredient: Ingredient) => AdaptedIngredient
+  ) { }
+
+  // EntityInput => Entity
+  async createRecipeEntity(recipeInput: RecipeInput): Promise<Recipe> {
+    const { name, description, type, imageFile, ingredients } = recipeInput
+
+    const options = {
+      description,
+      imageUrl: imageFile ? await this.postImage(imageFile) : null
+    }
+  
+    return new Recipe({
+      name,
+      type,
+      options: (isRecipeOptions(options) ? options : undefined),
+      ingredientList: (ingredients ? ingredients.map(
+        i => ({ ingredient: this.retrieveIngredient(i[0]), totalGrams: i[1] })
+      ) : undefined)
+    })
   }
 
-  return new Recipe({
-    id: adaptedRecipe.id,
-    name: adaptedRecipe.name,
-    type: adaptedRecipe.type,
-    options: (isRecipeOptions(options) ? options : undefined),
-    ingredientList: (adaptedRecipe.ingredients ? adaptedRecipe.ingredients.map(
-      i => ({ ingredient: i[0], totalGrams: i[1] })
-    ) : undefined)
-  })
-}
+  // Entity => AdaptedEntity
+  adaptRecipe(recipe: Recipe): AdaptedRecipe {
+    const { id, name, type, options, ingredientList, macros } = recipe
 
-export async function adaptRecipe(
-  recipe: Recipe,
-  getImageFile: (imageUrl: string) => Promise<File>
-): Promise<AdaptedRecipe> {
-  return {
-    id: recipe.id,
-    name: recipe.name,
-    type: recipe.type,
-    description: recipe.options?.description,
-    imageUrl: recipe.options?.imageUrl,
-    imageFile: (recipe.options?.imageUrl ? (
-      await getImageFile(recipe.options.imageUrl)
-    ) : undefined),
-    ingredients: (recipe.ingredientList ? recipe.ingredientList.map(
-      item => [item.ingredient, item.totalGrams]
-    ) : undefined),
-    macros: (recipe.macros ? [
-      recipe.macros.proteins, recipe.macros.carbs, recipe.macros.fats
-    ] : undefined)
-  }
-}
-
-export function getRecipeEntityValues(
-  adaptedAttr: Values<AdaptedRecipe>
-): Values<Recipe> {
-  const options = {
-    description: adaptedAttr.description,
-    imageUrl: adaptedAttr.imageUrl
+    return {
+      id, name, type,
+      description: options?.description,
+      imageUrl: options?.imageUrl,
+      ingredients: (ingredientList ? ingredientList.map(
+        item => [this.adaptIngredient(item.ingredient), item.totalGrams]
+      ) : undefined),
+      macros: (macros ? [
+        macros.proteins, macros.carbs, macros.fats
+      ] : undefined)
+    }
   }
 
-  return {
-    name: adaptedAttr.name,
-    type: adaptedAttr.type,
-    options: (isRecipeOptions(options) ? options : undefined),
-    ingredientList: (adaptedAttr.ingredients ? adaptedAttr.ingredients.map(
-      item => ({ ingredient: item[0], totalGrams: item[1] })
-    ) : undefined),
-    macros: (adaptedAttr.macros ? ({
-      proteins: adaptedAttr.macros[0],
-      carbs: adaptedAttr.macros[1],
-      fats: adaptedAttr.macros[2]
-    }) : undefined)
+  // AdaptedEntity => Entity
+  retrieveRecipe(adaptedRecipe: AdaptedRecipe): Recipe {
+    const { id, name, type, description, imageUrl, ingredients } = adaptedRecipe
+
+    const options = { description, imageUrl }
+
+    return new Recipe({
+      id, name, type,
+      options: (isRecipeOptions(options) ? options : undefined),
+      ingredientList: (ingredients ? ingredients.map(
+        item => ({ ingredient: this.retrieveIngredient(item[0]), totalGrams: item[1] })
+      ) : undefined)
+    })
   }
 }

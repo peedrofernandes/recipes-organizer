@@ -1,6 +1,5 @@
 import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { Values } from "@domain/utilities/types/Values"
 import { CardContainer, ContentContainer, ImageContainer, TypeSpan } from "@infra/ui/styles/cardStyles"
 import React from "react"
 import Button from "../buttons/_Button"
@@ -9,17 +8,13 @@ import Icon from "../icons/_Icon"
 type RecipeCardProps = {
   recipe: AdaptedRecipe;
   events: {
-    updateEvent: (id: Id, values: Values<AdaptedRecipe>) => void;
+    updateEvent: (adaptedRecipe: AdaptedRecipe) => void;
     deleteEvent: (id: Id) => void;
   }
 }
 
 export default function RecipeCard(props: RecipeCardProps) {
-  const { id, type, name, description, imageUrl, imageFile } = props.recipe
-
-  const values: Values<AdaptedRecipe> = {
-    name, type, description, imageUrl, imageFile
-  }
+  const { id, type, name, description, imageUrl  } = props.recipe
 
   return (
     <CardContainer status="active">
@@ -39,7 +34,7 @@ export default function RecipeCard(props: RecipeCardProps) {
           {description && <p>{description}</p>}
         </div>
         <div>
-          <Button variant="icon" onClick={() => props.events.updateEvent(id, values)}>
+          <Button variant="icon" onClick={() => props.events.updateEvent(props.recipe)}>
             <Icon variant="Edit" size={24} />
           </Button>
           <Button variant="icon" onClick={() => props.events.deleteEvent(id)}>

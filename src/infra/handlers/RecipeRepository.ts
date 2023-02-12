@@ -1,9 +1,9 @@
 import { AdaptedRecipe } from "@controllers/AdaptedTypes"
-import { adaptRecipe, getRecipeEntity } from "@controllers/RecipeAdapter"
+import { IngredientAdapter } from "@controllers/IngredientAdapter"
+import { RecipeAdapter } from "@controllers/RecipeAdapter"
 import Recipe from "@domain/entities/Recipe"
 import { IRepository } from "@domain/repositories/IRepository"
-import { Values } from "@domain/utilities/types/Values"
-import { services } from "./services"
+import services from "./services"
 
 const recipes = "recipes"
 
@@ -19,40 +19,50 @@ export default class RecipeRepository implements IRepository<Recipe> {
     localStorage.setItem(recipes, JSON.stringify(adaptedRecipes))
   }
 
+  private ingredientAdapter = new IngredientAdapter(services.postImage)
+
+  private recipeAdapter = new RecipeAdapter(
+    services.postImage,
+    this.ingredientAdapter.retrieveIngredient,
+    this.ingredientAdapter.adaptIngredient
+  )
+
   find(id: string): Promise<Recipe> {
-    const recipes = this.getData()
-    const recipe = recipes.find(r => r.id === id)
-    if (!recipe) throw new Error("Recipe not found!")
-    return Promise.resolve(getRecipeEntity(recipe))
+    const adaptedRecipes = this.getData()
+    const adaptedRecipeFound = adaptedRecipes.find(r => r.id === id)
+    if (!adaptedRecipeFound) throw new Error("Recipe not found!")
+    return Promise.resolve(this.recipeAdapter.retrieveRecipe(adaptedRecipeFound))
   }
   findAll(): Promise<Recipe[]> {
-    const recipes = this.getData()
-    return Promise.resolve(recipes.map(r => getRecipeEntity(r)))
+    const adaptedRecipes = this.getData()
+    return Promise.resolve(adaptedRecipes.map(
+      r => this.recipeAdapter.retrieveRecipe(r))
+    )
   }
-  async create(t: Recipe): Promise<void> {
-    const recipes = this.getData()
-    const adaptedRecipe = await adaptRecipe(t, services.retrieveImage)
-    recipes.push(adaptedRecipe)
-    this.setData(recipes)
+  async create(recipe: Recipe): Promise<void> {
+    const adaptedRecipes = this.getData()
+    const adaptedRecipe = this.recipeAdapter.adaptRecipe(recipe)
+    adaptedRecipes.push(adaptedRecipe)
+    this.setData(adaptedRecipes)
     return Promise.resolve()
   }
-  async createList(t: Recipe[]): Promise<void> {
-    const recipes = this.getData()
-    const adaptedRecipes = await Promise.all(t.map(
-      async r => await adaptRecipe(r, services.retrieveImage)
-    ))
-    recipes.concat(adaptedRecipes)
-    this.setData(recipes)
+  async createList(recipes: Recipe[]): Promise<void> {
+    const adaptedRecipes = this.getData()
+    const adaptedNewRecipes = recipes.map(
+      r => this.recipeAdapter.adaptRecipe(r)
+    )
+    adaptedRecipes.concat(adaptedNewRecipes)
+    this.setData(adaptedRecipes)
     return Promise.resolve()
   }
-  async update(id: string, attributes: Values<Recipe>): Promise<void> {
-    const recipes = this.getData()
-    const foundIndex = recipes.findIndex(recipe => recipe.id === id)
-    if (!foundIndex) throw new Error(`There's no such recipe with id ${id}.`)
-    const newRecipe = new Recipe({ id, ...attributes })
-    const adaptedNewRecipe = await adaptRecipe(newRecipe, services.retrieveImage)
-    recipes.splice(foundIndex, 1, adaptedNewRecipe)
-    this.setData(recipes)
+  async update(updatedRecipe: Recipe): Promise<void> {
+    const { id } = updatedRecipe
+    const adaptedRecipes = this.getData()
+    const indexFound = adaptedRecipes.findIndex(recipe => recipe.id === id)
+    if (!indexFound) throw new Error(`There's no such recipe with id ${id}.`)
+    const updatedAdaptedRecipe = this.recipeAdapter.adaptRecipe(updatedRecipe)
+    adaptedRecipes.splice(indexFound, 1, updatedAdaptedRecipe)
+    this.setData(adaptedRecipes)
     return Promise.resolve()
   }
   delete(id: string): Promise<void> {
@@ -78,5 +88,4 @@ export default class RecipeRepository implements IRepository<Recipe> {
       }
     })
   }
-
 }

@@ -110,7 +110,7 @@ export const ConfirmButtonSet = styled.div`
   margin-bottom: 16px;
 `
 
-export const SelectTitle = styled.span<{
+export const SelectField = styled.span<{
   error?: boolean;
   selected?: boolean;
 }>`

@@ -1,6 +1,5 @@
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { Values } from "@domain/utilities/types/Values"
 import React, { createContext, ReactNode, useState } from "react"
 
 type FormState = {
@@ -9,8 +8,7 @@ type FormState = {
   variant: "IngredientCreation"
 } | {
   variant: "IngredientUpdate"
-  id: Id
-  currentValues: Values<AdaptedIngredient>
+  ingredient: AdaptedIngredient
 } | {
   variant: "IngredientDeletion"
   id: Id
@@ -18,8 +16,7 @@ type FormState = {
   variant: "RecipeCreation"
 } | {
   variant: "RecipeUpdate"
-  id: Id
-  currentValues: Values<AdaptedRecipe>
+  recipe: AdaptedRecipe
 } | {
   variant: "RecipeDeletion"
   id: Id

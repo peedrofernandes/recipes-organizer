@@ -3,7 +3,7 @@ import RecipeController from "@controllers/RecipeController"
 import { Id } from "@domain/utilities/types/Id"
 import IngredientRepository from "./IngredientRepository"
 import RecipeRepository from "./RecipeRepository"
-import { services } from "./services"
+import services from "./services"
 
 export default function recipeHandler(
   updateUIOnCreate: (recipe: AdaptedRecipe) => void,
@@ -13,8 +13,8 @@ export default function recipeHandler(
   const recipeRepository = new RecipeRepository()
   const ingredientRepository = new IngredientRepository()
   const uiCallbacks = { updateUIOnCreate, updateUIOnUpdate, updateUIOnDelete }
-  const turnIntoJsonMethod = () => { }
-  const generatePDFMethod = () => { }
+  const turnIntoJsonMethod = () => { return }
+  const generatePDFMethod = () => { return }
 
   const recipeController = new RecipeController(
     recipeRepository,

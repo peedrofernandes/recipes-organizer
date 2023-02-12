@@ -4,11 +4,11 @@ import DeleteIngredient from "../domain/application/DeleteIngredient"
 import Ingredient from "../domain/entities/Ingredient"
 import { IRepository } from "../domain/repositories/IRepository"
 import { Id } from "../domain/utilities/types/Id"
-import { AdaptedIngredient } from "./AdaptedTypes"
-import { Values } from "@domain/utilities/types/Values"
-import { adaptIngredient, getIngredientEntityValues } from "./IngredientAdapter"
+import { AdaptedIngredient, IngredientInput } from "./AdaptedTypes"
+import { IngredientAdapter } from "./IngredientAdapter"
 
 export default class IngredientController {
+  private ingredientAdapter: IngredientAdapter
 
   // ----------- CONSTRUCTOR ------------
 
@@ -23,7 +23,10 @@ export default class IngredientController {
       postImage: (image: File) => Promise<string>,
       retrieveImage: (imageUrl: string) => Promise<File>
     }
-  ) { }
+  ) { 
+    this.ingredientAdapter = new IngredientAdapter(this.services.postImage)
+  }
+
 
   // ------------------------------------
 
@@ -32,64 +35,35 @@ export default class IngredientController {
 
   // ------------ PUBLIC API ------------
 
-  public async createIngredient(
-    values: Values<AdaptedIngredient>
-  ): Promise<void> {
+  public async createIngredient(input: IngredientInput): Promise<void> {
     const updateUI = async (ingredient: Ingredient) => {
-      const adaptedIngredient = await adaptIngredient(
-        ingredient,
-        this.services.retrieveImage
-      )
+      const adaptedIngredient = this.ingredientAdapter.adaptIngredient(ingredient)
       this.uiCallbacks.updateUIOnCreate(adaptedIngredient)
     }
-    const createIngredientUseCase = new CreateIngredient(
-      this.ingredientRepository,
-      updateUI
-    )
-
-    if (values.imageFile) {
-      values.imageUrl = await this.services.postImage(values.imageFile)
-    }
-
-    const entityValues = getIngredientEntityValues(values)
-
-    await createIngredientUseCase.execute(entityValues)
+    const createIngredientUseCase =
+      new CreateIngredient(this.ingredientRepository, updateUI)
+    const ingredient = await this.ingredientAdapter.createIngredientEntity(input)
+    await createIngredientUseCase.execute(ingredient)
   }
 
   public async getAllIngredients(): Promise<AdaptedIngredient[]> {
     const ingredients = await this.ingredientRepository.findAll()
-    const adaptedIngredients = Promise.all(ingredients.map(
-      async item => await adaptIngredient(item, this.services.retrieveImage)
-    ))
+    const adaptedIngredients = ingredients.map(
+      item => this.ingredientAdapter.adaptIngredient(item)
+    )
     return adaptedIngredients
   }
 
-  public async updateIngredient(id: Id, values: Values<AdaptedIngredient>) {
-    const updateUI = async (ingredient: Ingredient) => {
-      const adaptedIngredient = await adaptIngredient(ingredient, this.services.retrieveImage)
+  public async updateIngredient(adaptedIngredient: AdaptedIngredient) {
+    const updateUI = (ingredient: Ingredient) => {
+      const adaptedIngredient = this.ingredientAdapter.adaptIngredient(ingredient)
       this.uiCallbacks.updateUIOnUpdate(adaptedIngredient)
     }
     const updateIngredientUseCase = new UpdateIngredient(
-      this.ingredientRepository,
-      updateUI
+      this.ingredientRepository, updateUI
     )
-
-    const modifiedIngredient: AdaptedIngredient = await adaptIngredient(
-      await this.ingredientRepository.find(id),
-      this.services.retrieveImage
-    )
-
-    const mergedValues: Values<AdaptedIngredient> = {
-      name: values.name ?? modifiedIngredient.name,
-      description: values.description ?? modifiedIngredient.description,
-      imageUrl: values.imageUrl ?? modifiedIngredient.imageUrl,
-      imageFile: values.imageFile ?? modifiedIngredient.imageFile,
-      macros: values.macros ?? modifiedIngredient.macros
-    }
-
-    const newIngredientValues = getIngredientEntityValues(mergedValues)
-
-    await updateIngredientUseCase.execute(id, newIngredientValues)
+    const ingredient = this.ingredientAdapter.retrieveIngredient(adaptedIngredient)
+    await updateIngredientUseCase.execute(ingredient)
   }
 
   public async deleteIngredient(id: Id) {
