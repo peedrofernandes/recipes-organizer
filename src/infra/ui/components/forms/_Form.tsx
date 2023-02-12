@@ -1,102 +1,66 @@
-import { AdaptedIngredient, AdaptedRecipe, IngredientInput, RecipeInput } from "@controllers/AdaptedTypes"
-import { Id } from "@domain/utilities/types/Id"
+import useDataContext from "@infra/ui/hooks/useDataContext"
+import useEvents from "@infra/ui/hooks/useEvents"
+import useFormContext from "@infra/ui/hooks/useFormContext"
 import React from "react"
 import ConfirmDeleteForm from "./ConfirmDeleteForm"
 import IngredientForm from "./IngredientForm"
 import RecipeForm from "./RecipeForm"
 
-type FormProps = {
-  variant: "IngredientCreation",
-  events: {
-    submitEvent: (ingredientInput: IngredientInput) => Promise<void>
-  }
-} | {
-  variant: "IngredientUpdate",
-  ingredient: AdaptedIngredient
-  events: {
-    submitEvent: (adaptedIngredient: AdaptedIngredient) => Promise<void>
-  }
-} | {
-  variant: "IngredientDeletion",
-  id: Id,
-  events: {
-    confirmEvent: (id: Id) => Promise<void>
-    cancelEvent: () => void
-  }
-} | {
-  variant: "RecipeCreation",
-  data: {
-    loading: true
-  } | {
-    loading: false
-    ingredients: AdaptedIngredient[]
-  }
-  events: {
-    submitEvent: (recipeInput: RecipeInput) => Promise<void>
-  }
-} | {
-  variant: "RecipeUpdate",
-  data: {
-    loading: true
-  } | {
-    loading: false
-    ingredients: AdaptedIngredient[]
-  }
-  recipe: AdaptedRecipe
-  events: {
-    submitEvent: (adaptedRecipe: AdaptedRecipe) => Promise<void>
-  }
-} | {
-  variant: "RecipeDeletion",
-  id: Id,
-  events: {
-    confirmEvent: (id: Id) => Promise<void>
-    cancelEvent: () => void
-  }
-}
+export default function Form() {
+  const { form } = useFormContext()
+  const {
+    createIngredient,
+    updateIngredient,
+    createRecipe,
+    updateRecipe,
+    deleteIngredient,
+    deleteRecipe,
+    cancelRequest
+  } = useEvents()
+  const { data } = useDataContext()
 
-export default function Form(props: FormProps) {
-  switch (props.variant) {
+  switch (form.variant) {
   case "IngredientCreation":
     return <IngredientForm
       variant="Create"
-      events={props.events}
+      events={{ submitEvent: createIngredient }}
     />
   case "IngredientUpdate":
     return <IngredientForm
       variant="Update"
-      ingredient={props.ingredient}
-      events={props.events}
-    />
-  case "IngredientDeletion":
-    return <ConfirmDeleteForm
-      variant="Ingredient"
-      events={props.events}
-      id={props.id}
+      ingredient={form.ingredient}
+      events={{ submitEvent: updateIngredient }}
     />
   case "RecipeCreation":
     return <RecipeForm
       variant="Create"
-      data={props.data.loading
+      data={data.loading.fetchIngredients
         ? { loading: true }
-        : { loading: false, ingredients: props.data.ingredients }
-      }
-      events={props.events}
+        : { loading: false, ingredients: data.ingredients }}
+      events={{ submitEvent: createRecipe }}
     />
   case "RecipeUpdate":
     return <RecipeForm
       variant="Update"
-      data={props.data.loading
+      data={data.loading.fetchIngredients
         ? { loading: true }
-        : { loading: false, ingredients: props.data.ingredients }}
-      events={props.events}
-      recipe={props.recipe}
+        : { loading: false, ingredients: data.ingredients }}
+      recipe={form.recipe}
+      events={{ submitEvent: updateRecipe }}
+    />
+  case "IngredientDeletion":
+    return <ConfirmDeleteForm
+      variant="Ingredient"
+      id={form.id}
+      events={{ confirmEvent: deleteIngredient, cancelEvent: cancelRequest }}
     />
   case "RecipeDeletion":
     return <ConfirmDeleteForm
       variant="Recipe"
-      id={props.id}
-      events={props.events}
+      id={form.id}
+      events={{ confirmEvent: deleteRecipe, cancelEvent: cancelRequest }}
     />
+  default:
+    return null
   }
 }

@@ -3,16 +3,30 @@ import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 
 type DataState = {
-  loadingIngredients: boolean
+  loading: {
+    fetchIngredients: boolean
+    createIngredient: boolean
+    updateIngredient: boolean
+    deleteIngredient: boolean
+    fetchRecipes: boolean
+    createRecipe: boolean
+    updateRecipe: boolean
+    deleteRecipe: boolean
+  }
   ingredients: AdaptedIngredient[]
-  loadingRecipes: boolean
   recipes: AdaptedRecipe[]
 }
 
 type DataAction = {
-  type: "TOGGLE_LOADING_INGREDIENTS"
-} | {
-  type: "TOGGLE_LOADING_RECIPES"
+  type:
+    | "LOADING_FETCH_INGREDIENTS"
+    | "LOADING_CREATE_INGREDIENT"
+    | "LOADING_UPDATE_INGREDIENT"
+    | "LOADING_DELETE_INGREDIENT" 
+    | "LOADING_FETCH_RECIPES"
+    | "LOADING_CREATE_RECIPE"
+    | "LOADING_UPDATE_RECIPE"
+    | "LOADING_DELETE_RECIPE"
 } | {
   type: "SET_INGREDIENTS"
   payload: {
@@ -55,31 +69,71 @@ type DataAction = {
   }
 }
 
-function dataReducer(state: DataState, action: DataAction) {
+function dataReducer(state: DataState, action: DataAction): DataState {
   switch (action.type) {
-  case "TOGGLE_LOADING_INGREDIENTS": {
+  case "LOADING_FETCH_INGREDIENTS":
     return {
       ...state,
-      loadingIngredients: true
+      loading: { ...state.loading, fetchIngredients: true }
+    }
+  case "LOADING_CREATE_INGREDIENT": {
+    return {
+      ...state,
+      loading: { ...state.loading, createIngredient: true }
     }
   }
-  case "TOGGLE_LOADING_RECIPES": {
+  case "LOADING_UPDATE_INGREDIENT": {
     return {
       ...state,
-      loadingRecipes: true
+      loading: { ...state.loading, updateIngredient: true }
+    }
+  }
+  case "LOADING_DELETE_INGREDIENT": {
+    return {
+      ...state,
+      loading: { ...state.loading, updateIngredient: true }
+    }
+  }
+  case "LOADING_FETCH_RECIPES": {
+    return {
+      ...state,
+      loading: { ...state.loading, fetchRecipes: true }
+    }
+  }
+  case "LOADING_CREATE_RECIPE": {
+    return {
+      ...state,
+      loading: { ...state.loading, createRecipe: true }
+    }
+  }
+  case "LOADING_UPDATE_RECIPE": {
+    return {
+      ...state,
+      loading: { ...state.loading, updateRecipe: true }
+    }
+  }
+  case "LOADING_DELETE_RECIPE": {
+    return {
+      ...state,
+      loading: { ...state.loading, deleteRecipe: true }
     }
   }
   case "SET_INGREDIENTS": {
     return {
       ...state,
-      loadingIngredients: false,
+      loading: {
+        ...state.loading,
+        createIngredient: false,
+        updateIngredient: false,
+        deleteIngredient: false
+      },
       ingredients: action.payload.ingredients
     }
   }
   case "ADD_INGREDIENT": {   
     return {
       ...state,
-      loadingIngredients: false,
+      loading: { ...state.loading, createIngredient: false },
       ingredients: [...state.ingredients, action.payload.ingredient]
     }
   }
@@ -93,28 +147,33 @@ function dataReducer(state: DataState, action: DataAction) {
     newIngredients[indexFound] = action.payload.ingredient
     return {
       ...state,
-      loadingIngredients: false,
+      loading: { ...state.loading, updateIngredient: false },
       ingredients: newIngredients
     }
   }
   case "DELETE_INGREDIENT": {
     return {
       ...state,
-      loadingRecipes: false,
+      loading: { ...state.loading, deleteIngredient: false },
       ingredients: state.ingredients.filter(i => i.id !== action.payload.id)
     }
   }
   case "SET_RECIPES": {
     return {
       ...state,
-      loadingRecipes: false,
+      loading: {
+        ...state.loading,
+        createRecipe: false,
+        updateRecipe: false,
+        deleteRecipe: false
+      },
       recipes: action.payload.recipes
     }
   }
   case "ADD_RECIPE": {
     return {
       ...state,
-      loadingRecipes: false,
+      loading: { ...state.loading, createRecipe: false },
       recipes: [...state.recipes, action.payload.recipe]
     }
   }
@@ -126,14 +185,14 @@ function dataReducer(state: DataState, action: DataAction) {
     newRecipes[indexFound] = action.payload.recipe
     return {
       ...state,
-      loading: false,
+      loading: { ...state.loading, updateRecipe: false },
       recipes: newRecipes
     }
   }
   case "DELETE_RECIPE": {
     return {
       ...state,
-      loading: false,
+      loading: { ...state.loading, deleteRecipe: false },
       recipes: state.recipes.filter(r => r.id !== action.payload.id)
     }
   }
@@ -145,9 +204,17 @@ function dataReducer(state: DataState, action: DataAction) {
 
 const initialState: DataState = {
   ingredients: [],
-  loadingIngredients: false,
-  recipes: [],
-  loadingRecipes: false
+  loading: {
+    fetchIngredients: false,
+    createIngredient: false,
+    updateIngredient: false,
+    deleteIngredient: false,
+    fetchRecipes: false,
+    createRecipe: false,
+    updateRecipe: false,
+    deleteRecipe: false
+  },
+  recipes: []
 }
 
 type DataContext = {

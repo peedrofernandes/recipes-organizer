@@ -1,5 +1,5 @@
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
-import { Id } from "@domain/utilities/types/Id"
+import useEvents from "@infra/ui/hooks/useEvents"
 import React from "react"
 
 import CreateIngredientCard from "./CreateIngredientCard"
@@ -15,27 +15,13 @@ import RecipeCard from "./RecipeCard"
 type CardProps = {
   variant: "Ingredient";
   ingredient: AdaptedIngredient;
-  events: {
-    updateEvent: (adaptedIngredient: AdaptedIngredient) => void;
-    deleteEvent: (id: Id) => void;
-  }
 } | {
   variant: "Recipe";
   recipe: AdaptedRecipe;
-  events: {
-    updateEvent: (adaptedRecipe: AdaptedRecipe) => void;
-    deleteEvent: (id: Id) => void;
-  }
 } | {
   variant: "CreateRecipe";
-  events: {
-    createEvent: () => void;
-  }
 } | {
   variant: "CreateIngredient";
-  events: {
-    createEvent: () => void;
-  }
 } | {
   variant: "Loading"
 };
@@ -43,15 +29,40 @@ type CardProps = {
 // ------------------------------------
 
 export default function Card(props: CardProps) {
+  const { 
+    createIngredientRequest,
+    createRecipeRequest,
+    updateIngredientRequest,
+    updateRecipeRequest,
+    deleteIngredientRequest,
+    deleteRecipeRequest
+  } = useEvents()
+
   switch (props.variant) {
   case "Ingredient":
-    return <IngredientCard ingredient={props.ingredient} events={props.events} />
+    return <IngredientCard
+      ingredient={props.ingredient}
+      events={{
+        updateEvent: updateIngredientRequest,
+        deleteEvent: deleteIngredientRequest
+      }}
+    />
   case "CreateIngredient":
-    return <CreateIngredientCard events={props.events} />
+    return <CreateIngredientCard
+      events={{ createEvent: createIngredientRequest }}
+    />
   case "Recipe":
-    return <RecipeCard recipe={props.recipe} events={props.events} />
+    return <RecipeCard
+      recipe={props.recipe}
+      events={{ 
+        updateEvent: updateRecipeRequest,
+        deleteEvent: deleteRecipeRequest
+      }}
+    />
   case "CreateRecipe":
-    return <CreateRecipeCard events={props.events} />
+    return <CreateRecipeCard
+      events={{ createEvent: createRecipeRequest }}
+    />
   case "Loading":
     return <LoadingCard />
   }

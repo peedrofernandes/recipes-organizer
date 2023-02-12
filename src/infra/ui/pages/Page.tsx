@@ -1,14 +1,11 @@
-import React, { useContext, useMemo } from "react"
+import React from "react"
 import styled from "styled-components"
 import Card from "../components/cards/_Card"
 import { Grid, GridItem } from "../components/MaterialGrid"
 import PageLayout from "./PageLayout"
 import { Link } from "react-router-dom"
 import Button from "../components/buttons/_Button"
-import { Id } from "@domain/utilities/types/Id"
-import { DataContext } from "../context/DataContext"
-import { FormContext } from "../context/FormContext"
-import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
+import useDataContext from "../hooks/useDataContext"
 
 const Title = styled.h1`
   padding: 24px 0;
@@ -25,24 +22,7 @@ type PageProps = {
 
 export default function Page(props: PageProps) {
   const { variant } = props
-
-  const { data } = useContext(DataContext)
-  const { setForm } = useContext(FormContext)
-
-  const events = useMemo(() => ({
-    ingredientEvents: {
-      createEvent: () => setForm({ variant: "IngredientCreation" }),
-      updateEvent: (adaptedIngredient: AdaptedIngredient) =>
-        setForm({ variant: "IngredientUpdate", ingredient: adaptedIngredient }),
-      deleteEvent: (id: Id) => setForm({ variant: "IngredientDeletion", id })
-    },
-    recipeEvents: {
-      createEvent: () => setForm({ variant: "RecipeCreation" }),
-      updateEvent: (adaptedRecipe: AdaptedRecipe) =>
-        setForm({ variant: "RecipeUpdate", recipe: adaptedRecipe }),
-      deleteEvent: (id: Id) => setForm({ variant: "RecipeDeletion", id })
-    }
-  }), [])
+  const { data } = useDataContext()
 
   switch (variant) {
   case "Help": {
@@ -56,12 +36,6 @@ export default function Page(props: PageProps) {
     )
   }
   case "Ingredients": {
-    const {
-      createEvent,
-      updateEvent,
-      deleteEvent
-    } = events.ingredientEvents
-
     return (
       <PageLayout>
         <Title>Ingredientes</Title>
@@ -74,13 +48,12 @@ export default function Page(props: PageProps) {
                 <Card
                   variant="Ingredient"
                   ingredient={ingredient}
-                  events={{ updateEvent, deleteEvent }}
                 />
               </GridItem>
             )
           })}
 
-          {data.loadingIngredients && (
+          {data.loading.createIngredient && (
             <GridItem span={4}>
               <Card variant="Loading" />
             </GridItem>
@@ -89,7 +62,6 @@ export default function Page(props: PageProps) {
           <GridItem span={4}>
             <Card
               variant="CreateIngredient"
-              events={{ createEvent }}
             />
           </GridItem>
 
@@ -113,20 +85,19 @@ export default function Page(props: PageProps) {
                 <Card
                   variant="Recipe"
                   recipe={recipe}
-                  events={events.recipeEvents}
                 />
               </GridItem>
             )
           })}
 
-          {data.loadingRecipes && (
+          {data.loading.createRecipe && (
             <GridItem span={4}>
               <Card variant="Loading" />
             </GridItem>
           )}
 
           <GridItem span={4}>
-            <Card variant="CreateRecipe" events={events.recipeEvents} />
+            <Card variant="CreateRecipe" />
           </GridItem>
         </Grid>
       </PageLayout>

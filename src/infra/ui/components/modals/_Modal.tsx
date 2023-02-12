@@ -9,6 +9,7 @@ import styled from "styled-components"
 import { Grid, GridItem } from "../MaterialGrid"
 import Icon from "../icons/_Icon"
 import Button from "../buttons/_Button"
+import useEvents from "@infra/ui/hooks/useEvents"
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -60,18 +61,16 @@ const ModalContent = styled.div`
 
 type ModalProps = {
   title: string;
-  events: {
-    closeModalEvent: () => void
-  };
   children: ReactNode
 }
 
 export default function Modal(props: ModalProps) {
   const modalBoxRef = useRef<HTMLDivElement>(null)
+  const { cancelRequest } = useEvents()
 
   const modalCloseClickOutside = useCallback((e: MouseEvent) => {
     if (!modalBoxRef.current?.contains(e.target as Node)) {
-      props.events.closeModalEvent()
+      cancelRequest()
     }
   }, [modalBoxRef])
 
@@ -83,7 +82,7 @@ export default function Modal(props: ModalProps) {
           <ModalBox ref={modalBoxRef}>
             <TopContainer>
               <h3>{props.title}</h3>
-              <Button variant="icon" onClick={() => props.events.closeModalEvent()}>
+              <Button variant="icon" onClick={() => cancelRequest()}>
                 <Icon variant="Close" size={24} />
               </Button>
             </TopContainer>

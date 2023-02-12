@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useEffect, useMemo } from "react"
+import React, { ReactNode, useContext } from "react"
 import { Link, useLocation } from "react-router-dom"
 import styled, { ThemeProvider } from "styled-components"
 
@@ -7,12 +7,9 @@ import { ThemeContext } from "../context/ThemeContext"
 import Button from "../components/buttons/_Button"
 import Icon from "../components/icons/_Icon"
 import Modal from "../components/modals/_Modal"
-import ingredientHandler from "../../handlers/IngredientHandler"
-import { AdaptedIngredient, AdaptedRecipe, IngredientInput, RecipeInput } from "@controllers/AdaptedTypes"
-import recipeHandler from "@infra/handlers/RecipeHandler"
-import { DataContext } from "../context/DataContext"
-import { FormContext } from "../context/FormContext"
 import Form from "../components/forms/_Form"
+import useFormContext from "../hooks/useFormContext"
+import useLoadData from "../hooks/useLoadData"
 
 const LayoutContainer = styled.div`
   position: relative;
@@ -90,192 +87,20 @@ export default function PageLayout(props: { children: ReactNode }) {
   const { children } = props
 
   const { theme, toggleTheme } = useContext(ThemeContext)
-  const { data, dispatch } = useContext(DataContext)
-  const { form, setForm } = useContext(FormContext)
+  const { title, form } = useFormContext()
   const location = useLocation()
 
-  const ingredientController = ingredientHandler(
-    // Update UI on Create
-    (ingredient: AdaptedIngredient) => dispatch({
-      type: "ADD_INGREDIENT", payload: { ingredient }
-    }),
-    // Update UI on Update
-    (ingredient: AdaptedIngredient) => dispatch({
-      type: "UPDATE_INGREDIENT", payload: { ingredient }
-    }),
-    // Update UI on Delete
-    (id: string) => dispatch({
-      type: "DELETE_INGREDIENT", payload: { id }
-    })
-  )
-
-  const recipeController = recipeHandler(
-    // Update UI on Create
-    (recipe: AdaptedRecipe) => dispatch({
-      type: "ADD_RECIPE", payload: { recipe }
-    }),
-    // Update UI on Update
-    (recipe: AdaptedRecipe) => dispatch({
-      type: "UPDATE_RECIPE", payload: { recipe }
-    }),
-    // Update UI on Delete
-    (id: string) => dispatch({
-      type: "DELETE_RECIPE", payload: { id }
-    })
-  )
-
-  const events = {
-    createIngredientEvent: async (ingredientInput: IngredientInput) => {
-      dispatch({ type: "TOGGLE_LOADING_INGREDIENTS"})
-      setForm({ variant: null })
-      await ingredientController.createIngredient(ingredientInput)
-    },
-    updateIngredientEvent: async (adaptedIngredient: AdaptedIngredient) => {
-      dispatch({ type: "TOGGLE_LOADING_INGREDIENTS"})
-      setForm({ variant: null })
-      await ingredientController.updateIngredient(adaptedIngredient)
-    },
-    deleteIngredientEvent: async (id: string) => {
-      dispatch({ type: "TOGGLE_LOADING_INGREDIENTS"})
-      setForm({ variant: null })
-      await ingredientController.deleteIngredient(id)
-    },
-    createRecipeEvent: async (recipeInput: RecipeInput) => {
-      dispatch({ type: "TOGGLE_LOADING_RECIPES" })
-      setForm({ variant: null })
-      await recipeController.createRecipe(recipeInput)
-    },
-    updateRecipeEvent: async (adaptedRecipe: AdaptedRecipe) => {
-      dispatch({ type: "TOGGLE_LOADING_RECIPES"})
-      setForm({ variant: null })
-      await recipeController.updateRecipe(adaptedRecipe)
-    },
-    deleteRecipeEvent: async (id: string) => {
-      dispatch({ type: "TOGGLE_LOADING_RECIPES"})
-      setForm({ variant: null })
-      await recipeController.deleteRecipe(id)
-    }
-  }
-
-  useEffect(() => {
-    const fetchIngredients = async () => {
-      dispatch({ type: "TOGGLE_LOADING_INGREDIENTS" })
-      setTimeout(async () => { 
-        const ingredients = await ingredientController.getAllIngredients()
-        dispatch({ type: "SET_INGREDIENTS", payload: { ingredients }})
-      }, 500)
-    }
-    const fetchRecipes = async () => {
-      dispatch({ type: "TOGGLE_LOADING_RECIPES"})
-      const recipes = await recipeController.getAllRecipes()
-      dispatch({ type: "SET_RECIPES", payload: { recipes }})
-    }
-
-    fetchIngredients()
-    fetchRecipes()
-  }, [])
-
-  useEffect(() => { 
-    console.log(`Loading Ingredients set to ${data.loadingIngredients}`)
-  }, [data.loadingIngredients])
-
-  const CurrentForm = useMemo(() => {
-    switch (form.variant) {
-    case "IngredientCreation":
-      return (
-        <Modal
-          events={{ closeModalEvent: () => setForm({ variant: null }) }}
-          title="Criar novo ingrediente"
-        >
-          <Form
-            variant="IngredientCreation"
-            events={{ submitEvent: events.createIngredientEvent }}
-          />
-        </Modal>)
-    case "IngredientUpdate":
-      return (
-        <Modal
-          events={{ closeModalEvent: () => setForm({ variant: null }) }}
-          title="Editar ingrediente"
-        >
-          <Form
-            variant="IngredientUpdate"
-            ingredient={form.ingredient}
-            events={{ submitEvent: events.updateIngredientEvent }}
-          />
-        </Modal>)
-    case "IngredientDeletion":
-      return (
-        <Modal
-          events={{ closeModalEvent: () => setForm({ variant: null }) }}
-          title="Tem certeza que deseja excluir o ingrediente?"
-        >
-          <Form
-            variant="IngredientDeletion"
-            id={form.id}
-            events={{
-              confirmEvent: events.deleteIngredientEvent,
-              cancelEvent: () => setForm({ variant: null })
-            }}
-          />
-        </Modal>)
-    case "RecipeCreation":
-      return (
-        <Modal
-          events={{ closeModalEvent: () => setForm({ variant: null }) }}
-          title="Criar nova receita"
-        >
-          <Form
-            variant="RecipeCreation"
-            events={{ submitEvent: events.createRecipeEvent }}
-            data={data.loadingIngredients
-              ? { loading: true }
-              : { loading: false, ingredients: data.ingredients }
-            }
-          />
-        </Modal>)
-    case "RecipeUpdate":
-      return (
-        <Modal
-          events={{ closeModalEvent: () => setForm({ variant: null }) }}
-          title="Editar receita"
-        >
-          <Form
-            variant="RecipeUpdate"
-            recipe={form.recipe}
-            events={{ submitEvent: events.updateRecipeEvent }}
-            data={data.loadingIngredients
-              ? { loading: true }
-              : { loading: false, ingredients: data.ingredients }
-            }
-          />
-        </Modal>)
-    case "RecipeDeletion":
-      return (
-        <Modal
-          events={{ closeModalEvent: () => setForm({ variant: null }) }}
-          title="Tem certeza que deseja excluir a receita?"
-        >
-          <Form
-            variant="RecipeDeletion"
-            id={form.id}
-            events={{
-              confirmEvent: events.deleteRecipeEvent,
-              cancelEvent: () => setForm({ variant: null })
-            }}
-          />
-        </Modal>
-      )
-    default:
-      return null
-    }
-  }, [form, data])
+  useLoadData()
 
   return (
     <ThemeProvider theme={theme}>
       <LayoutContainer>
 
-        {CurrentForm}
+        {form.variant !== null && (
+          <Modal title={title}>
+            <Form />
+          </Modal>
+        )}
 
 
         <ButtonSet>
