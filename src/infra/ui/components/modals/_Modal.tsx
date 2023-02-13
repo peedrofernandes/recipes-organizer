@@ -68,14 +68,25 @@ export default function Modal(props: ModalProps) {
   const modalBoxRef = useRef<HTMLDivElement>(null)
   const { cancelRequest } = useEvents()
 
-  const modalCloseClickOutside = useCallback((e: MouseEvent) => {
-    if (!modalBoxRef.current?.contains(e.target as Node)) {
+  let outsideClick = false
+  const clickBackground = (e: MouseEvent) => {
+    const targetIsModalBox = modalBoxRef.current?.contains(e.target as Node)
+    if (!targetIsModalBox) outsideClick = true
+    else outsideClick = false
+    console.log(`Backgound click detected! outsideClick: ${outsideClick}`)
+  }
+  const releaseClickBackground = (e: MouseEvent) => {
+    const targetIsModalBox = modalBoxRef.current?.contains(e.target as Node)
+    console.log("Click released!")
+    if (!targetIsModalBox && outsideClick)
       cancelRequest()
-    }
-  }, [modalBoxRef])
+  }
 
   return (
-    <ModalBackground onClick={(e) => modalCloseClickOutside(e)}>
+    <ModalBackground
+      onMouseDown={(e) => clickBackground(e)}
+      onMouseUp={(e) => releaseClickBackground(e)}
+    >
 
       <Grid>
         <GridItem rAbs={{ xs: [1, 5], sm: [2, 8], md: [2, 12] }}>
