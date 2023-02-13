@@ -47,6 +47,7 @@ export default class Recipe {
   private _options?: RecipeOptions
   private _ingredientList?: IngredientList
   private _macros?: RecipeMacros
+  private _kcal?: number
 
   private calculateMacro(
     qtdMacro: number,
@@ -99,6 +100,9 @@ export default class Recipe {
         0
       ),
     }
+    this._kcal = this._macros.proteins * 4
+      + this._macros.carbs * 4
+      + this._macros.fats * 9
   }
 
   public addIngredient(ingredient: Ingredient, totalGrams: number): void {
@@ -174,5 +178,8 @@ export default class Recipe {
   }
   get macros() {
     return this._macros
+  }
+  get kcal() {
+    return this._kcal
   }
 }

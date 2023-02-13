@@ -32,7 +32,7 @@ export class RecipeAdapter {
 
   // Entity => AdaptedEntity
   adaptRecipe(recipe: Recipe): AdaptedRecipe {
-    const { id, name, type, options, ingredientList, macros } = recipe
+    const { id, name, type, options, ingredientList, macros, kcal } = recipe
 
     return {
       id, name, type,
@@ -43,7 +43,8 @@ export class RecipeAdapter {
       ) : undefined),
       macros: (macros ? [
         macros.proteins, macros.carbs, macros.fats
-      ] : undefined)
+      ] : undefined),
+      kcal
     }
   }
 

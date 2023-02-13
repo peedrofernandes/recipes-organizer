@@ -22,6 +22,7 @@ export type Theme = {
     orange?: string;
     blue?: string;
     red?: string;
+    yellow?: string;
   }
 }
 
@@ -55,7 +56,8 @@ export const themesSet: ThemesSet = {
       green: "#076e34",
       orange: "#002d81",
       blue: "#913a00",
-      red: "#860000"
+      red: "#860000",
+      yellow: "#8b8200"
     }
   },
   dark: {
@@ -77,7 +79,8 @@ export const themesSet: ThemesSet = {
       green: "#07da63",
       orange: "#1184e2",
       blue: "#ea6f1c",
-      red: "#dd2323"
+      red: "#dd2323",
+      yellow: "#fffb00"
     }
   }
 }

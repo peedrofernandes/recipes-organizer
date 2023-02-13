@@ -33,4 +33,5 @@ export type AdaptedRecipe = {
   imageUrl?: string,
   ingredients?: [AdaptedIngredient, number][],
   macros?: [number, number, number]
+  kcal?: number
 }

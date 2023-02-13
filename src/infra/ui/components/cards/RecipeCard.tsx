@@ -15,7 +15,7 @@ type RecipeCardProps = {
 }
 
 export default function RecipeCard(props: RecipeCardProps) {
-  const { id, type, name, description, imageUrl, macros  } = props.recipe
+  const { id, type, name, description, imageUrl, macros, kcal  } = props.recipe
 
   return (
     <CardContainer status="active">
@@ -37,6 +37,8 @@ export default function RecipeCard(props: RecipeCardProps) {
                   <li>P: {macros[0].toFixed(2)}g</li>
                   <li>C: {macros[1].toFixed(2)}g</li>
                   <li>G: {macros[2].toFixed(2)}g</li>
+                  <li>|</li>
+                  <li>{kcal}kcal</li>
                 </ul>
               </MacrosSpan>
             )}

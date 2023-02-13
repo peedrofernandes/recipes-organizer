@@ -58,7 +58,7 @@ export const TypeSpan = styled.span`
 export const MacrosSpan = styled.span`
   position: absolute;
   bottom: 2px;
-  width: 75%;
+  width: auto;
   background-color: ${({ theme }) => theme.main.primaryV2 + "7F"};
   backdrop-filter: blur(2px);
   font-weight: bold;
@@ -70,14 +70,21 @@ export const MacrosSpan = styled.span`
     display: flex;
     justify-content: space-evenly;
 
+    li {
+      padding: 4px;
+    }
+
     li:nth-child(1) {
       color: ${({ theme }) => theme.color.green}
     }
     li:nth-child(2) {
-      color: ${({ theme }) => theme.color.blue}
+      color: ${({ theme }) => theme.color.orange}
     }
     li:nth-child(3) {
-      color: ${({ theme }) => theme.color.orange}
+      color: ${({ theme }) => theme.color.blue}
+    }
+    li:nth-child(5) {
+      color: ${({ theme }) => theme.color.yellow}
     }
 
   }
