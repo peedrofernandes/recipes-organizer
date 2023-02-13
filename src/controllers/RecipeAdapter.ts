@@ -12,11 +12,11 @@ export class RecipeAdapter {
 
   // EntityInput => Entity
   async createRecipeEntity(recipeInput: RecipeInput, id?: Id): Promise<Recipe> {
-    const { name, description, type, imageFile, ingredients } = recipeInput
+    const { name, description, type, imageFile, initialImageUrl, ingredients } = recipeInput
 
     const options = {
       description,
-      imageUrl: imageFile ? await this.postImage(imageFile) : null
+      imageUrl: imageFile ? await this.postImage(imageFile) : initialImageUrl || null
     }
   
     return new Recipe({

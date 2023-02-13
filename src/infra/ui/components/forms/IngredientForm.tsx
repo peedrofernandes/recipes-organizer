@@ -35,10 +35,12 @@ export default function IngredientForm(props: IngredientFormProps) {
   let initialName = ""
   let initialDescription = ""
   let initialMacros: StringTuple = ["", "", "", ""]
+  let initialImageUrl = ""
   if (props.variant === "Update") {
     initialName = props.ingredient.name
     initialDescription = props.ingredient.description || ""
     initialMacros = props.ingredient.macros?.map(item => item.toString()) as StringTuple || ["", "", "", ""]
+    initialImageUrl = props.ingredient.imageUrl || ""
   }
   
   const [name, setName] = useState<string>(initialName)
@@ -115,6 +117,7 @@ export default function IngredientForm(props: IngredientFormProps) {
       name,
       description,
       ...(imageFile ? { imageFile } : null),
+      initialImageUrl,
       ...(macros.every(m => !!m) ? {
         macros: macros.map(
           item => parseFloat(item)

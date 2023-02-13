@@ -68,6 +68,7 @@ export default function RecipeForm(props: RecipeFormProps) {
   let initialType: "Week" | "Weekend" | "Both" | "" = ""
   let initialDescription = ""
   let initialIngredients: [AdaptedIngredient, string][] = []
+  let initialImageUrl = ""
   if (props.variant === "Update") {
     initialName = props.recipe.name
     initialType = props.recipe.type
@@ -75,6 +76,7 @@ export default function RecipeForm(props: RecipeFormProps) {
     initialIngredients = props.recipe.ingredients?.map(
       item => [item[0], item[1].toString()]
     ) || []
+    initialImageUrl = props.recipe.imageUrl || ""
   }
 
   
@@ -186,6 +188,7 @@ export default function RecipeForm(props: RecipeFormProps) {
     const recipeInput: RecipeInput = {
       name, type, description,
       ...(imageFile ? { imageFile } : null),
+      initialImageUrl,
       ...(!invalidIngredients ? {
         ingredients: ingredients.map(i => [i[0], parseFloat(i[1])])
       } : null)

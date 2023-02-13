@@ -9,11 +9,11 @@ export class IngredientAdapter {
 
   // EntityInput => Entity
   async createIngredientEntity(input: IngredientInput, id?: Id): Promise<Ingredient> {
-    const { name, description, imageFile, macros } = input
+    const { name, description, imageFile, initialImageUrl, macros } = input
 
     const options = {
       description,
-      imageUrl: imageFile ? await this.postImage(imageFile) : null
+      imageUrl: imageFile ? await this.postImage(imageFile) : initialImageUrl
     }
   
     return new Ingredient({

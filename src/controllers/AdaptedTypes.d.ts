@@ -4,6 +4,7 @@ export type IngredientInput = {
   name: string;
   description?: string;
   imageFile?: File;
+  initialImageUrl?: string;
   macros?: [number, number, number, number]
 }
 
@@ -20,6 +21,7 @@ export type RecipeInput = {
   type: "Week" | "Weekend" | "Both";
   description?: string;
   imageFile?: File;
+  initialImageUrl?: string;
   ingredients?: [AdaptedIngredient, number][];
 }
 
