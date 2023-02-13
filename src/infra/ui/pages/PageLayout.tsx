@@ -1,8 +1,6 @@
-import React, { ReactNode, useContext } from "react"
+import React, { ReactNode } from "react"
 import { Link, useLocation } from "react-router-dom"
 import styled, { ThemeProvider } from "styled-components"
-
-import { ThemeContext } from "../context/ThemeContext"
 
 import Button from "../components/buttons/_Button"
 import Icon from "../components/icons/_Icon"
@@ -10,6 +8,7 @@ import Modal from "../components/modals/_Modal"
 import Form from "../components/forms/_Form"
 import useFormContext from "../hooks/useFormContext"
 import useLoadData from "../hooks/useLoadData"
+import useTheme from "../hooks/useTheme"
 
 const LayoutContainer = styled.div`
   position: relative;
@@ -86,7 +85,7 @@ const BottomNav = styled.nav`
 export default function PageLayout(props: { children: ReactNode }) {
   const { children } = props
 
-  const { theme, toggleTheme } = useContext(ThemeContext)
+  const { theme, toggleTheme } = useTheme()
   const { title, form } = useFormContext()
   const location = useLocation()
 
