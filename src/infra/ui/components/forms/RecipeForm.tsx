@@ -1,6 +1,6 @@
 import { AdaptedIngredient, AdaptedRecipe, RecipeInput } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { Dropdown, DropdownItem, FieldSet, FormContainer, IngredientListItem, IngredientMacrosSpan, IngredientTable, InputField, SelectField, SubmitContainer } from "@infra/ui/styles/formStyles"
+import { Dropdown, DropdownItem, FieldSet, FormContainer, IngredientMacrosSpan, IngredientTable, InputField, SelectField, SubmitContainer } from "@infra/ui/styles/formStyles"
 import { Span, Subtitle, Text } from "@infra/ui/styles/generalStyles"
 import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
 import Button from "../buttons/_Button"
@@ -231,10 +231,9 @@ export default function RecipeForm(props: RecipeFormProps) {
   }
 
   useEffect(() => {
-    if (props.data.loading || !search) return setIngOptions([])
+    if (props.data.loading) return setIngOptions([])
     setIngOptions(props.data.ingredients.filter(
       i => i.name.includes(search)))
-    setShowIngOptionsDropdown(true)
   }, [search, loading])
 
   return (
