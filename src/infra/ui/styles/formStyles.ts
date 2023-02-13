@@ -184,3 +184,40 @@ export const IngredientListItem = styled.div`
   justify-content: space-between;
   padding: 8px;
 `
+
+export const IngredientTable = styled.table`
+  width: 100%;
+  margin: 20px 0;
+  border-collapse: collapse;
+  td, th {
+    padding: 8px 16px;
+    text-align: left;
+  }
+
+  thead tr {
+    background-color: ${({ theme }) => theme.color.primaryV1};
+    color: ${({ theme }) => theme.main.contrastV1};
+  }
+
+  tbody tr {
+    border-bottom: 1px solid ${({ theme }) => theme.main.contrastV3 + "60"};
+    &:nth-of-type(even) {
+      background-color: ${({ theme }) => theme.main.primaryV3}
+    }
+    &:last-of-type {
+      border-bottom: 2px solid ${({ theme }) => theme.color.primaryV1}
+    }
+
+    td {
+      &:nth-child(2) {
+        color: ${({ theme }) => theme.color.green}
+      }
+      &:nth-child(3) {
+        color: ${({ theme }) => theme.color.orange}
+      }
+      &:nth-child(4) {
+        color: ${({ theme }) => theme.color.blue}
+      }
+    }
+  }
+`

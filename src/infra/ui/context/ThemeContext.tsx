@@ -55,7 +55,7 @@ export const themesSet: ThemesSet = {
       green: "#076e34",
       orange: "#002d81",
       blue: "#913a00",
-      red: "#570202"
+      red: "#860000"
     }
   },
   dark: {

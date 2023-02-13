@@ -1,6 +1,6 @@
 import { AdaptedIngredient, AdaptedRecipe, RecipeInput } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { Dropdown, DropdownItem, FieldSet, FormContainer, IngredientListItem, IngredientMacrosSpan, InputField, SelectField, SubmitContainer } from "@infra/ui/styles/formStyles"
+import { Dropdown, DropdownItem, FieldSet, FormContainer, IngredientListItem, IngredientMacrosSpan, IngredientTable, InputField, SelectField, SubmitContainer } from "@infra/ui/styles/formStyles"
 import { Span, Subtitle, Text } from "@infra/ui/styles/generalStyles"
 import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
 import Button from "../buttons/_Button"
@@ -273,7 +273,6 @@ export default function RecipeForm(props: RecipeFormProps) {
             onChange={handleChangeSearch}
           />  
         </InputField>
-        {submitError.ingredients && <span>{submitError.ingredientsMessage}</span>}
         {showIngOptionsDropdown && !loading && ingOptions.length > 0 && (
           <Dropdown ref={searchOptionsRef}>
             {ingOptions.map(
@@ -305,25 +304,42 @@ export default function RecipeForm(props: RecipeFormProps) {
           </Dropdown>
         )}
         {ingredients.length > 0 && (
-          <div>
-            {ingredients.map((i, index) => (
-              <IngredientListItem key={i[0].id}>
-                <div>
-                  <Text>{i[0].name}</Text>
-                  <Subtitle>{i[0].description}</Subtitle>
-                </div>
-                <InputField error={submitError.ingredients}>
-                  <input
-                    type="number"
-                    placeholder="Gramas totais"
-                    onChange={(e) => handleChangeGrams(e, i[0].id)}
-                    value={ingredients[index][1]}
-                  />
-                </InputField>
-              </IngredientListItem>
-            ))}
-          </div>
+          <IngredientTable>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Proteínas</th>
+                <th>Carboidratos</th>
+                <th>Gorduras</th>
+                <th>Gramas Totais</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ingredients.map((i, index) => (
+                <tr key={index}>
+                  <td>
+                    <Text>{i[0].name}</Text>
+                    <Subtitle>{i[0].description}</Subtitle>
+                  </td>
+                  <td>{i[0].macros ? i[0].macros[0].toFixed(2) + "g" : "-"}</td>
+                  <td>{i[0].macros ? i[0].macros[1].toFixed(2) + "g" : "-"}</td>
+                  <td>{i[0].macros ? i[0].macros[2].toFixed(2) + "g" : "-"}</td>
+                  <td>
+                    <InputField error={submitError.ingredients}>
+                      <input
+                        type="number"
+                        placeholder="Gramas totais"
+                        onChange={(e) => handleChangeGrams(e, i[0].id)}
+                        value={ingredients[index][1]}
+                      />
+                    </InputField>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </IngredientTable>
         )}
+        {submitError.ingredients && <span>{submitError.ingredientsMessage}</span>}
       </FieldSet>
 
       
