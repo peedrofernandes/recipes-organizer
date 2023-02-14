@@ -74,6 +74,8 @@ type DataAction = {
 }
 
 function dataReducer(state: DataState, action: DataAction): DataState {
+  console.trace("A dispatch was fired! Action: " + action.type )
+
   switch (action.type) {
   case "LOADING_FETCH_INGREDIENTS":
     return {

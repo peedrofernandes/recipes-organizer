@@ -38,7 +38,7 @@ export default function RecipeCard(props: RecipeCardProps) {
                   <li>C: {macros[1].toFixed(2)}g</li>
                   <li>G: {macros[2].toFixed(2)}g</li>
                   <li>|</li>
-                  <li>{kcal}kcal</li>
+                  <li>{kcal?.toFixed(2)}kcal</li>
                 </ul>
               </MacrosSpan>
             )}

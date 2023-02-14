@@ -1,3 +1,4 @@
+import GeneratePDF from "@domain/application/GeneratePDF"
 import CreateRecipe from "../domain/application/CreateRecipe"
 import DeleteRecipe from "../domain/application/DeleteRecipe"
 import GenerateJson from "../domain/application/GenerateJson"
@@ -23,7 +24,9 @@ export default class RecipeController {
     private recipeRepository: IRepository<Recipe>,
     private ingredientRepository: IRepository<Ingredient>,
     private turnIntoJsonMethod: (recipes: AdaptedRecipe[]) => any,
-    private generatePDFMethod: (recipesWithDates: [Id, Date][]) => any,
+    private generatePDFMethod: (
+      adaptedRecipesWithDates: [AdaptedRecipe, Date][]
+    ) => Promise<void>,
     private uiCallbacks: {
       updateUIOnCreate: (recipe: AdaptedRecipe) => void,
       updateUIOnUpdate: (recipe: AdaptedRecipe) => void,
@@ -90,6 +93,32 @@ export default class RecipeController {
     await deleteRecipeUseCase.execute(id)
   }
 
+  public randomizeRecipes(adaptedRecipes: AdaptedRecipe[], initialDate: Date) {
+    const randomizeRecipesUseCase = new RandomizeRecipes()
+    
+    const recipes = adaptedRecipes.map(r => this.recipeAdapter.retrieveRecipe(r))
+    const randomizedRecipes = randomizeRecipesUseCase.execute(recipes, initialDate)
+    const adaptedRandomizedRecipes: [AdaptedRecipe, Date][] = randomizedRecipes.map(
+      ([r, date]) => [this.recipeAdapter.adaptRecipe(r), date]
+    )
+    return adaptedRandomizedRecipes
+  }
+
+  public generatePDF(adaptedRecipesWithDates: [AdaptedRecipe, Date][]) {
+    const generatePDFMethod = async (recipesWithDates: [Recipe, Date][]) => {
+      const adapted: [AdaptedRecipe, Date][] = recipesWithDates.map(
+        ([r, date]) => [this.recipeAdapter.adaptRecipe(r), date])
+      await this.generatePDFMethod(adapted)
+      console.trace("GeneratePDF fired at the method defined in the controller")
+    }
+    const generatePDFUseCase = new GeneratePDF(generatePDFMethod)
+
+    const recipesWithDates: [Recipe, Date][] = adaptedRecipesWithDates.map(
+      ([recipe, date]) => [this.recipeAdapter.retrieveRecipe(recipe), date])
+    console.trace("generatePDF called at the recipeController")
+    return generatePDFUseCase.execute(recipesWithDates)
+  }
+
   public async turnRecipesIntoJson(adaptedRecipes: AdaptedRecipe[]) {
     const turnIntoJsonMethod = async (recipes: Recipe[]) => {
       const adaptedRecipes = recipes.map(
@@ -110,17 +139,6 @@ export default class RecipeController {
     )
     const { newIngredients, newRecipes } = await loadRecipesFromJsonUseCase.execute(jsonFile)
     return { newIngredients, newRecipes }
-  }
-
-  public async randomizeAndGeneratePDF(recipes: Recipe[], date: Date) {
-    const generatePDF = (recipesWithDates: [Recipe, Date][]) => {
-      const adaptedParams = recipesWithDates.map(
-        ([recipe, date]) => [recipe.id, date] as [Id, Date]
-      )
-      return this.generatePDFMethod(adaptedParams)
-    }
-    const randomizeRecipesUseCase = new RandomizeRecipes(generatePDF)
-    randomizeRecipesUseCase.execute(recipes, date)
   }
 
   // ------------------------------------

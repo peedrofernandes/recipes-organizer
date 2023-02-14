@@ -62,6 +62,15 @@ export default function useEvents() {
       dispatch({ type: "LOADING_DELETE_RECIPE"})
       setForm({ variant: null })
       await recipeController.deleteRecipe(id)
+    },
+
+    randomizeRecipes: async (adaptedRecipes: AdaptedRecipe[], initialDate: Date) => {
+      return recipeController.randomizeRecipes(adaptedRecipes, initialDate)
+    },
+
+    generatePDF: async (adaptedRecipesWithDates: [AdaptedRecipe, Date][]) => {
+      console.trace("generatePDFevent called at useEvents")
+      return recipeController.generatePDF(adaptedRecipesWithDates)
     }
   }), [])
 

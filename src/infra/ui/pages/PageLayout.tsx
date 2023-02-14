@@ -9,6 +9,9 @@ import Form from "../components/forms/_Form"
 import useFormContext from "../hooks/useFormContext"
 import useLoadData from "../hooks/useLoadData"
 import useTheme from "../hooks/useTheme"
+import PDFDocument from "../components/PDF"
+import useDataContext from "../hooks/useDataContext"
+import Theme from "../styles/styles"
 
 const LayoutContainer = styled.div`
   position: relative;
@@ -89,8 +92,6 @@ export default function PageLayout(props: { children: ReactNode }) {
   const { title, form } = useFormContext()
   const location = useLocation()
 
-  useLoadData()
-
   return (
     <ThemeProvider theme={theme}>
       <LayoutContainer>
@@ -119,6 +120,7 @@ export default function PageLayout(props: { children: ReactNode }) {
         <section>
           {children}
         </section>
+
 
         {location.pathname !== "/" && (
 

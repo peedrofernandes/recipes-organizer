@@ -1,13 +1,8 @@
 import Recipe from "../entities/Recipe"
 import IUseCase from "./_IUseCase"
 
-export default class RandomizeRecipes implements IUseCase<[Recipe[], Date], File> {
-
-  constructor(
-    private generatePDF: (recipesWithDates: [Recipe, Date][]) => File
-  ) { }
-
-  execute(recipes: Recipe[], date: Date): File {
+export default class RandomizeRecipes implements IUseCase<[Recipe[], Date], [Recipe, Date][]> {
+  execute(recipes: Recipe[], date: Date): [Recipe, Date][] {
     const weekRecipes = recipes.filter(
       r => r.type === "Week" || r.type === "Both"
     )
@@ -41,6 +36,6 @@ export default class RandomizeRecipes implements IUseCase<[Recipe[], Date], File
       currentDate.setDate(currentDate.getDate() + 1)
     }
 
-    return this.generatePDF(recipesWithDates)
+    return recipesWithDates
   }
 }

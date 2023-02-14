@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useRef, useState } from "react"
 import styled from "styled-components"
 import Card from "../components/cards/_Card"
 import { Grid, GridItem } from "../components/MaterialGrid"
@@ -6,6 +6,10 @@ import PageLayout from "./PageLayout"
 import { Link } from "react-router-dom"
 import Button from "../components/buttons/_Button"
 import useDataContext from "../hooks/useDataContext"
+import useEvents from "../hooks/useEvents"
+import services from "@infra/handlers/services"
+import PDFDocument from "../components/PDF"
+import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 
 const Title = styled.h1`
   padding: 24px 0;
@@ -18,11 +22,20 @@ type PageProps = {
   variant: "Ingredients";
 } | {
   variant: "Recipes";
+} | {
+  variant: "PDF"
 }
 
 export default function Page(props: PageProps) {
   const { variant } = props
   const { data } = useDataContext()
+  const { generatePDF } = useEvents()
+
+  const [recipeList, setRecipeList] = useState<[AdaptedRecipe, Date][]>([])
+
+  useEffect(() => {
+    setRecipeList(data.recipes.map(r => [r, new Date()]))
+  }, [data.recipes])
 
   switch (variant) {
   case "Help": {
@@ -78,6 +91,15 @@ export default function Page(props: PageProps) {
         <Title>Receitas</Title>
         <Grid>
 
+          <GridItem rSpan={{xs: 4, sm: 8, md: 12, lg: 12, xl: 12}}>
+            <h1>Content</h1>
+            <Button
+              variant="styled"
+              text="Gerar PDF"
+              onClick={() => generatePDF(data.recipes.map(r => [r, new Date()]))}
+            />
+          </GridItem>
+
           {data.recipes.map((recipe) => {
 
             return (
@@ -102,6 +124,9 @@ export default function Page(props: PageProps) {
         </Grid>
       </PageLayout>
     )
+  }
+  case "PDF": {
+    return <PDFDocument list={recipeList} />
   }
   }
 }

@@ -3,7 +3,7 @@ import ingredientHandler from "@infra/handlers/IngredientHandler"
 import recipeHandler from "@infra/handlers/RecipeHandler"
 import useDataContext from "./useDataContext"
 
-export default function useControllers() {
+export default function  useControllers() {
   const { dispatch } = useDataContext()
 
   const ingredientController = ingredientHandler(

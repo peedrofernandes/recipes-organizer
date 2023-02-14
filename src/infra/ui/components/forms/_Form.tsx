@@ -3,6 +3,7 @@ import useEvents from "@infra/ui/hooks/useEvents"
 import useFormContext from "@infra/ui/hooks/useFormContext"
 import React from "react"
 import ConfirmDeleteForm from "./ConfirmDeleteForm"
+import GeneratePdfForm from "./GeneratePdfForm"
 import IngredientForm from "./IngredientForm"
 import RecipeForm from "./RecipeForm"
 
@@ -16,7 +17,9 @@ export default function Form() {
     updateRecipe,
     deleteIngredient,
     deleteRecipe,
-    cancelRequest
+    cancelRequest,
+    randomizeRecipes,
+    generatePDF
   } = useEvents()
 
   const { data } = useDataContext()
@@ -61,6 +64,11 @@ export default function Form() {
       variant="Recipe"
       id={form.id}
       events={{ confirmEvent: deleteRecipe, cancelEvent: cancelRequest }}
+    />
+  case "GeneratePDF":
+    return <GeneratePdfForm
+      list={data.recipes.map(r => [r, new Date()])}
+      events={{ randomize: randomizeRecipes, submitEvent: generatePDF }}
     />
   default:
     return null

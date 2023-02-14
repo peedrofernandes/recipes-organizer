@@ -20,6 +20,9 @@ type FormState = {
 } | {
   variant: "RecipeDeletion"
   id: Id
+} | {
+  variant: "GeneratePDF"
+  list: AdaptedRecipe[]
 }
 
 type FormContext = {
@@ -28,7 +31,7 @@ type FormContext = {
 }
 
 // const initialState: FormState = { variant: null }
-const initialState: FormState = { variant: "RecipeCreation" }
+const initialState: FormState = { variant: null }
 
 export const FormContext = createContext<FormContext>({
   form: initialState,
