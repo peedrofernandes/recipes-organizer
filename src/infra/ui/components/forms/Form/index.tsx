@@ -2,12 +2,12 @@ import useDataContext from "@infra/ui/hooks/useDataContext"
 import useEvents from "@infra/ui/hooks/useEvents"
 import useFormContext from "@infra/ui/hooks/useFormContext"
 import React from "react"
-import ConfirmDeleteForm from "./ConfirmDeleteForm"
-import GeneratePdfForm from "./GeneratePdfForm"
-import IngredientForm from "./IngredientForm"
-import RecipeForm from "./RecipeForm"
+import ConfirmDeleteForm from "../ConfirmDeleteForm"
+import IngredientForm from "../IngredientForm"
+import RecipeForm from "../RecipeForm"
+import PDFGenerationForm from "../PDFGenerationForm"
 
-export default function Form() {
+export default function Form(props: { scrolled: boolean }) {
   const { form } = useFormContext()
   
   const {
@@ -43,6 +43,7 @@ export default function Form() {
         ? { loading: true }
         : { loading: false, ingredients: data.ingredients }}
       events={{ submitEvent: createRecipe }}
+      scrolled={props.scrolled}
     />
   case "RecipeUpdate":
     return <RecipeForm
@@ -52,6 +53,7 @@ export default function Form() {
         : { loading: false, ingredients: data.ingredients }}
       recipe={form.recipe}
       events={{ submitEvent: updateRecipe }}
+      scrolled={props.scrolled}
     />
   case "IngredientDeletion":
     return <ConfirmDeleteForm
@@ -65,9 +67,14 @@ export default function Form() {
       id={form.id}
       events={{ confirmEvent: deleteRecipe, cancelEvent: cancelRequest }}
     />
-  case "GeneratePDF":
-    return <GeneratePdfForm
-      list={data.recipes.map(r => [r, new Date()])}
+  case "PDFGeneration":
+    return <PDFGenerationForm
+      data={data.loading.fetchRecipes ? {
+        loading: true 
+      } : {
+        loading: false,
+        recipes: data.recipes
+      }}
       events={{ randomize: randomizeRecipes, submitEvent: generatePDF }}
     />
   default:

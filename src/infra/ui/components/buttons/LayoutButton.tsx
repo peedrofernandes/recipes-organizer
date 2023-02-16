@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react"
 import styled from "styled-components"
-import { BaseButtonProps } from "./_Button"
+import { BaseButtonProps } from "./Button"
 
 const LayoutButtonContainer = styled.button<{ selected?: boolean }>`
   outline: none;

@@ -1,7 +1,7 @@
 import React from "react"
 import { Id } from "@domain/utilities/types/Id"
-import Button from "../buttons/_Button"
-import { ConfirmButtonSet } from "@infra/ui/styles/formStyles"
+import Button from "../buttons/Button"
+import { ConfirmButtonSet } from "@infra/ui/components/forms/Form/styles"
 
 type ConfirmDeleteFormProps = {
   variant: "Recipe",

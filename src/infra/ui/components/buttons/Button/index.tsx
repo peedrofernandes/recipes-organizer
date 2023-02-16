@@ -1,8 +1,8 @@
 import React, { ReactNode, ReactElement } from "react"
-import Icon from "../icons/_Icon"
-import IconButton from "./IconButton"
-import LayoutButton from "./LayoutButton"
-import StyledButton from "./StyledButton"
+import Icon from "../../icons/_Icon"
+import IconButton from "../IconButton"
+import LayoutButton from "../LayoutButton"
+import StyledButton from "../StyledButton"
 
 export interface BaseButtonProps {
   onClick?: () => void;

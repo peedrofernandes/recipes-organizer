@@ -1,17 +1,28 @@
 import React, { useEffect } from "react"
 import { createContext, ReactNode, useState } from "react"
-import { Theme } from "styled-components"
+import { DefaultTheme } from "styled-components"
 import ThemeController from "../../../controllers/ThemeController"
 
 type ThemesSet = {
-  light: Theme;
-  dark: Theme;
+  light: DefaultTheme;
+  dark: DefaultTheme;
 }
 
-const green = "#07da63"
-const orange = "#ea6f1c"
-const blue = "#1184e2"
-const red = "#dd2323"
+const breakpoints: [number, number, number, number, number] = [0, 600, 905, 1240, 1440]
+type ParsedBreakpoints = {
+  xs: string;
+  sm: string;
+  md: string;
+  lg: string;
+  xl: string;
+}
+    
+function parseBreakpoints(b: [number, number, number, number, number]): ParsedBreakpoints {
+  return ["xs", "sm", "md", "lg", "xl"].reduce((object, key, i) => ({
+    ...object,
+    [key]: `(min-width: ${b[i]}px)`
+  }), {} as ParsedBreakpoints)
+}
 
 export const themesSet: ThemesSet = {
   light: {
@@ -35,7 +46,8 @@ export const themesSet: ThemesSet = {
       blue: "#913a00",
       red: "#860000",
       yellow: "#8b8200"
-    }
+    },
+    breakpoints: parseBreakpoints(breakpoints)
   },
   dark: {
     main: {
@@ -58,12 +70,13 @@ export const themesSet: ThemesSet = {
       blue: "#ea6f1c",
       red: "#dd2323",
       yellow: "#fffb00"
-    }
+    },
+    breakpoints: parseBreakpoints(breakpoints)
   }
 }
 
 export type ThemeContextValue = {
-  theme: Theme;
+  theme: DefaultTheme;
   toggleTheme: () => void
 }
 
@@ -77,7 +90,7 @@ export default function ThemeContextProvider(props: { children: ReactNode }) {
 
   const themeController = new ThemeController()
 
-  const [theme, setTheme] = useState<Theme>(themesSet.light)
+  const [theme, setTheme] = useState<DefaultTheme>(themesSet.light)
 
   useEffect(() => {
     const existingTheme = themeController.loadTheme()
@@ -87,7 +100,7 @@ export default function ThemeContextProvider(props: { children: ReactNode }) {
   }, [])
 
   const toggleTheme = () => {
-    const newTheme: Theme = (theme === themesSet.light) ? themesSet.dark : themesSet.light
+    const newTheme: DefaultTheme = (theme === themesSet.light) ? themesSet.dark : themesSet.light
 
     themeController.persistTheme(newTheme === themesSet.light ? "light" : "dark")
 

@@ -1,6 +1,6 @@
-import React from "react"
+import React, { useState } from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import { createGlobalStyle } from "styled-components"
+import styled, { createGlobalStyle } from "styled-components"
 import DataContextProvider from "./context/DataContext"
 import FormContextProvider from "./context/FormContext"
 import ThemeContextProvider from "./context/ThemeContext"
@@ -23,6 +23,8 @@ export default function App() {
   return (
     <>
       <GlobalStyles />
+
+
             
       <Router>
         <Routes>

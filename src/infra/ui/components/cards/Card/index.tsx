@@ -3,11 +3,12 @@ import useDataContext from "@infra/ui/hooks/useDataContext"
 import useEvents from "@infra/ui/hooks/useEvents"
 import React from "react"
 
-import CreateIngredientCard from "./CreateIngredientCard"
-import CreateRecipeCard from "./CreateRecipeCard"
-import IngredientCard from "./IngredientCard"
-import LoadingCard from "./LoadingCard"
-import RecipeCard from "./RecipeCard"
+import CreateIngredientCard from "../CreateIngredientCard"
+import CreateRecipeCard from "../CreateRecipeCard"
+import IngredientCard from "../IngredientCard"
+import IngredientSelectionCard from "../IngredientSelectionCard"
+import LoadingCard from "../LoadingCard"
+import RecipeCard from "../RecipeCard"
 
 // --------- Visual Elements ----------
 
@@ -25,7 +26,9 @@ type CardProps = {
   variant: "CreateIngredient";
 } | {
   variant: "Loading"
-};
+} | ({
+  variant: "IngredientSelection"
+} & React.ComponentPropsWithoutRef<typeof IngredientSelectionCard>);
 
 // ------------------------------------
 
@@ -67,6 +70,10 @@ export default function Card(props: CardProps) {
   case "CreateRecipe":
     return <CreateRecipeCard
       events={{ createEvent: createRecipeRequest }}
+    />
+  case "IngredientSelection":
+    return <IngredientSelectionCard
+      {...props}
     />
   case "Loading":
     return <LoadingCard />

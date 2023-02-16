@@ -26,6 +26,8 @@ export default function useEvents() {
       
     deleteRecipeRequest: (id: Id) => setForm({ variant: "RecipeDeletion", id }),
 
+    generatePDFRequest: () => setForm({ variant: "PDFGeneration" }),
+
     cancelRequest: () => setForm({ variant: null }),
 
     createIngredient: async (ingredientInput: IngredientInput) => {

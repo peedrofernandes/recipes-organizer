@@ -1,17 +1,17 @@
-import React, { ReactNode } from "react"
+import React, { ReactNode, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import styled, { ThemeProvider } from "styled-components"
 
-import Button from "../components/buttons/_Button"
+import Button from "../components/buttons/Button"
 import Icon from "../components/icons/_Icon"
 import Modal from "../components/modals/_Modal"
-import Form from "../components/forms/_Form"
+import Form from "../components/forms/Form"
 import useFormContext from "../hooks/useFormContext"
 import useLoadData from "../hooks/useLoadData"
 import useTheme from "../hooks/useTheme"
 import PDFDocument from "../components/PDF"
 import useDataContext from "../hooks/useDataContext"
-import Theme from "../styles/styles"
+import Theme from "../components/styles"
 
 const LayoutContainer = styled.div`
   position: relative;
@@ -85,8 +85,17 @@ const BottomNav = styled.nav`
   }
 `
 
+const GridColumnButton = styled.button`
+  position: fixed;
+  top: 40px;
+  left: 40px;
+  z-index: 10;
+`
+
 export default function PageLayout(props: { children: ReactNode }) {
   const { children } = props
+
+  const [gridColumns, setGridColumns] = useState<boolean>(false)
 
   const { theme, toggleTheme } = useTheme()
   const { title, form } = useFormContext()
@@ -97,9 +106,11 @@ export default function PageLayout(props: { children: ReactNode }) {
       <LayoutContainer>
 
         {form.variant !== null && (
-          <Modal title={title}>
-            <Form />
-          </Modal>
+          <Modal
+            variant="form"
+            title={title}
+            renderChildren={(scrolled: boolean) => <Form scrolled={scrolled} />}
+          />
         )}
 
 

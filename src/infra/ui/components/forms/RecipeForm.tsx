@@ -1,10 +1,13 @@
 import { AdaptedIngredient, AdaptedRecipe, RecipeInput } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { Dropdown, DropdownItem, FieldSet, FormContainer, IngredientMacrosSpan, IngredientTable, InputField, SelectField, SubmitContainer } from "@infra/ui/styles/formStyles"
-import { Span, Subtitle, Text } from "@infra/ui/styles/generalStyles"
+import useTheme from "@infra/ui/hooks/useTheme"
+import { Dropdown, DropdownItem, FieldSet, FormContainer, MacrosList, InputField, SelectField, SubmitContainer } from "@infra/ui/components/forms/Form/styles"
+import { CardList, CardListItem, Span, Subtitle, Text } from "@infra/ui/components/styles"
 import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
-import Button from "../buttons/_Button"
+import Button from "../buttons/Button"
+import Card from "../cards/Card"
 import Icon from "../icons/_Icon"
+import Table from "../tables/Table"
 
 
 
@@ -27,6 +30,7 @@ type RecipeFormProps = ({
     loading: false
     ingredients: AdaptedIngredient[]
   }
+  scrolled: boolean
 })
 
 
@@ -63,7 +67,6 @@ type SubmitErrors = ({
 
 export default function RecipeForm(props: RecipeFormProps) {
   const { loading } = props.data
-
   let initialName = ""
   let initialType: "Week" | "Weekend" | "Both" | "" = ""
   let initialDescription = ""
@@ -132,12 +135,14 @@ export default function RecipeForm(props: RecipeFormProps) {
       setIngredients([...ingredients, [ing, ""]])
   }
 
-  function handleChangeGrams(e: ChangeEvent<HTMLInputElement>, id: Id) {
+  function handleChangeGrams(id: Id, value: string) {
     setSubmitError((state): SubmitErrors => ({
       ...state,
       ingredients: false
     }))
     const index = ingredients.findIndex(item => item[0].id === id)
+    console.log(`List of ids: ${ingredients.map(i => i[0].id)}`)
+    console.log(`Current id: ${id}`)
     const ing = ingredients[index]
     if (!ing) {
       setSubmitError((state): SubmitErrors => ({
@@ -147,7 +152,7 @@ export default function RecipeForm(props: RecipeFormProps) {
       }))
       return
     }
-    ing[1] = e.target.value
+    ing[1] = value
     ingredients[index] = ing
     setIngredients(ingredients)
   }
@@ -204,7 +209,10 @@ export default function RecipeForm(props: RecipeFormProps) {
 
 
   // Auxiliar states, variables, handlers and effects
+
+  const { breakpoints } = useTheme().theme
   
+  const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false)
   const [search, setSearch] = useState<string>("")
   const [ingOptions, setIngOptions] = useState<AdaptedIngredient[]>([])
   const [showTypesDropdown, setShowTypesDropdown] = useState<boolean>(false)
@@ -236,16 +244,41 @@ export default function RecipeForm(props: RecipeFormProps) {
       i => i.name.includes(search)))
   }, [search, loading])
 
+  useEffect(() => {
+    if (props.scrolled) setShowIngOptionsDropdown(false)
+  }, [props.scrolled])
+
+  useEffect(() => {
+    const mediaWatcher = window.matchMedia(breakpoints.md)
+    setIsSmallScreen(!mediaWatcher.matches)
+
+    function update(value: boolean) {
+      console.log(`Window updated! Value: ${value}`)
+      setIsSmallScreen(value)
+    }
+
+    mediaWatcher.addEventListener("change", () => update(!mediaWatcher.matches))
+
+    return () => {
+      mediaWatcher.removeEventListener("change", () => update(!mediaWatcher.matches))
+    }
+  }, [])
+    
   return (
-    <FormContainer onClick={(e) => handleCloseDropdowns(e)} onSubmit={handleSubmit}>
+    <FormContainer
+      onClick={handleCloseDropdowns}
+      onSubmit={handleSubmit}
+      onScroll={() => setShowIngOptionsDropdown(false)}
+      autoComplete="off"
+    >
 
       
 
 
       {/* Name Input */}
-      <FieldSet error={submitError.name}>
+      <FieldSet errorStatus={submitError.name}>
         <label>Nome</label>
-        <InputField error={submitError.name}>
+        <InputField errorStatus={submitError.name}>
           <input type="text" id="nome" name="nome"
             placeholder="Nome"
             value={name}
@@ -259,12 +292,12 @@ export default function RecipeForm(props: RecipeFormProps) {
       
 
       {/* Ingredients Input */}
-      <FieldSet error={submitError.ingredients}>
+      <FieldSet errorStatus={submitError.ingredients}>
         <label>Ingredientes</label>
         <InputField
           ref={searchInputRef}
           onClick={() => setShowIngOptionsDropdown(true)}
-          error={submitError.ingredients}
+          errorStatus={submitError.ingredients}
         >
           {useMemo(() => (
             <Icon variant={loading ? "Spinner" : "Search"} size={20} />
@@ -288,11 +321,11 @@ export default function RecipeForm(props: RecipeFormProps) {
                     <Subtitle>{opt.description}</Subtitle>
                   </div>
                   {opt.macros && (
-                    <IngredientMacrosSpan>
+                    <MacrosList>
                       <li><Span>P: {opt.macros[0].toFixed(2)}g</Span></li>
                       <li><Span>C: {opt.macros[1].toFixed(2)}g</Span></li>
                       <li><Span>G: {opt.macros[2].toFixed(2)}g</Span></li>
-                    </IngredientMacrosSpan>
+                    </MacrosList>
                   )}
                   <Icon
                     variant={
@@ -306,40 +339,28 @@ export default function RecipeForm(props: RecipeFormProps) {
           </Dropdown>
         )}
         {ingredients.length > 0 && (
-          <IngredientTable>
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Proteínas</th>
-                <th>Carboidratos</th>
-                <th>Gorduras</th>
-                <th>Gramas Totais</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ingredients.map((i, index) => (
-                <tr key={index}>
-                  <td>
-                    <Text>{i[0].name}</Text>
-                    <Subtitle>{i[0].description}</Subtitle>
-                  </td>
-                  <td>{i[0].macros ? i[0].macros[0].toFixed(2) + "g" : "-"}</td>
-                  <td>{i[0].macros ? i[0].macros[1].toFixed(2) + "g" : "-"}</td>
-                  <td>{i[0].macros ? i[0].macros[2].toFixed(2) + "g" : "-"}</td>
-                  <td>
-                    <InputField error={submitError.ingredients}>
-                      <input
-                        type="number"
-                        placeholder="Gramas totais"
-                        onChange={(e) => handleChangeGrams(e, i[0].id)}
-                        value={ingredients[index][1]}
-                      />
-                    </InputField>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </IngredientTable>
+          <>
+            { !isSmallScreen ? (
+              <Table
+                variant="IngredientSelection"
+                errorStatus={submitError.ingredients}
+                handleChangeGrams={handleChangeGrams}
+                ingredients={ingredients}
+              />
+            ) : (
+              <>
+                {ingredients.map(i => (
+                  <Card
+                    key={i[0].id}
+                    variant="IngredientSelection"
+                    errorStatus={submitError.ingredients}
+                    handleChangeGrams={handleChangeGrams}
+                    ingredient={i}
+                  />
+                ))}
+              </>
+            )}
+          </>
         )}
         {submitError.ingredients && <span>{submitError.ingredientsMessage}</span>}
       </FieldSet>
@@ -348,13 +369,13 @@ export default function RecipeForm(props: RecipeFormProps) {
 
 
       {/* Type selection */}
-      <FieldSet error={submitError.type}>
+      <FieldSet errorStatus={submitError.type}>
         <label>Tipo</label>
         <SelectField
           onClick={() => setShowTypesDropdown(true)}
           ref={typesTitleRef}
           selected={type !== undefined}
-          error={submitError.type}
+          errorStatus={submitError.type}
         >
           {type ? typeTranslator[type] : "Selecione"}
         </SelectField>

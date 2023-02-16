@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import { BaseButtonProps } from "./_Button"
+import { BaseButtonProps } from "./Button"
 
 const StyledButtonContainer = styled.button`
   background-color: ${({ theme, color }) => color === "red" ? "#ff0000" : theme.color.primaryV1};

@@ -26,13 +26,12 @@ export const FormContainer = styled.form`
 `
 
 export const FieldSet = styled.fieldset<{
-  error?: boolean
+  errorStatus?: boolean
 }>`
-  position: relative;
   width: 100%;
   display: block;
   border: none;
-  color: ${({ error, theme }) => error ? theme.color.red : "inherit"};
+  color: ${({ errorStatus, theme }) => errorStatus ? theme.color.red : "inherit"};
 
   input[type=text], input[type=number], select {
     background-color: inherit;
@@ -42,7 +41,7 @@ export const FieldSet = styled.fieldset<{
     width: 100%;
 
     &::placeholder {
-      color: ${({ error, theme }) => error ? theme.color.red + "90" : theme.main.contrastV1 + "90"};
+      color: ${({ errorStatus, theme }) => errorStatus ? theme.color.red + "90" : theme.main.contrastV1 + "90"};
       font-size: 14px;
     }
   }
@@ -53,7 +52,7 @@ export const FieldSet = styled.fieldset<{
 `
 
 export const InputFieldStyles = css<{
-  error?: boolean
+  errorStatus?: boolean
 }>`
   position: relative;
   display: flex;
@@ -67,21 +66,21 @@ export const InputFieldStyles = css<{
   min-width: 0;
   margin-top: 8px;
 
-  box-shadow: ${({ theme, error }) =>
-    `inset 0 0 1px ${error ? theme.color.red : theme.main.contrastV1},
-     0 0 1px ${error ? theme.color.red : theme.main.contrastV1}`};
+  box-shadow: ${({ theme, errorStatus }) =>
+    `inset 0 0 1px ${errorStatus ? theme.color.red : theme.main.contrastV1},
+     0 0 1px ${errorStatus ? theme.color.red : theme.main.contrastV1}`};
   
   &:hover {
-    box-shadow: ${({ theme, error }) =>
-    `inset 0 0 2px ${error ? theme.color.red : theme.main.contrastV1},
-     0 0 2px ${error ? theme.color.red : theme.main.contrastV1}`};
+    box-shadow: ${({ theme, errorStatus }) =>
+    `inset 0 0 2px ${errorStatus ? theme.color.red : theme.main.contrastV1},
+     0 0 2px ${errorStatus ? theme.color.red : theme.main.contrastV1}`};
   }
   
   &:focus-within {
     outline: none;
-    box-shadow: ${({ theme, error }) =>
-    `inset 0 0 4px ${error ? theme.color.red : theme.main.contrastV1},
-     0 0 4px ${error ? theme.color.red : theme.main.contrastV1}`};
+    box-shadow: ${({ theme, errorStatus }) =>
+    `inset 0 0 4px ${errorStatus ? theme.color.red : theme.main.contrastV1},
+     0 0 4px ${errorStatus ? theme.color.red : theme.main.contrastV1}`};
   }
 `
 export const InputField = styled.div`
@@ -111,13 +110,13 @@ export const ConfirmButtonSet = styled.div`
 `
 
 export const SelectField = styled.span<{
-  error?: boolean;
+  errorStatus?: boolean;
   selected?: boolean;
 }>`
   ${InputFieldStyles}
 
   font-size: 14px;
-  color: ${({ error, theme, selected }) => error
+  color: ${({ errorStatus, theme, selected }) => errorStatus
     ? theme.color.red + "90"
     : selected
       ? theme.main.contrastV1
@@ -127,8 +126,7 @@ export const SelectField = styled.span<{
 
 export const Dropdown = styled.ul`
   position: absolute;
-  z-index: 1;
-  width: 100%;
+  z-index: 1000;
   background-color: ${({ theme }) => theme.main.primaryV1};
   border-radius: 0 8px 8px 0;
   padding: 4px;
@@ -146,6 +144,7 @@ export const DropdownItem = styled.li<{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
 
   p {
     color: ${({ theme, active }) => active ? theme.color.green : "unset"} !important;
@@ -160,7 +159,7 @@ export const DropdownItem = styled.li<{
   }
 `
 
-export const IngredientMacrosSpan = styled.ul`
+export const MacrosList = styled.ul`
   display: flex;
   justify-content: space-evenly;
   position: relative;
@@ -183,41 +182,4 @@ export const IngredientListItem = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 8px;
-`
-
-export const IngredientTable = styled.table`
-  width: 100%;
-  margin: 20px 0;
-  border-collapse: collapse;
-  td, th {
-    padding: 8px 16px;
-    text-align: left;
-  }
-
-  thead tr {
-    background-color: ${({ theme }) => theme.color.primaryV1};
-    color: ${({ theme }) => theme.main.contrastV1};
-  }
-
-  tbody tr {
-    border-bottom: 1px solid ${({ theme }) => theme.main.contrastV3 + "60"};
-    &:nth-of-type(even) {
-      background-color: ${({ theme }) => theme.main.primaryV3}
-    }
-    &:last-of-type {
-      border-bottom: 2px solid ${({ theme }) => theme.color.primaryV1}
-    }
-
-    td {
-      &:nth-child(2) {
-        color: ${({ theme }) => theme.color.green}
-      }
-      &:nth-child(3) {
-        color: ${({ theme }) => theme.color.orange}
-      }
-      &:nth-child(4) {
-        color: ${({ theme }) => theme.color.blue}
-      }
-    }
-  }
 `

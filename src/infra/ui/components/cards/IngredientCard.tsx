@@ -1,8 +1,8 @@
 import { AdaptedIngredient } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { CardContainer, ContentContainer, ImageContainer, MacrosSpan } from "@infra/ui/styles/cardStyles"
+import { CardContainer, ContentContainer, ImageContainer, MacrosSpan } from "@infra/ui/components/cards/Card/styles"
 import React from "react"
-import Button from "../buttons/_Button"
+import Button from "../buttons/Button"
 import Icon from "../icons/_Icon"
 
 type IngredientCardProps = {

@@ -23,6 +23,9 @@ export default function useFormContext() {
   case "RecipeDeletion":
     title = "Tem certeza que deseja excluir a receita?"
     break
+  case "PDFGeneration":
+    title = "Escolha suas receitas favoritas e gere um PDF"
+    break
   default:
     title = ""
     break
