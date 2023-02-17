@@ -122,7 +122,7 @@ export default function Page(props: PageProps) {
     )
   }
   case "PDF": {
-    return <PDFDocument list={data.selectedRecipes} />
+    return <PDFDocument />
   }
   }
 }

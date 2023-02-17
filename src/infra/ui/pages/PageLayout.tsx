@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef, useState } from "react"
+import React, { ReactNode } from "react"
 import { Link, useLocation } from "react-router-dom"
 import styled, { ThemeProvider } from "styled-components"
 
@@ -7,10 +7,7 @@ import Icon from "../components/icons/_Icon"
 import Modal from "../components/modals/_Modal"
 import Form from "../components/forms/Form"
 import useFormContext from "../hooks/useFormContext"
-import useLoadData from "../hooks/useLoadData"
 import useTheme from "../hooks/useTheme"
-import PDFDocument from "../components/PDF"
-import useDataContext from "../hooks/useDataContext"
 
 const LayoutContainer = styled.div`
   position: relative;
@@ -84,23 +81,12 @@ const BottomNav = styled.nav`
   }
 `
 
-const GridColumnButton = styled.button`
-  position: fixed;
-  top: 40px;
-  left: 40px;
-  z-index: 10;
-`
-
 export default function PageLayout(props: { children: ReactNode }) {
   const { children } = props
-
-  const [gridColumns, setGridColumns] = useState<boolean>(false)
 
   const { theme, toggleTheme } = useTheme()
   const { title, form } = useFormContext()
   const location = useLocation()
-
-  const [scrollStatus, setScrollStatus] = useState<0 | 1>(0)
 
   return (
     <ThemeProvider theme={theme}>

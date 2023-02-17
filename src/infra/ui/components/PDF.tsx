@@ -235,7 +235,7 @@ function Element(props: { recipe: AdaptedRecipe, date: Date }) {
   )
 }
 
-export default function PDFDocument(props: { list: [AdaptedRecipe, Date][] }) {
+export default function PDFDocument() {
   const list = useDataContext().data.selectedRecipes
   const [splittedList, setSplittedList] = useState<[AdaptedRecipe, Date][][]>([])
 

@@ -1,7 +1,7 @@
 import { AdaptedIngredient, IngredientInput } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import { FieldSet, FormContainer, InputField, InputGroup, SubmitContainer } from "@infra/ui/components/forms/Form/styles"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import Button from "../buttons/Button"
 
 type IngredientFormProps = {

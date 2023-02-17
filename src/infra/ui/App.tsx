@@ -1,9 +1,6 @@
-import React, { useState } from "react"
+import React from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import styled, { createGlobalStyle } from "styled-components"
-import DataContextProvider from "./context/DataContext"
-import FormContextProvider from "./context/FormContext"
-import ThemeContextProvider from "./context/ThemeContext"
+import { createGlobalStyle } from "styled-components"
 import useLoadData from "./hooks/useLoadData"
 import Page from "./pages/Page"
 

@@ -1,4 +1,3 @@
-import { Id } from "../utilities/types/Id"
 import Recipe from "../entities/Recipe"
 import IUseCase from "./_IUseCase"
 import { IRepository } from "../repositories/IRepository"

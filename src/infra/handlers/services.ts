@@ -1,7 +1,4 @@
-import { AdaptedRecipe } from "@controllers/AdaptedTypes"
-import { Id } from "@domain/utilities/types/Id"
 import axios from "axios"
-import React from "react"
 
 export default {
   async postImage(image: File): Promise<string> {

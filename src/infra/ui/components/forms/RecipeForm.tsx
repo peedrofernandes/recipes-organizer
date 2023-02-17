@@ -2,7 +2,7 @@ import { AdaptedIngredient, AdaptedRecipe, RecipeInput } from "@controllers/Adap
 import { Id } from "@domain/utilities/types/Id"
 import useTheme from "@infra/ui/hooks/useTheme"
 import { Dropdown, DropdownItem, FieldSet, FormContainer, MacrosList, InputField, SelectField, SubmitContainer } from "@infra/ui/components/forms/Form/styles"
-import { CardList, CardListItem, Span, Subtitle, Text } from "@infra/ui/components/styles"
+import { Span, Subtitle, Text } from "@infra/ui/components/styles"
 import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
 import Button from "../buttons/Button"
 import Card from "../cards/Card"
