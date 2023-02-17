@@ -15,6 +15,7 @@ type DataState = {
   }
   ingredients: AdaptedIngredient[]
   recipes: AdaptedRecipe[]
+  selectedRecipes: [AdaptedRecipe, Date][]
 }
 
 type DataAction = {
@@ -71,11 +72,12 @@ type DataAction = {
   payload: {
     id: Id
   }
+} | {
+  type: "SET_SELECTED_RECIPES_WITH_DATES"
+  payload: { recipes: [AdaptedRecipe, Date][] }
 }
 
 function dataReducer(state: DataState, action: DataAction): DataState {
-  console.trace("A dispatch was fired! Action: " + action.type )
-
   switch (action.type) {
   case "LOADING_FETCH_INGREDIENTS":
     return {
@@ -204,6 +206,12 @@ function dataReducer(state: DataState, action: DataAction): DataState {
       recipes: state.recipes.filter(r => r.id !== action.payload.id)
     }
   }
+  case "SET_SELECTED_RECIPES_WITH_DATES": {
+    return {
+      ...state,
+      selectedRecipes: action.payload.recipes
+    }
+  }
   default: {
     return state
   }
@@ -211,7 +219,6 @@ function dataReducer(state: DataState, action: DataAction): DataState {
 }
 
 const initialState: DataState = {
-  ingredients: [],
   loading: {
     fetchIngredients: false,
     createIngredient: false,
@@ -222,7 +229,9 @@ const initialState: DataState = {
     updateRecipe: null,
     deleteRecipe: false
   },
-  recipes: []
+  ingredients: [],
+  recipes: [],
+  selectedRecipes: []
 }
 
 type DataContext = {

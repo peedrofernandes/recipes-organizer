@@ -12,7 +12,6 @@ export default {
         data: image,
         headers: { "Content-Type": image.type }
       })
-      console.log(`Response: ${JSON.stringify(response)}`)
       return response.data.url
     } catch (error) {
       throw new Error("There was an error posting ingredient image!")

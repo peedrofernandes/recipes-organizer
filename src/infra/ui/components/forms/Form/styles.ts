@@ -1,8 +1,12 @@
+import { themesSet } from "@infra/ui/context/ThemeContext"
 import styled, { css } from "styled-components"
 
 export const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
+  padding: 0 16px 16px 16px;
+  max-height: 100%;
+  overflow-y: scroll;
 
   label {
     margin-top: 24px;
@@ -33,17 +37,21 @@ export const FieldSet = styled.fieldset<{
   border: none;
   color: ${({ errorStatus, theme }) => errorStatus ? theme.color.red : "inherit"};
 
-  input[type=text], input[type=number], select {
+  input[type=text], input[type=number], input[type=date], select {
     background-color: inherit;
     outline: none;
     border: none;
-    color: inherit;
+    color: ${({ theme }) => theme.main.contrastV1};
     width: 100%;
 
     &::placeholder {
       color: ${({ errorStatus, theme }) => errorStatus ? theme.color.red + "90" : theme.main.contrastV1 + "90"};
       font-size: 14px;
     }
+  }
+
+  input[type=date]::-webkit-calendar-picker-indicator {
+    filter: ${({ theme }) => theme.variant === "Dark" ? "invert(100%)" : "none"};
   }
 
   ul {

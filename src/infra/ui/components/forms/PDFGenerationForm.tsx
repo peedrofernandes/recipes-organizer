@@ -1,7 +1,11 @@
 import { AdaptedRecipe } from "@controllers/AdaptedTypes"
-import { Dropdown, DropdownItem, FieldSet, FormContainer, InputField, MacrosList } from "@infra/ui/components/forms/Form/styles"
+import { Id } from "@domain/utilities/types/Id"
+import { Dropdown, DropdownItem, FieldSet, FormContainer, InputField, MacrosList, SubmitContainer } from "@infra/ui/components/forms/Form/styles"
 import { Span, Subtitle, Text } from "@infra/ui/components/styles"
-import React, { ChangeEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
+import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
+import { useNavigate } from "react-router"
+import { Link } from "react-router-dom"
+import Button from "../buttons/Button"
 import Icon from "../icons/_Icon"
 import Table from "../tables/Table"
 
@@ -20,9 +24,23 @@ type GeneratePDFFormProps = {
   }
 }
 
+type SubmitErrors = ({
+  recipeQuantities: false
+} | {
+  recipeQuantities: true
+  recipeQuantitiesMessage: string
+}) & ({
+  dates: false
+} | {
+  dates: true
+  datesMessage: string
+})
+
 export default function PDFGenerationForm(props: GeneratePDFFormProps) {
   const { loading } = props.data
 
+
+  // Search for recipes functionality
   const [search, setSearch] = useState<string>("")
   const [recipeOptions, setRecipeOptions] = useState<AdaptedRecipe[]>([])
   useEffect(() => {
@@ -30,6 +48,8 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
     setRecipeOptions(props.data.recipes.filter(r => r.name.includes(search)))
   }, [search, loading])
 
+
+  // Change state of selected recipes for the submit
   const [selectedRecipes, setSelectedRecipes] = useState<[AdaptedRecipe, string][]>([])
   function handleChangeSelectedRecipes(recipe: AdaptedRecipe) {
     if (selectedRecipes.some(r => r[0].id === recipe.id))
@@ -39,7 +59,7 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
   }
   
 
-  
+  // Dropdown open/closing logic
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const searchRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLUListElement>(null)
@@ -50,13 +70,63 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
     }
   }
 
+
+  // Handle change date of each recipe
+  function handleChangeDate(id: Id, value: string) {
+    setSubmitErrors(errors => ({ ...errors, dates: false }))
+    const index = selectedRecipes.findIndex(r => r[0].id === id)
+    const updatedRecipe = selectedRecipes[index]
+    updatedRecipe[1] = value
+    selectedRecipes[index] = updatedRecipe
+    setSelectedRecipes(selectedRecipes)
+  }
+
+
+  // Submit error and success handling
+  const [submitErrors, setSubmitErrors] = useState<SubmitErrors>({
+    dates: false, recipeQuantities: false
+  })
+  const [submitSuccess, setSubmitSuccess] = useState<boolean>(false)
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    console.log("Submitted!")
+
+    const invalidRecipeDates = selectedRecipes.some(recipe => !recipe[1])
+    const noRecipes = selectedRecipes.length === 0
+
+    if (invalidRecipeDates || noRecipes) {
+      if (invalidRecipeDates) {
+        setSubmitErrors(errors => ({
+          ...errors,
+          dates: true,
+          datesMessage: "Todas as receitas devem conter datas!"
+        }))
+      }
+      if (noRecipes) {
+        setSubmitErrors(errors => ({
+          ...errors,
+          recipeQuantities: true,
+          recipeQuantitiesMessage: "Adicione pelo menos uma receita!"
+        }))
+      }
+      return
+    }
+
+    const input: [AdaptedRecipe, Date][] =
+      selectedRecipes.map(([recipe, date]) => [recipe, new Date(date)])
+    
+    props.events.submitEvent(input)
+    setSubmitSuccess(true)
+  }
+
   return (
     <FormContainer
       onClick={handleCloseDropdown}
       autoComplete="off"
+      onSubmit={handleSubmit}
     >
 
-      <FieldSet>
+      <FieldSet errorStatus={submitErrors.dates || submitErrors.recipeQuantities}>
         <label>Label</label>
         <InputField
           ref={searchRef}
@@ -101,10 +171,25 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
             ))}
           </Dropdown>
         )}
-        {selectedRecipes.length > 0 && (
-          <Table variant="RecipeSelection" recipes={selectedRecipes} />
-        )}
+        {submitErrors.recipeQuantities && <span>
+          {submitErrors.recipeQuantitiesMessage}
+        </span>}
+        <Table variant="RecipeSelection"
+          recipes={selectedRecipes}
+          errorStatus={submitErrors.dates || submitErrors.recipeQuantities}
+          handleChangeDate={handleChangeDate}
+        />
+        {submitErrors.dates && <span>{submitErrors.datesMessage}</span>}
       </FieldSet>
+
+      <SubmitContainer style={{ display: selectedRecipes.length === 0 ? "none" : ""}}>
+        <Button variant="styled" type="submit" text="Criar PDF" />
+        {submitSuccess && (
+          <Link to="/PDF">
+            <Button variant="styled" text="Go to PDF"/>
+          </Link>
+        )}
+      </SubmitContainer>
 
     </FormContainer>
   )

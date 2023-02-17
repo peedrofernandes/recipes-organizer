@@ -1,4 +1,4 @@
-import { AtLeastOne } from "./AtLeastOne";
+import { AtLeastOne } from "./AtLeastOne"
 
 export type OnlyOne<T, U = {
   [K1 in keyof T]: {

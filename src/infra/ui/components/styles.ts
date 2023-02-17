@@ -55,6 +55,12 @@ export const StyledTable = styled.table`
     color: ${({ theme }) => theme.main.contrastV1};
   }
 
+  tbody span {
+    text-align: center;
+    padding: 8px;
+    width: 100%;
+  }
+
   tbody tr {
     border-bottom: 1px solid ${({ theme }) => theme.main.contrastV3 + "60"};
     &:nth-of-type(even) {

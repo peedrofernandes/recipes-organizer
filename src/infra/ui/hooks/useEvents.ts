@@ -71,7 +71,6 @@ export default function useEvents() {
     },
 
     generatePDF: async (adaptedRecipesWithDates: [AdaptedRecipe, Date][]) => {
-      console.trace("generatePDFevent called at useEvents")
       return recipeController.generatePDF(adaptedRecipesWithDates)
     }
   }), [])

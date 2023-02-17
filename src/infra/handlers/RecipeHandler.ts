@@ -9,6 +9,9 @@ import React, { useRef } from "react"
 import IngredientRepository from "./IngredientRepository"
 import RecipeRepository from "./RecipeRepository"
 import services from "./services"
+import useDataContext from "@infra/ui/hooks/useDataContext"
+
+
 export default function recipeHandler(
   updateUIOnCreate: (recipe: AdaptedRecipe) => void,
   updateUIOnUpdate: (recipe: AdaptedRecipe) => void,
@@ -16,12 +19,18 @@ export default function recipeHandler(
 ) {
   const recipeRepository = new RecipeRepository()
   const ingredientRepository = new IngredientRepository()
+  const { dispatch } = useDataContext()
 
   const uiCallbacks = { updateUIOnCreate, updateUIOnUpdate, updateUIOnDelete }
 
   const turnIntoJsonMethod = () => { return }
 
-  const generatePDFMethod = async (recipesWithDates: [AdaptedRecipe, Date][]) => { return }
+  const generatePDFMethod = async (recipesWithDates: [AdaptedRecipe, Date][]) => {
+    dispatch({
+      type: "SET_SELECTED_RECIPES_WITH_DATES",
+      payload: { recipes: recipesWithDates }
+    })
+  }
 
   const recipeController = new RecipeController(
     recipeRepository,

@@ -7,7 +7,7 @@ import IngredientForm from "../IngredientForm"
 import RecipeForm from "../RecipeForm"
 import PDFGenerationForm from "../PDFGenerationForm"
 
-export default function Form(props: { scrolled: boolean }) {
+export default function Form() {
   const { form } = useFormContext()
   
   const {
@@ -43,7 +43,6 @@ export default function Form(props: { scrolled: boolean }) {
         ? { loading: true }
         : { loading: false, ingredients: data.ingredients }}
       events={{ submitEvent: createRecipe }}
-      scrolled={props.scrolled}
     />
   case "RecipeUpdate":
     return <RecipeForm
@@ -53,7 +52,6 @@ export default function Form(props: { scrolled: boolean }) {
         : { loading: false, ingredients: data.ingredients }}
       recipe={form.recipe}
       events={{ submitEvent: updateRecipe }}
-      scrolled={props.scrolled}
     />
   case "IngredientDeletion":
     return <ConfirmDeleteForm

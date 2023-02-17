@@ -136,16 +136,14 @@ export default function IngredientForm(props: IngredientFormProps) {
 
   }
 
-  useEffect(() => console.log(submitError), [submitError.name, submitError.macros])
-
   return (
     <FormContainer onSubmit={handleSubmit}>
 
 
       
-      <FieldSet error={submitError.name}>
+      <FieldSet errorStatus={submitError.name}>
         <label>Nome*</label>
-        <InputField error={submitError.name}>
+        <InputField errorStatus={submitError.name}>
           <input
             type="text" id="nome" name="nome"
             placeholder="Nome"
@@ -173,9 +171,9 @@ export default function IngredientForm(props: IngredientFormProps) {
 
       <legend>Macronutrientes</legend>
       <InputGroup>
-        <FieldSet error={submitError.macros}>
+        <FieldSet errorStatus={submitError.macros}>
           <label>Proteínas</label>
-          <InputField error={submitError.macros}>
+          <InputField errorStatus={submitError.macros}>
             <input
               type="number" id="proteins" name="proteins"
               step="any" min="0"
@@ -184,9 +182,9 @@ export default function IngredientForm(props: IngredientFormProps) {
             />
           </InputField>
         </FieldSet>
-        <FieldSet error={submitError.macros}>
+        <FieldSet errorStatus={submitError.macros}>
           <label>Carboidratos</label>
-          <InputField error={submitError.macros}>
+          <InputField errorStatus={submitError.macros}>
             <input
               type="number" id="proteins" name="proteins"
               step="any" min="0"
@@ -195,9 +193,9 @@ export default function IngredientForm(props: IngredientFormProps) {
             />
           </InputField>
         </FieldSet>
-        <FieldSet error={submitError.macros}>
+        <FieldSet errorStatus={submitError.macros}>
           <label>Gorduras</label>
-          <InputField error={submitError.macros}>
+          <InputField errorStatus={submitError.macros}>
             <input
               type="number" id="proteins" name="proteins"
               step="any" min="0"
@@ -210,9 +208,9 @@ export default function IngredientForm(props: IngredientFormProps) {
 
 
       
-      <FieldSet error={submitError.macros}>
+      <FieldSet errorStatus={submitError.macros}>
         <label>Gramas totais</label>
-        <InputField error={submitError.macros}>
+        <InputField errorStatus={submitError.macros}>
           <input
             type="number" id="totalGrams" name="totalGrams"
             step="any" min="0" placeholder="g"

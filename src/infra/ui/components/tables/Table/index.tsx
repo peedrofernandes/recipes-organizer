@@ -14,14 +14,8 @@ export default function Table(props: TableProps) {
 
   switch (props.variant) {
   case "IngredientSelection":
-    return <IngredientSelectionTable
-      errorStatus={props.errorStatus}
-      handleChangeGrams={props.handleChangeGrams}
-      ingredients={props.ingredients}
-    />
+    return <IngredientSelectionTable {...props} />
   case "RecipeSelection":
-    return <RecipeSelectionTable
-      recipes={props.recipes}
-    />
+    return <RecipeSelectionTable {...props} />
   }
 }

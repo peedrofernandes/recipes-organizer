@@ -7,7 +7,6 @@ export default class GeneratePDF implements IUseCase<[[Recipe, Date][]], void> {
   ) { }
 
   async execute(recipesWithDates: [Recipe, Date][]) {
-    console.trace("GeneratePDF called at usecases")
     await this.generatePDFMethod(recipesWithDates)
   }
 }

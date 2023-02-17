@@ -2,7 +2,6 @@ import React, {
   MouseEvent,
   ReactNode,
   useRef,
-  useState,
 } from "react"
 import styled from "styled-components"
 
@@ -20,11 +19,13 @@ const ModalBackground = styled.div`
 `
 
 const ModalBox = styled.div`
+  position: relative;
   margin-top: 10%;
   background-color: ${({ theme }) => theme.main.primaryV2};
   color: ${({ theme }) => theme.main.contrastV2};
   width: 100%;
   border-radius: 8px;
+  min-height: 60vh;
   max-height: 80vh;
   overflow-y: auto;
 `
@@ -49,13 +50,13 @@ const TopContainer = styled.div`
 `
 
 const ModalContent = styled.div`
-  padding: 0 16px 16px 16px;
 `
 
 type ModalProps = {
-  variant: "small" | "form"
+  variant: "small" | "form";
   title: string;
-  renderChildren: (scrollEvent: boolean) => ReactNode
+  children: ReactNode;
+  events?: { scrollEvent: () => void }
 }
 
 export default function Modal(props: ModalProps) {
@@ -67,19 +68,11 @@ export default function Modal(props: ModalProps) {
     const targetIsModalBox = modalBoxRef.current?.contains(e.target as Node)
     if (!targetIsModalBox) outsideClick = true
     else outsideClick = false
-    console.log(`Backgound click detected! outsideClick: ${outsideClick}`)
   }
   const releaseClickBackground = (e: MouseEvent) => {
     const targetIsModalBox = modalBoxRef.current?.contains(e.target as Node)
-    console.log("Click released!")
     if (!targetIsModalBox && outsideClick)
       cancelRequest()
-  }
-
-  const [scrolled, setScrolled] = useState<boolean>(false)
-  const fireScrolledEvent = () => {
-    setScrolled(true)
-    setTimeout(() => setScrolled(false), 1000)
   }
 
   return (
@@ -94,17 +87,22 @@ export default function Modal(props: ModalProps) {
         } : {
           xs: [2, 4], sm: [3, 7], md: [4, 10]
         }}>
-          <ModalBox ref={modalBoxRef} onScroll={fireScrolledEvent}>
+
+          <ModalBox ref={modalBoxRef} onScroll={props.events?.scrollEvent}>
+
             <TopContainer>
               <h3>{props.title}</h3>
               <Button variant="icon" onClick={() => cancelRequest()}>
                 <Icon variant="Close" size={24} />
               </Button>
             </TopContainer>
+
             <ModalContent>
-              {props.renderChildren(scrolled)}
+              {props.children}
             </ModalContent>
+
           </ModalBox>
+
         </GridItem>
       </Grid>
 

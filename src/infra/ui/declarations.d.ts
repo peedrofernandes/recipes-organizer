@@ -7,6 +7,7 @@ declare module "*.ttf" {
 
 declare module "styled-components" {
   export interface DefaultTheme {
+    variant: "Dark" | "Light";
     main: {
       primaryV1: string;
       primaryV2?: string;

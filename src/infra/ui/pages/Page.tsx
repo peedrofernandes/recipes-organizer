@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import styled from "styled-components"
 import Card from "../components/cards/Card"
 import { Grid, GridItem } from "../components/MaterialGrid"
@@ -8,7 +8,6 @@ import Button from "../components/buttons/Button"
 import useDataContext from "../hooks/useDataContext"
 import useEvents from "../hooks/useEvents"
 import PDFDocument from "../components/PDF"
-import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 
 const Title = styled.h1`
   padding: 24px 0;
@@ -30,11 +29,9 @@ export default function Page(props: PageProps) {
   const { data } = useDataContext()
   const { generatePDFRequest } = useEvents()
 
-  const [recipeList, setRecipeList] = useState<[AdaptedRecipe, Date][]>([])
-
   useEffect(() => {
-    setRecipeList(data.recipes.map(r => [r, new Date()]))
-  }, [data.recipes])
+    console.log("Selected recipes updated: " + data.selectedRecipes)
+  }, [data.selectedRecipes])
 
   switch (variant) {
   case "Help": {
@@ -125,7 +122,7 @@ export default function Page(props: PageProps) {
     )
   }
   case "PDF": {
-    return <PDFDocument list={recipeList} />
+    return <PDFDocument list={data.selectedRecipes} />
   }
   }
 }

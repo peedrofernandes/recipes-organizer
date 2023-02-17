@@ -1,14 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Document, Page, View, Text, Image, PDFViewer, StyleSheet, Font } from "@react-pdf/renderer"
+import useDataContext from "../hooks/useDataContext"
 import fontThin from "../assets/Montserrat-Thin.ttf"
 import fontRegular from "../assets/Montserrat-Regular.ttf"
 import fontBold from "../assets/Montserrat-Bold.ttf"
-
-// Font.register({
-//   family: "Montserrat",
-//   src: "../assets/Montserrat.ttf"
-// })
 
 Font.register({
   family: "Montserrat",
@@ -27,27 +23,6 @@ Font.register({
     }
   ]
 })
-
-// primaryV1: "#ffffff",
-// primaryV2: "#f8f8f8",
-// primaryV3: "#dddddd",
-// contrastV1: "#2E3232",
-// contrastV2: "#242828",
-// contrastV3: "#111414",
-// },
-// color: {
-// primaryV1: "#07da63",
-// primaryV2: "#00ac4a",
-// primaryV3: "#007c36",
-// contrastV1: "#111414",
-// contrastV2: "#ffffff",
-// contrastV3: "#ffffff",
-// green: "#076e34",
-// orange: "#002d81",
-// blue: "#913a00",
-// red: "#860000",
-// yellow: "#8b8200"
-// }
 
 const pallete = {
   white1: "#ffffff",
@@ -261,8 +236,10 @@ function Element(props: { recipe: AdaptedRecipe, date: Date }) {
 }
 
 export default function PDFDocument(props: { list: [AdaptedRecipe, Date][] }) {
-  const { list } = props
+  const list = useDataContext().data.selectedRecipes
   const [splittedList, setSplittedList] = useState<[AdaptedRecipe, Date][][]>([])
+
+  console.log(`List received at the PDF document: ${list}`)
 
   // Maximum of 5 elements per page
   useEffect(() => { 
@@ -270,6 +247,7 @@ export default function PDFDocument(props: { list: [AdaptedRecipe, Date][] }) {
       (_, i) => list.slice(i * 5, (i + 1) * 5) 
     )
     setSplittedList(newSplittedList)
+    console.log(`Splitted list updated at the PDF docs: ${splittedList}`)
   }, [list])
 
   // const mapWeekDay = useCallback((n: number): string => {

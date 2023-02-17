@@ -61,9 +61,7 @@ export default class RecipeController {
       this.uiCallbacks.updateUIOnCreate(adaptedRecipe)
     }
     const createRecipeUseCase = new CreateRecipe(this.recipeRepository, updateUI)
-    console.trace(input)
     const recipe = await this.recipeAdapter.createRecipeEntity(input)
-    console.trace(recipe)
     await createRecipeUseCase.execute(recipe)
   }
 
@@ -109,13 +107,11 @@ export default class RecipeController {
       const adapted: [AdaptedRecipe, Date][] = recipesWithDates.map(
         ([r, date]) => [this.recipeAdapter.adaptRecipe(r), date])
       await this.generatePDFMethod(adapted)
-      console.trace("GeneratePDF fired at the method defined in the controller")
     }
     const generatePDFUseCase = new GeneratePDF(generatePDFMethod)
 
     const recipesWithDates: [Recipe, Date][] = adaptedRecipesWithDates.map(
       ([recipe, date]) => [this.recipeAdapter.retrieveRecipe(recipe), date])
-    console.trace("generatePDF called at the recipeController")
     return generatePDFUseCase.execute(recipesWithDates)
   }
 

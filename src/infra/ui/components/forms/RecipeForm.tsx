@@ -30,7 +30,6 @@ type RecipeFormProps = ({
     loading: false
     ingredients: AdaptedIngredient[]
   }
-  scrolled: boolean
 })
 
 
@@ -141,8 +140,6 @@ export default function RecipeForm(props: RecipeFormProps) {
       ingredients: false
     }))
     const index = ingredients.findIndex(item => item[0].id === id)
-    console.log(`List of ids: ${ingredients.map(i => i[0].id)}`)
-    console.log(`Current id: ${id}`)
     const ing = ingredients[index]
     if (!ing) {
       setSubmitError((state): SubmitErrors => ({
@@ -218,15 +215,18 @@ export default function RecipeForm(props: RecipeFormProps) {
   const [showTypesDropdown, setShowTypesDropdown] = useState<boolean>(false)
   const [showIngOptionsDropdown, setShowIngOptionsDropdown] = useState<boolean>(false)
 
-  const typesTitleRef = useRef<HTMLFieldSetElement>(null)
-  const searchOptionsRef = useRef<HTMLUListElement>(null)
-  const searchInputRef = useRef<HTMLDivElement>(null)
+  const typeSelectionRef = useRef<HTMLFieldSetElement>(null)
+  const typesDropdownRef = useRef<HTMLUListElement>(null)
+
+  const ingredientsSearchRef = useRef<HTMLDivElement>(null)
+  const ingredientsDropdownRef = useRef<HTMLUListElement>(null)
+  
   function handleCloseDropdowns(e: MouseEvent) {
-    if (!typesTitleRef.current?.contains(e.target as Node)) {
+    if (!typeSelectionRef.current?.contains(e.target as Node)) {
       setShowTypesDropdown(false)
     }
-    if (!searchOptionsRef.current?.contains(e.target as Node)
-      && !searchInputRef.current?.contains(e.target as Node)) {
+    if (!ingredientsDropdownRef.current?.contains(e.target as Node)
+      && !ingredientsSearchRef.current?.contains(e.target as Node)) {
       setShowIngOptionsDropdown(false)
     }
   }
@@ -245,15 +245,10 @@ export default function RecipeForm(props: RecipeFormProps) {
   }, [search, loading])
 
   useEffect(() => {
-    if (props.scrolled) setShowIngOptionsDropdown(false)
-  }, [props.scrolled])
-
-  useEffect(() => {
     const mediaWatcher = window.matchMedia(breakpoints.md)
     setIsSmallScreen(!mediaWatcher.matches)
 
     function update(value: boolean) {
-      console.log(`Window updated! Value: ${value}`)
       setIsSmallScreen(value)
     }
 
@@ -295,7 +290,7 @@ export default function RecipeForm(props: RecipeFormProps) {
       <FieldSet errorStatus={submitError.ingredients}>
         <label>Ingredientes</label>
         <InputField
-          ref={searchInputRef}
+          ref={ingredientsSearchRef}
           onClick={() => setShowIngOptionsDropdown(true)}
           errorStatus={submitError.ingredients}
         >
@@ -308,36 +303,37 @@ export default function RecipeForm(props: RecipeFormProps) {
             onChange={handleChangeSearch}
           />  
         </InputField>
-        {showIngOptionsDropdown && !loading && ingOptions.length > 0 && (
-          <Dropdown ref={searchOptionsRef}>
-            {ingOptions.map(
-              opt => (
-                <DropdownItem key={opt.id}
-                  active={ingredients.some(i => i[0].id === opt.id)}
-                  onClick={() => handleChangeIngredients(opt)}
-                >
-                  <div>
-                    <Text>{opt.name}</Text>
-                    <Subtitle>{opt.description}</Subtitle>
-                  </div>
-                  {opt.macros && (
-                    <MacrosList>
-                      <li><Span>P: {opt.macros[0].toFixed(2)}g</Span></li>
-                      <li><Span>C: {opt.macros[1].toFixed(2)}g</Span></li>
-                      <li><Span>G: {opt.macros[2].toFixed(2)}g</Span></li>
-                    </MacrosList>
-                  )}
-                  <Icon
-                    variant={
-                      ingredients.some(i => i[0].id === opt.id)
-                        ? "Check"
-                        : "CheckEmpty"
-                    } size={20}
-                  />
-                </DropdownItem>
-              ))}
-          </Dropdown>
-        )}
+        <Dropdown
+          ref={ingredientsDropdownRef}
+          style={{display: showIngOptionsDropdown && !loading && ingOptions.length > 0 ? "block" : "none"}}
+        >
+          {ingOptions.map(
+            opt => (
+              <DropdownItem key={opt.id}
+                active={ingredients.some(i => i[0].id === opt.id)}
+                onClick={() => handleChangeIngredients(opt)}
+              >
+                <div>
+                  <Text>{opt.name}</Text>
+                  <Subtitle>{opt.description}</Subtitle>
+                </div>
+                {opt.macros && (
+                  <MacrosList>
+                    <li><Span>P: {opt.macros[0].toFixed(2)}g</Span></li>
+                    <li><Span>C: {opt.macros[1].toFixed(2)}g</Span></li>
+                    <li><Span>G: {opt.macros[2].toFixed(2)}g</Span></li>
+                  </MacrosList>
+                )}
+                <Icon
+                  variant={
+                    ingredients.some(i => i[0].id === opt.id)
+                      ? "Check"
+                      : "CheckEmpty"
+                  } size={20}
+                />
+              </DropdownItem>
+            ))}
+        </Dropdown>
         {ingredients.length > 0 && (
           <>
             { !isSmallScreen ? (
@@ -373,26 +369,26 @@ export default function RecipeForm(props: RecipeFormProps) {
         <label>Tipo</label>
         <SelectField
           onClick={() => setShowTypesDropdown(true)}
-          ref={typesTitleRef}
+          ref={typeSelectionRef}
           selected={type !== undefined}
           errorStatus={submitError.type}
         >
           {type ? typeTranslator[type] : "Selecione"}
         </SelectField>
         {submitError.type && <span>{submitError.typeMessage}</span>}
-        {showTypesDropdown && (
-          <Dropdown>
-            <DropdownItem active={type === "Week"} onClick={() => handleChangeType("Week")}>
-              {typeTranslator["Week"]}
-            </DropdownItem>
-            <DropdownItem active={type === "Weekend"} onClick={() => handleChangeType("Weekend")}>
-              {typeTranslator["Weekend"]}
-            </DropdownItem>
-            <DropdownItem active={type === "Both"} onClick={() => handleChangeType("Both")}>
-              {typeTranslator["Both"]}
-            </DropdownItem>
-          </Dropdown>
-        )}
+        <Dropdown ref={typesDropdownRef}
+          style={{ display: showTypesDropdown ? "block" : "none" }}
+        >
+          <DropdownItem active={type === "Week"} onClick={() => handleChangeType("Week")}>
+            {typeTranslator["Week"]}
+          </DropdownItem>
+          <DropdownItem active={type === "Weekend"} onClick={() => handleChangeType("Weekend")}>
+            {typeTranslator["Weekend"]}
+          </DropdownItem>
+          <DropdownItem active={type === "Both"} onClick={() => handleChangeType("Both")}>
+            {typeTranslator["Both"]}
+          </DropdownItem>
+        </Dropdown>
       </FieldSet>
 
       

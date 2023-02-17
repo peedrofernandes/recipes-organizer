@@ -26,6 +26,7 @@ function parseBreakpoints(b: [number, number, number, number, number]): ParsedBr
 
 export const themesSet: ThemesSet = {
   light: {
+    variant: "Light",
     main: {
       primaryV1: "#ffffff",
       primaryV2: "#f8f8f8",
@@ -50,6 +51,7 @@ export const themesSet: ThemesSet = {
     breakpoints: parseBreakpoints(breakpoints)
   },
   dark: {
+    variant: "Dark",
     main: {
       primaryV1: "#111414",
       primaryV2: "#1a1d1d",

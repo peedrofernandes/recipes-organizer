@@ -30,7 +30,7 @@ type FormContext = {
 }
 
 // const initialState: FormState = { variant: null }
-const initialState: FormState = { variant: "RecipeCreation" }
+const initialState: FormState = { variant: "PDFGeneration" }
 
 export const FormContext = createContext<FormContext>({
   form: initialState,

@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react"
+import React, { ReactNode, useRef, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import styled, { ThemeProvider } from "styled-components"
 
@@ -11,7 +11,6 @@ import useLoadData from "../hooks/useLoadData"
 import useTheme from "../hooks/useTheme"
 import PDFDocument from "../components/PDF"
 import useDataContext from "../hooks/useDataContext"
-import Theme from "../components/styles"
 
 const LayoutContainer = styled.div`
   position: relative;
@@ -101,16 +100,20 @@ export default function PageLayout(props: { children: ReactNode }) {
   const { title, form } = useFormContext()
   const location = useLocation()
 
+  const [scrollStatus, setScrollStatus] = useState<0 | 1>(0)
+
   return (
     <ThemeProvider theme={theme}>
       <LayoutContainer>
 
+        
         {form.variant !== null && (
           <Modal
             variant="form"
             title={title}
-            renderChildren={(scrolled: boolean) => <Form scrolled={scrolled} />}
-          />
+          >
+            <Form />
+          </Modal>
         )}
 
 
