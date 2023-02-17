@@ -95,7 +95,12 @@ export default function PageLayout(props: { children: ReactNode }) {
         
         {form.variant !== null && (
           <Modal
-            variant="form"
+            variant={
+              form.variant === "IngredientDeletion"
+                || form.variant === "RecipeDeletion"
+                ? "small"
+                : "form"
+            }
             title={title}
           >
             <Form />

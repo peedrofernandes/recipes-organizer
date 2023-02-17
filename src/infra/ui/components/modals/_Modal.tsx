@@ -9,6 +9,7 @@ import { Grid, GridItem } from "../MaterialGrid"
 import Icon from "../icons/_Icon"
 import Button from "../buttons/Button"
 import useEvents from "@infra/ui/hooks/useEvents"
+import { Title } from "../styles"
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -21,27 +22,42 @@ const ModalBackground = styled.div`
   justify-content: center;
 `
 
-const ModalBox = styled.div`
+const ModalBox = styled.div<{ variant?: "small" | "form" }>`
   position: relative;
   background-color: ${({ theme }) => theme.main.primaryV2};
   color: ${({ theme }) => theme.main.contrastV2};
   width: 100%;
   border-radius: 8px;
-  height: 80vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+
+  height: ${({ variant }) => variant === "small" ? "100px" : "60vh"};
+
+  ${({ theme, variant }) => `
+    @media ${theme.breakpoints.sm} {
+      height: ${variant === "small" ? "120px" : "80vh"};
+      padding: 16px;
+    }
+  `}
 `
 
 const TopContainer = styled.div`
   position: sticky;
-  background-color: ${({ theme }) => theme.main.primaryV2};
   box-sizing: border-box;
   z-index: 1;
-  padding: 16px;
-  gap: 16px;
   top: 0;
   width: 100%;
   display: flex;
   justify-content: space-between;
+
+  ${({ theme }) => `
+    @media ${theme.breakpoints.sm} {
+      gap: 16px;
+    }
+  `}
+  
+
 
   & > h1, h2, h3 {
     width: 100%;
@@ -50,7 +66,12 @@ const TopContainer = styled.div`
 `
 
 const ModalContent = styled.div`
-  height: 80%;
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
 `
 
 type ModalProps = {
@@ -89,10 +110,10 @@ export default function Modal(props: ModalProps) {
           xs: [2, 4], sm: [3, 7], md: [4, 10]
         }}>
 
-          <ModalBox ref={modalBoxRef} onScroll={props.events?.scrollEvent}>
+          <ModalBox ref={modalBoxRef} variant={props.variant}>
 
             <TopContainer>
-              <h3>{props.title}</h3>
+              <Title variant={3} as="h3">{props.title}</Title>
               <Button variant="icon" onClick={() => cancelRequest()}>
                 <Icon variant="Close" size={24} />
               </Button>

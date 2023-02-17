@@ -3,7 +3,6 @@ import styled, { css } from "styled-components"
 export const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
-  padding: 0 16px 16px 16px;
   height: 100%;
   overflow-y: scroll;
 
@@ -114,9 +113,6 @@ export const ConfirmButtonSet = styled.div`
   display: flex;
   gap: 16px;
   justify-content: center;
-  position: absolute;
-  bottom: 0;
-  margin-bottom: 16px;
 `
 
 export const SelectField = styled.span<{

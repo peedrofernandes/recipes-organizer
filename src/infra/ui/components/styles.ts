@@ -1,24 +1,25 @@
 import styled from "styled-components"
 
+const fontSizesXs = [22, 20, 14, 14, 14]
+const fontSizesSm = [24, 22, 18, 16, 16]
+const fontSizesLg = [28, 26, 22, 20, 18]
+
 export const Title = styled.div<{
-  variant: "1" | "2" | "3" | "4" | "5"
+  variant: 1 | 2 | 3 | 4 | 5
 }>`
-  font-size: ${({ variant }) => {
-    switch (variant) {
-    case "1":
-      return "28px"
-    case "2":
-      return "26px"
-    case "3":
-      return "24px"
-    case "4":
-      return "20px"
-    case "5":
-      return "18px"
-    default:
-      return
+  ${({ theme, variant }) => `
+    @media ${theme.breakpoints.xs} {
+      font-size: ${fontSizesXs[variant - 1]}px;
     }
-  }};
+
+    @media ${theme.breakpoints.sm} {
+      font-size: ${fontSizesSm[variant - 1]}px;
+    }
+
+    @media ${theme.breakpoints.lg} {
+      font-size: ${fontSizesLg[variant - 1]}px;
+    }
+  `}
 
   color: ${({ theme }) => theme.main.contrastV1};
 `
