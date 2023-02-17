@@ -38,6 +38,14 @@ const Fieldset = styled.fieldset`
 const Macros = styled.ul`
   white-space: nowrap;
 
+  font-size: 12px;
+
+  ${({ theme }) => `
+    @media ${theme.breakpoints.sm} {
+      font-size: 14px;
+    }
+  `}
+
   & > li {
     font-weight: bold;
   }

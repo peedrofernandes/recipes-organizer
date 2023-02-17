@@ -16,17 +16,18 @@ const ModalBackground = styled.div`
   height: 100vh;
   background-color: rgba(0, 0, 0, .6);
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 const ModalBox = styled.div`
   position: relative;
-  margin-top: 10%;
   background-color: ${({ theme }) => theme.main.primaryV2};
   color: ${({ theme }) => theme.main.contrastV2};
   width: 100%;
   border-radius: 8px;
-  min-height: 60vh;
-  max-height: 80vh;
+  height: 80vh;
   overflow-y: auto;
 `
 
@@ -39,7 +40,6 @@ const TopContainer = styled.div`
   gap: 16px;
   top: 0;
   width: 100%;
-  filter: ${({ theme }) => `drop-shadow(0 12px 6px ${theme.main.primaryV2})`};
   display: flex;
   justify-content: space-between;
 
@@ -50,6 +50,7 @@ const TopContainer = styled.div`
 `
 
 const ModalContent = styled.div`
+  height: 80%;
 `
 
 type ModalProps = {

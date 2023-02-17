@@ -4,7 +4,7 @@ export const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
   padding: 0 16px 16px 16px;
-  max-height: 100%;
+  height: 100%;
   overflow-y: scroll;
 
   label {
@@ -31,6 +31,7 @@ export const FormContainer = styled.form`
 export const FieldSet = styled.fieldset<{
   errorStatus?: boolean
 }>`
+  position: relative;
   width: 100%;
   display: block;
   border: none;
@@ -135,6 +136,7 @@ export const SelectField = styled.span<{
 
 export const Dropdown = styled.ul`
   position: absolute;
+  max-width: 100%;
   z-index: 1000;
   background-color: ${({ theme }) => theme.main.primaryV1};
   border-radius: 0 8px 8px 0;
@@ -153,7 +155,7 @@ export const DropdownItem = styled.li<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
 
   p {
     color: ${({ theme, active }) => active ? theme.color.green : "unset"} !important;
@@ -172,7 +174,8 @@ export const MacrosList = styled.ul`
   display: flex;
   justify-content: space-evenly;
   position: relative;
-  gap: 16px;
+  font-size: 12px;
+  gap: 8px;
   font-weight: bold;
 
   li:nth-child(1) {
@@ -186,7 +189,7 @@ export const MacrosList = styled.ul`
   }
 `
 
-export const IngredientListItem = styled.div`
+export const IngredientListItem = styled.li`
   display: flex;
   align-items: center;
   justify-content: space-between;

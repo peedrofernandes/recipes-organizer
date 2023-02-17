@@ -24,12 +24,28 @@ export const Title = styled.div<{
 `
 
 export const Text = styled.p`
-  font-size: 16px;
+
+  font-size: 14px;  
+
+
+  ${({ theme }) => `
+    @media ${theme.breakpoints.md} {
+      font-size: 16px;
+    }
+  `}
+
   color: ${({ theme }) => theme.main.contrastV1};
 `
 
 export const Subtitle = styled.p`
-  font-size: 14px;
+  font-size: 12px;
+
+  ${({ theme }) => `
+    @media ${theme.breakpoints.md} {
+      font-size: 14px;
+    }
+  `}
+
   color: ${({ theme }) => theme.main.contrastV1 + "90"};
 
 `
@@ -37,6 +53,14 @@ export const Subtitle = styled.p`
 export const Span = styled.span<{ 
   color?: string
 }>`
+  font-size: 10px;
+
+  ${({ theme }) => `
+    @media ${theme.breakpoints.md} {
+      font-size: 12px;
+    }
+  `}
+
   font-weight: bold;
   color: ${({ color }) => color ?? "inherit"};
 `
