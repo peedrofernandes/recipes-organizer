@@ -104,6 +104,8 @@ export const InputGroup = styled.div`
 export const SubmitContainer = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 16px;
   padding: 16px 0;
 `
 

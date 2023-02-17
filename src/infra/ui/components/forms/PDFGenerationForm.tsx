@@ -186,7 +186,9 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
         <Button variant="styled" type="submit" text="Criar PDF" />
         {submitSuccess && (
           <Link to="/PDF">
-            <Button variant="styled" text="Go to PDF"/>
+            <Button variant="icon" >
+              <Icon variant="Download" size={24} />
+            </Button>
           </Link>
         )}
       </SubmitContainer>

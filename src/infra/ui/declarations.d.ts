@@ -1,10 +1,5 @@
 import "styled-components"
 
-declare module "*.ttf" {
-  const content: any
-  export default content
-}
-
 declare module "styled-components" {
   export interface DefaultTheme {
     variant: "Dark" | "Light";
