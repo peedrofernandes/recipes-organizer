@@ -9,6 +9,7 @@ import IngredientCard from "../IngredientCard"
 import IngredientSelectionCard from "../IngredientSelectionCard"
 import LoadingCard from "../LoadingCard"
 import RecipeCard from "../RecipeCard"
+import RecipeSelectionCard from "../RecipeSelectionCard"
 
 // --------- Visual Elements ----------
 
@@ -28,7 +29,9 @@ type CardProps = {
   variant: "Loading"
 } | ({
   variant: "IngredientSelection"
-} & React.ComponentPropsWithoutRef<typeof IngredientSelectionCard>);
+} & React.ComponentPropsWithoutRef<typeof IngredientSelectionCard>) | ({
+  variant: "RecipeSelection"
+} & React.ComponentPropsWithoutRef<typeof RecipeSelectionCard>) ;
 
 // ------------------------------------
 
@@ -72,9 +75,9 @@ export default function Card(props: CardProps) {
       events={{ createEvent: createRecipeRequest }}
     />
   case "IngredientSelection":
-    return <IngredientSelectionCard
-      {...props}
-    />
+    return <IngredientSelectionCard {...props} />
+  case "RecipeSelection":
+    return <RecipeSelectionCard {...props} />
   case "Loading":
     return <LoadingCard />
   }

@@ -10,11 +10,18 @@ const Card = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: 8px;
   gap: 16px;
   box-shadow: 0 0 4px ${({ theme }) => theme.main.contrastV1};
   margin-top: 8px;
   border-radius: 4px;
+
+  & > :nth-child(1) {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    white-space: nowrap;
+  }
 `
 
 const ImageContainer = styled.div`
@@ -36,6 +43,9 @@ const Fieldset = styled.fieldset`
 `
 
 const Macros = styled.ul`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   white-space: nowrap;
 
   font-size: 12px;
@@ -62,45 +72,45 @@ const Macros = styled.ul`
 `
 
 type IngredientSelectionCardProps = {
-  ingredient: [AdaptedIngredient, string]
+  ingredientWithGrams: [AdaptedIngredient, string]
   errorStatus: boolean
   handleChangeGrams: (id: Id, qtd: string) => void
 }
 
 export default function IngredientSelectionCard(props: IngredientSelectionCardProps) {
-  const { ingredient, errorStatus } = props
+  const { ingredientWithGrams, errorStatus } = props
 
   return (
     <Card>
       <div>
         <div>
-          <Text>{ingredient[0].name}</Text>
-          <Subtitle>{ingredient[0].description}</Subtitle>
+          <Text>{ingredientWithGrams[0].name}</Text>
+          <Subtitle>{ingredientWithGrams[0].description}</Subtitle>
         </div>
-        {ingredient[0].imageUrl && (
+        {ingredientWithGrams[0].imageUrl && (
           <ImageContainer>
             <img
-              src={ingredient[0].imageUrl}
-              alt={`${ingredient[0].name} recipe image`}
+              src={ingredientWithGrams[0].imageUrl}
+              alt={`${ingredientWithGrams[0].name} recipe image`}
             />
           </ImageContainer>
         )}
       </div>
-      {ingredient[0].macros && (
-        <Macros>
-          <li>P: {ingredient[0].macros[0].toFixed(2)}g</li>
-          <li>C: {ingredient[0].macros[1].toFixed(2)}g</li>
-          <li>G: {ingredient[0].macros[2].toFixed(2)}g</li>
+      {ingredientWithGrams[0].macros && (
+        <Macros style={{ flexGrow: "1" }}>
+          <li>P: {ingredientWithGrams[0].macros[0].toFixed(2)}g</li>
+          <li>C: {ingredientWithGrams[0].macros[1].toFixed(2)}g</li>
+          <li>G: {ingredientWithGrams[0].macros[2].toFixed(2)}g</li>
         </Macros>
       )}
-      <Fieldset>
+      <Fieldset style={{ flexGrow: "1" }}>
         <label>Gramas totais</label>
         <InputField errorStatus={errorStatus}>
           <input
             type="text"
             placeholder="Gramas totais"
-            value={ingredient[1]}
-            onChange={(e) => props.handleChangeGrams(ingredient[0].id, e.target.value)}
+            value={ingredientWithGrams[1]}
+            onChange={(e) => props.handleChangeGrams(ingredientWithGrams[0].id, e.target.value)}
           />
         </InputField>
       </Fieldset>

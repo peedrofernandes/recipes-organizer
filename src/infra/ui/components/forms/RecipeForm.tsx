@@ -8,6 +8,7 @@ import Button from "../buttons/Button"
 import Card from "../cards/Card"
 import Icon from "../icons/_Icon"
 import Table from "../tables/Table"
+import List from "../lists/List"
 
 
 
@@ -344,17 +345,12 @@ export default function RecipeForm(props: RecipeFormProps) {
                 ingredients={ingredients}
               />
             ) : (
-              <>
-                {ingredients.map(i => (
-                  <Card
-                    key={i[0].id}
-                    variant="IngredientSelection"
-                    errorStatus={submitError.ingredients}
-                    handleChangeGrams={handleChangeGrams}
-                    ingredient={i}
-                  />
-                ))}
-              </>
+              <List
+                variant="IngredientSelection"
+                ingredients={ingredients}
+                errorStatus={submitError.ingredients}
+                handleChangeGrams={handleChangeGrams}
+              />
             )}
           </>
         )}

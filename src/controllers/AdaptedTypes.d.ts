@@ -25,7 +25,7 @@ export type RecipeInput = {
   ingredients?: [AdaptedIngredient, number][];
 }
 
-export type AdaptedRecipe = {
+export type  AdaptedRecipe = {
   id: Id,
   name: string,
   type: "Week" | "Weekend" | "Both",

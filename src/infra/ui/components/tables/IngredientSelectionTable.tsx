@@ -31,9 +31,9 @@ export default function IngredientSelectionTable(props: IngredientSelectionProps
               <Text>{i[0].name}</Text>
               <Subtitle>{i[0].description}</Subtitle>
             </td>
-            <td>{i[0].macros ? i[0].macros[0].toFixed(2) + "g" : "-"}</td>
-            <td>{i[0].macros ? i[0].macros[1].toFixed(2) + "g" : "-"}</td>
-            <td>{i[0].macros ? i[0].macros[2].toFixed(2) + "g" : "-"}</td>
+            <td><Text>{i[0].macros ? i[0].macros[0].toFixed(2) + "g" : "-"}</Text></td>
+            <td><Text>{i[0].macros ? i[0].macros[1].toFixed(2) + "g" : "-"}</Text></td>
+            <td><Text>{i[0].macros ? i[0].macros[2].toFixed(2) + "g" : "-"}</Text></td>
             <td>
               <InputField errorStatus={errorStatus}>
                 <input

@@ -1,7 +1,7 @@
 import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import { InputField } from "@infra/ui/components/forms/Form/styles"
-import { StyledTable } from "@infra/ui/components/styles"
+import { StyledTable, Text } from "@infra/ui/components/styles"
 import React from "react"
 
 type RecipeSelectionTableProps = {
@@ -24,9 +24,9 @@ export default function RecipeSelectionTable(props: RecipeSelectionTableProps) {
       <tbody>
         {props.recipes.length > 0 ? props.recipes.map(r => (
           <tr key={r[0].id}>
-            <td>{r[0].name}</td>
-            <td>{r[0].type}</td>
-            <td>{r[0].kcal ? r[0].kcal.toFixed(2).toString() + "kcal" : "-"}</td>
+            <td><Text>{r[0].name}</Text></td>
+            <td><Text>{r[0].type}</Text></td>
+            <td><Text>{r[0].kcal ? r[0].kcal.toFixed(2).toString() + "kcal" : "-"}</Text></td>
             <td>
               <InputField errorStatus={props.errorStatus}>
                 <input
@@ -39,7 +39,7 @@ export default function RecipeSelectionTable(props: RecipeSelectionTableProps) {
           </tr>
         )) : (
           <tr>
-            <td>Pesquise e adicione receitas acima! </td>
+            <td><Text>Pesquise e adicione receitas acima! </Text></td>
           </tr>
         )}
       </tbody>

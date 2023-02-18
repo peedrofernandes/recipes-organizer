@@ -5,6 +5,7 @@ export const FormContainer = styled.form`
   flex-direction: column;
   height: 100%;
   overflow-y: scroll;
+  padding: 0 8px;
 
   label {
     margin-top: 24px;
