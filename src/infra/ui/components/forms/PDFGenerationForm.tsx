@@ -111,8 +111,12 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
       return
     }
 
+    const timezoneOffsetMilliseconds = new Date().getTimezoneOffset() * 60 * 1000
     const input: [AdaptedRecipe, Date][] =
-      selectedRecipes.map(([recipe, date]) => [recipe, new Date(date)])
+      selectedRecipes.map(([recipe, date]) => [
+        recipe,
+        new Date(new Date(date).getTime() + timezoneOffsetMilliseconds)
+      ])
     
     props.events.submitEvent(input)
     setSubmitSuccess(true)
