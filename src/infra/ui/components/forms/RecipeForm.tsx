@@ -9,6 +9,7 @@ import Card from "../cards/Card"
 import Icon from "../icons/_Icon"
 import Table from "../tables/Table"
 import List from "../lists/List"
+import useViewportTracker from "@infra/ui/hooks/useViewportTracker"
 
 
 
@@ -208,9 +209,7 @@ export default function RecipeForm(props: RecipeFormProps) {
 
   // Auxiliar states, variables, handlers and effects
 
-  const { breakpoints } = useTheme().theme
-  
-  const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false)
+  const isSmallScreen = useViewportTracker()
   const [search, setSearch] = useState<string>("")
   const [ingOptions, setIngOptions] = useState<AdaptedIngredient[]>([])
   const [showTypesDropdown, setShowTypesDropdown] = useState<boolean>(false)
@@ -244,21 +243,6 @@ export default function RecipeForm(props: RecipeFormProps) {
     setIngOptions(props.data.ingredients.filter(
       i => i.name.includes(search)))
   }, [search, loading])
-
-  useEffect(() => {
-    const mediaWatcher = window.matchMedia(breakpoints.md)
-    setIsSmallScreen(!mediaWatcher.matches)
-
-    function update(value: boolean) {
-      setIsSmallScreen(value)
-    }
-
-    mediaWatcher.addEventListener("change", () => update(!mediaWatcher.matches))
-
-    return () => {
-      mediaWatcher.removeEventListener("change", () => update(!mediaWatcher.matches))
-    }
-  }, [])
     
   return (
     <FormContainer

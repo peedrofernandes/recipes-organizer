@@ -2,10 +2,12 @@ import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import { Dropdown, DropdownItem, FieldSet, FormContainer, InputField, MacrosList, SubmitContainer } from "@infra/ui/components/forms/Form/styles"
 import { Span, Subtitle, Text } from "@infra/ui/components/styles"
+import useViewportTracker from "@infra/ui/hooks/useViewportTracker"
 import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import Button from "../buttons/Button"
 import Icon from "../icons/_Icon"
+import List from "../lists/List"
 import Table from "../tables/Table"
 
 type GeneratePDFFormProps = {
@@ -68,6 +70,9 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
       setShowDropdown(false)
     }
   }
+
+  // Viewport tracker
+  const isSmallScreen = useViewportTracker()
 
 
   // Handle change date of each recipe
@@ -177,11 +182,20 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
         {submitErrors.recipeQuantities && <span>
           {submitErrors.recipeQuantitiesMessage}
         </span>}
-        <Table variant="RecipeSelection"
-          recipes={selectedRecipes}
-          errorStatus={submitErrors.dates || submitErrors.recipeQuantities}
-          handleChangeDate={handleChangeDate}
-        />
+        {!isSmallScreen ? (
+          <Table variant="RecipeSelection"
+            recipes={selectedRecipes}
+            errorStatus={submitErrors.dates || submitErrors.recipeQuantities}
+            handleChangeDate={handleChangeDate}
+          />
+          
+        ): (
+          <List variant="RecipeSelection"
+            errorStatus={submitErrors.dates || submitErrors.recipeQuantities}
+            recipes={selectedRecipes}
+            handleChangeDate={handleChangeDate}
+          />
+        )}
         {submitErrors.dates && <span>{submitErrors.datesMessage}</span>}
       </FieldSet>
 

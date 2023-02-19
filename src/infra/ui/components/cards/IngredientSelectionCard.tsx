@@ -13,7 +13,6 @@ const Card = styled.div`
   padding: 8px;
   gap: 16px;
   box-shadow: 0 0 4px ${({ theme }) => theme.main.contrastV1};
-  margin-top: 8px;
   border-radius: 4px;
 
   & > :nth-child(1) {

@@ -5,10 +5,11 @@ import Card from "../cards/Card"
 import { Id } from "@domain/utilities/types/Id"
 
 const List = styled.ul`
+  margin-top: 8px;
   display: flex;
   width: 100%;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 `
 
 type IngredientSelectionListProps = {
