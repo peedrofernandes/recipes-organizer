@@ -52,7 +52,7 @@ export default class IngredientRepository implements IRepository<Ingredient> {
     const { id } = updatedIngredient
     const adaptedIngredients = this.getData()
     const indexFound = adaptedIngredients.findIndex(i => i.id === id)
-    if (!indexFound) throw new Error(`There's no such ingredient with id ${id}.`)
+    if (indexFound === -1) throw new Error(`There's no such ingredient with id ${id}.`)
     const adaptedUpdatedIngredient =
       this.ingredientAdapter.adaptIngredient(updatedIngredient)
     adaptedIngredients.splice(indexFound, 1, adaptedUpdatedIngredient)

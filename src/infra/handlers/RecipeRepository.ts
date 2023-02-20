@@ -59,7 +59,7 @@ export default class RecipeRepository implements IRepository<Recipe> {
     const { id } = updatedRecipe
     const adaptedRecipes = this.getData()
     const indexFound = adaptedRecipes.findIndex(recipe => recipe.id === id)
-    if (!indexFound) throw new Error(`There's no such recipe with id ${id}.`)
+    if (indexFound === -1) throw new Error(`There's no such recipe with id ${id}.`)
     const updatedAdaptedRecipe = this.recipeAdapter.adaptRecipe(updatedRecipe)
     adaptedRecipes.splice(indexFound, 1, updatedAdaptedRecipe)
     this.setData(adaptedRecipes)
@@ -67,9 +67,9 @@ export default class RecipeRepository implements IRepository<Recipe> {
   }
   delete(id: string): Promise<void> {
     const recipes = this.getData()
-    const foundIndex = recipes.findIndex(recipe => recipe.id === id)
-    if (!foundIndex) throw new Error(`There's no recipe with id ${id}.`)
-    recipes.splice(foundIndex, 1)
+    const indexFound = recipes.findIndex(recipe => recipe.id === id)
+    if (indexFound === -1) throw new Error(`There's no recipe with id ${id}.`)
+    recipes.splice(indexFound, 1)
     this.setData(recipes)
     return Promise.resolve()
   }
