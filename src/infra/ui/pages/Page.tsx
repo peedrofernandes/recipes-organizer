@@ -51,28 +51,37 @@ export default function Page(props: PageProps) {
 
         <Grid>
 
-          {data.ingredients.map((ingredient) => {
-            return (
-              <GridItem span={4} key={ingredient.id}>
+          {data.loading.fetchIngredients ? (
+            <GridItem span={4}>
+              <Card variant="Skeleton"/>
+            </GridItem>
+          ) : (
+            <>
+              {data.ingredients.map((ingredient) => {
+                return (
+                  <GridItem span={4} key={ingredient.id}>
+                    <Card
+                      variant="Ingredient"
+                      ingredient={ingredient}
+                    />
+                  </GridItem>
+                )
+              })}
+
+              {data.loading.createIngredient && (
+                <GridItem span={4}>
+                  <Card variant="Loading" />
+                </GridItem>
+              )}
+
+              <GridItem span={4}>
                 <Card
-                  variant="Ingredient"
-                  ingredient={ingredient}
+                  variant="CreateIngredient"
                 />
               </GridItem>
-            )
-          })}
-
-          {data.loading.createIngredient && (
-            <GridItem span={4}>
-              <Card variant="Loading" />
-            </GridItem>
+            </>
           )}
 
-          <GridItem span={4}>
-            <Card
-              variant="CreateIngredient"
-            />
-          </GridItem>
 
 
         </Grid>
@@ -96,17 +105,21 @@ export default function Page(props: PageProps) {
             />
           </GridItem>
 
-          {data.recipes.map((recipe) => {
+          {data.loading.fetchRecipes && (
+            <GridItem span={4}>
+              <Card variant="Skeleton"/>
+            </GridItem>
+          )}
 
-            return (
-              <GridItem span={4} key={recipe.id}>
-                <Card
-                  variant="Recipe"
-                  recipe={recipe}
-                />
-              </GridItem>
-            )
-          })}
+          {data.recipes.map((recipe) => (
+            <GridItem span={4} key={recipe.id}>
+              <Card
+                variant="Recipe"
+                recipe={recipe}
+              />
+            </GridItem>
+          )
+          )}
 
           {data.loading.createRecipe && (
             <GridItem span={4}>
