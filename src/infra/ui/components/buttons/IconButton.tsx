@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react"
 import styled from "styled-components"
-import Icon from "../icons/_Icon"
+import Icon from "../Icon"
 import { BaseButtonProps } from "./Button"
 
 const IconButtonContainer = styled.button`

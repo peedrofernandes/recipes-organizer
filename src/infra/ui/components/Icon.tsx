@@ -1,6 +1,6 @@
 import React, { ReactNode, useContext } from "react"
 import styled from "styled-components"
-import { ThemeContext } from "../../context/ThemeContext"
+import { ThemeContext } from "../context/ThemeContext"
 
 const SpinnerCircle = styled.circle<{ size?: number }>`
   fill: none;

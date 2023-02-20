@@ -6,7 +6,7 @@ import useViewportTracker from "@infra/ui/hooks/useViewportTracker"
 import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import Button from "../buttons/Button"
-import Icon from "../icons/_Icon"
+import Icon from "../Icon"
 import List from "../lists/List"
 import Table from "../tables/Table"
 

@@ -5,11 +5,11 @@ import React, {
 } from "react"
 import styled from "styled-components"
 
-import { Grid, GridItem } from "../MaterialGrid"
-import Icon from "../icons/_Icon"
-import Button from "../buttons/Button"
+import { Grid, GridItem } from "./MaterialGrid"
+import Icon from "./Icon"
+import Button from "./buttons/Button"
 import useEvents from "@infra/ui/hooks/useEvents"
-import { Title } from "../styles"
+import { Title } from "./styles"
 
 const ModalBackground = styled.div`
   position: fixed;
