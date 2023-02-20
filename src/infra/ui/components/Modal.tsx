@@ -72,6 +72,7 @@ const ModalContent = styled.div`
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-end;
+  padding-top: 32px;
 `
 
 type ModalProps = {

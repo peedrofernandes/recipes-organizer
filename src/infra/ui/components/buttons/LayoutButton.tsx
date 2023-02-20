@@ -29,7 +29,6 @@ const LayoutButtonContainer = styled.button<{ selected?: boolean }>`
 `
 
 interface LayoutButtonProps extends BaseButtonProps {
-  type?: "submit"
   selected?: boolean;
   children?: ReactNode;
 }

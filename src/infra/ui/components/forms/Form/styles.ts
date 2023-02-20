@@ -7,11 +7,6 @@ export const FormContainer = styled.form`
   overflow-y: scroll;
   padding: 0 8px;
 
-  label {
-    margin-top: 24px;
-    display: block;
-  }
-
   legend {
     display: block;
     margin-top: 32px;
@@ -72,7 +67,7 @@ export const InputFieldStyles = css<{
   color: ${({ theme }) => theme.main.contrastV1};
   border: none;
   min-width: 0;
-  margin-top: 8px;
+  margin: 8px 0 24px 0;
 
   box-shadow: ${({ theme, errorStatus }) =>
     `inset 0 0 1px ${errorStatus ? theme.color.red : theme.main.contrastV1},
@@ -98,6 +93,7 @@ export const InputField = styled.div`
 export const InputGroup = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 8px;
 `
 

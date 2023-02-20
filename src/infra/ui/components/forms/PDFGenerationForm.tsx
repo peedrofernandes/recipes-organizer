@@ -1,7 +1,8 @@
 import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { Dropdown, DropdownItem, FieldSet, FormContainer, InputField, MacrosList, SubmitContainer } from "@infra/ui/components/forms/Form/styles"
+import { Dropdown, DropdownItem, FieldSet, FormContainer, InputField, MacrosList, SubmitContainer, InputGroup } from "@infra/ui/components/forms/Form/styles"
 import { Span, Subtitle, Text } from "@infra/ui/components/styles"
+import useDateFormatter from "@infra/ui/hooks/useDateFormatter"
 import useViewportTracker from "@infra/ui/hooks/useViewportTracker"
 import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
 import { Link } from "react-router-dom"
@@ -35,13 +36,19 @@ type SubmitErrors = ({
 } | {
   dates: true
   datesMessage: string
+}) & ({
+  randomization: false
+} | {
+  randomization: true
+  randomizationMessage: string
 })
 
 export default function PDFGenerationForm(props: GeneratePDFFormProps) {
   const { loading } = props.data
+  const { dateToString, stringToDate } = useDateFormatter()
 
 
-  // Search for recipes functionality
+  // functionality of search for recipes
   const [search, setSearch] = useState<string>("")
   const [recipeOptions, setRecipeOptions] = useState<AdaptedRecipe[]>([])
   useEffect(() => {
@@ -58,6 +65,35 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
     else
       setSelectedRecipes(state => ([...state, [recipe, ""]]))
   }
+
+
+  // initialDate state, to randomize the dates of the recipes
+  const [initialDate, setInitialDate] = useState<string>("")
+  function handleChangeInitialDate(date: string) {
+    setSubmitErrors(errors => ({...errors, randomization: false }))
+    setInitialDate(date)
+  }
+  async function handleRandomize() {
+    if (!initialDate) {
+      setSubmitErrors(errors => ({
+        ...errors,
+        randomization: true,
+        randomizationMessage: "Selecione uma data inicial!"
+      }))
+      return
+    }
+    setSubmitErrors(errors => ({
+      ...errors,
+      randomization: false,
+      dates: false
+    }))
+
+    const recipes = selectedRecipes.map(([recipe]) => recipe)
+    const randomized = await props.events.randomize(recipes, stringToDate(initialDate))
+    setSelectedRecipes(randomized.map(
+      ([recipe, date]) => ([recipe, dateToString(date)])
+    ))
+  }
   
 
   // Dropdown open/closing logic
@@ -71,12 +107,14 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
     }
   }
 
+
   // Viewport tracker
   const isSmallScreen = useViewportTracker()
 
 
   // Handle change date of each recipe
   function handleChangeDate(id: Id, value: string) {
+    console.log(`Date changed: ${value}`)
     setSubmitErrors(errors => ({ ...errors, dates: false }))
     const index = selectedRecipes.findIndex(r => r[0].id === id)
     const updatedRecipe = selectedRecipes[index]
@@ -88,7 +126,7 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
 
   // Submit error and success handling
   const [submitErrors, setSubmitErrors] = useState<SubmitErrors>({
-    dates: false, recipeQuantities: false
+    dates: false, recipeQuantities: false, randomization: false
   })
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false)
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -116,11 +154,10 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
       return
     }
 
-    const timezoneOffsetMilliseconds = new Date().getTimezoneOffset() * 60 * 1000
     const input: [AdaptedRecipe, Date][] =
-      selectedRecipes.map(([recipe, date]) => [
+      selectedRecipes.map(([recipe, dateString]) => [
         recipe,
-        new Date(new Date(date).getTime() + timezoneOffsetMilliseconds)
+        stringToDate(dateString)
       ])
     
     props.events.submitEvent(input)
@@ -134,8 +171,9 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
       onSubmit={handleSubmit}
     >
 
+      
       <FieldSet errorStatus={submitErrors.dates || submitErrors.recipeQuantities}>
-        <label>Label</label>
+        <label>Pesquisar receitas</label>
         <InputField
           ref={searchRef}
           onClick={() => setShowDropdown(true)}
@@ -182,6 +220,7 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
         {submitErrors.recipeQuantities && <span>
           {submitErrors.recipeQuantitiesMessage}
         </span>}
+        <label>Selecione uma data para cada receita:</label>
         {!isSmallScreen ? (
           <Table variant="RecipeSelection"
             recipes={selectedRecipes}
@@ -189,27 +228,51 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
             handleChangeDate={handleChangeDate}
           />
           
-        ): (
+        ) : (
           <List variant="RecipeSelection"
             errorStatus={submitErrors.dates || submitErrors.recipeQuantities}
             recipes={selectedRecipes}
             handleChangeDate={handleChangeDate}
           />
         )}
-        {submitErrors.dates && <span>{submitErrors.datesMessage}</span>}
+        {submitErrors.dates && <Span>{submitErrors.datesMessage}</Span>}
       </FieldSet>
 
+      
+      <FieldSet
+        errorStatus={submitErrors.randomization}
+        style={{ display: selectedRecipes.length === 0 ? "none" : "" }}
+      >
+        <Text style={{ margin: "16px 0"}}>Ou gere datas aleatórias!</Text>
+        <InputGroup>
+          <FieldSet errorStatus={submitErrors.randomization}>
+            <label>Data inicial</label>
+            <InputField errorStatus={submitErrors.randomization}>
+              <input
+                type="date"
+                value={initialDate}
+                onChange={(e) => handleChangeInitialDate(e.target.value)}
+              />
+            </InputField>
+            {submitErrors.randomization && <Span>{submitErrors.randomizationMessage}</Span>}
+          </FieldSet>
+          <Button type="button" variant="styled" text="Gerar datas" onClick={handleRandomize} />
+        </InputGroup>
+      </FieldSet>
+
+      
       <SubmitContainer style={{ display: selectedRecipes.length === 0 ? "none" : ""}}>
         <Button variant="styled" type="submit" text="Criar PDF" />
         {submitSuccess && (
           <Link to="/PDF">
-            <Button variant="icon" >
+            <Button variant="icon">
               <Icon variant="Download" size={24} />
             </Button>
           </Link>
         )}
       </SubmitContainer>
 
+      
     </FormContainer>
   )
 }

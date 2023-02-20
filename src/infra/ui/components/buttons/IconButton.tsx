@@ -25,7 +25,6 @@ const IconButtonContainer = styled.button`
 `
 
 interface IconButtonProps extends BaseButtonProps {
-  type?: "submit"
   children: ReactElement<typeof Icon>
 }
 
