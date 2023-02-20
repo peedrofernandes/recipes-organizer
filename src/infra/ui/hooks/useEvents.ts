@@ -26,7 +26,7 @@ export default function useEvents() {
       
     deleteRecipeRequest: (id: Id) => setForm({ variant: "RecipeDeletion", id }),
 
-    generatePDFRequest: () => setForm({ variant: "PDFGeneration" }),
+    generatePdfRequest: () => setForm({ variant: "PDFGeneration" }),
 
     cancelRequest: () => setForm({ variant: null }),
 
@@ -70,7 +70,7 @@ export default function useEvents() {
       return recipeController.randomizeRecipes(adaptedRecipes, initialDate)
     },
 
-    generatePDF: async (adaptedRecipesWithDates: [AdaptedRecipe, Date][]) => {
+    generatePdf: async (adaptedRecipesWithDates: [AdaptedRecipe, Date][]) => {
       return recipeController.generatePDF(adaptedRecipesWithDates)
     }
   }), [])
