@@ -118,7 +118,10 @@ export default function PageLayout(props: { children: ReactNode }) {
           )}
 
           <Button variant="icon" onClick={() => toggleTheme()} >
-            <Icon variant="DarkMode" size={36} />
+            <Icon
+              variant={theme.variant === "Light" ? "DarkMode" : "LightMode"}
+              size={36}
+            />
           </Button>
         </ButtonSet>
 

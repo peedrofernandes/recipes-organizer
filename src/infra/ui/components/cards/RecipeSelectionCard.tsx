@@ -28,6 +28,7 @@ const Card = styled.div<{ variant: "active" | "inactive" }>`
   }
 
   & > * {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
