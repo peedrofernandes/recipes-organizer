@@ -1,53 +1,33 @@
-import React, { ReactNode, ReactElement } from "react"
-import { BaseButtonProps } from "."
-import Icon from "../../Icon"
+import React from "react"
 import IconButton from "../IconButton"
 import LayoutButton from "../LayoutButton"
 import StyledButton from "../StyledButton"
 
 
-
 type ButtonProps = ({
-  variant: "styled";
-  text: string;
-  color?: "red" | "green" | "blue";
-} | {
-  variant: "icon";
-  children: ReactElement<typeof Icon>;
-} | {
-  variant: "layout";
-  selected?: boolean;
-  children?: ReactNode;
-}) & BaseButtonProps;
+  variant: "styled"
+} & React.ComponentPropsWithoutRef<typeof StyledButton>) | ({
+  variant: "icon"
+} & React.ComponentPropsWithoutRef<typeof IconButton>) | ({
+  variant: "layout"
+} & React.ComponentPropsWithoutRef<typeof LayoutButton>)
 
 export function Button(props: ButtonProps) {
   switch (props.variant) {
 
   case "styled":
     return (
-      <StyledButton
-        onClick={props.onClick}
-        color={props.color}
-        text={props.text}
-        type={props.type}
-      />
+      <StyledButton {...props} />
     )
   case "icon":
     return (
-      <IconButton
-        onClick={props.onClick}
-        type={props.type}
-      >
+      <IconButton {...props}>
         {props.children}
       </IconButton>
     )
   case "layout":
     return (
-      <LayoutButton
-        selected={props.selected ?? false}
-        onClick={props.onClick}
-        type={props.type}
-      >
+      <LayoutButton {...props}>
         {props.children}
       </LayoutButton>
     )

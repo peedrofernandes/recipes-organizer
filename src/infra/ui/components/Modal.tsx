@@ -32,7 +32,7 @@ const ModalBox = styled.div<{ variant?: "small" | "form" }>`
   flex-direction: column;
   padding: 8px;
 
-  height: ${({ variant }) => variant === "small" ? "100px" : "60vh"};
+  height: ${({ variant }) => variant === "small" ? "100px" : "80vh"};
 
   ${({ theme, variant }) => `
     @media ${theme.breakpoints.sm} {

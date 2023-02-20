@@ -30,7 +30,7 @@ const SpinnerCircle = styled.circle<{ size?: number }>`
 
 
 export type IconProps = {
-  variant: "Delete" | "Edit" | "NoRecipe" | "NoImage" | "AddRecipe" | "Plus" | "DarkMode" | "LightMode" | "Help" | "Menu Book" | "Ingredient" | "Close" | "Search" | "Spinner" | "Check" | "CheckEmpty" | "Download"; 
+  variant: "Delete" | "Edit" | "NoRecipe" | "NoImage" | "AddRecipe" | "Plus" | "DarkMode" | "LightMode" | "Help" | "Menu Book" | "Ingredient" | "Close" | "Search" | "Spinner" | "Check" | "CheckEmpty" | "Download" | "Document"; 
   size?: number;
   color?: string;
 }
@@ -154,6 +154,11 @@ export default function Icon(props: IconProps) {
   case "Download":
     return <Svg size={size} viewBox={[0, 96, 960, 960]}>
       <path fill={color ?? theme.main.contrastV1} d="M220 896q-24 0-42-18t-18-42V693h60v143h520V693h60v143q0 24-18 42t-42 18H220Zm260-153L287 550l43-43 120 120V256h60v371l120-120 43 43-193 193Z"/>
+    </Svg>
+
+  case "Document":
+    return <Svg size={size} viewBox={[0, 96, 960, 960]}>
+      <path fill={color ?? theme.main.contrastV1} d="M319 806h322v-60H319v60Zm0-170h322v-60H319v60Zm-99 340q-24 0-42-18t-18-42V236q0-24 18-42t42-18h361l219 219v521q0 24-18 42t-42 18H220Zm331-554V236H220v680h520V422H551ZM220 236v186-186 680-680Z"/>
     </Svg>
   default:
     return null

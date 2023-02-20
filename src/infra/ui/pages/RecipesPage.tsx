@@ -2,6 +2,7 @@ import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 import React from "react"
 import Button from "../components/buttons/Button"
 import Card from "../components/cards/Card"
+import Icon from "../components/Icon"
 import { Grid, GridItem } from "../components/MaterialGrid"
 import { Title } from "../components/styles"
 import PageLayout from "./PageLayout"
@@ -20,11 +21,11 @@ export default function RecipesPage(props: RecipesPageProps) {
       <Grid>
 
         <GridItem rSpan={{xs: 4, sm: 8, md: 12, lg: 12, xl: 12}}>
-          <h1>Content</h1>
           <Button
             variant="styled"
             text="Gerar PDF"
             onClick={() => props.events.generatePdfRequest()}
+            icon={<Icon variant="Document" size={20} />}
           />
         </GridItem>
 

@@ -58,11 +58,11 @@ export const Subtitle = styled.p`
 export const Span = styled.span<{ 
   color?: string
 }>`
-  font-size: 10px;
+  font-size: 12px;
 
   ${({ theme }) => `
     @media ${theme.breakpoints.md} {
-      font-size: 12px;
+      font-size: 14px;
     }
   `}
 

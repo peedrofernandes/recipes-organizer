@@ -19,7 +19,7 @@ export function Form() {
     deleteRecipe,
     cancelRequest,
     randomizeRecipes,
-    generatePDF
+    generatePdf
   } = useEvents()
 
   const { data } = useDataContext()
@@ -73,7 +73,7 @@ export function Form() {
         loading: false,
         recipes: data.recipes
       }}
-      events={{ randomize: randomizeRecipes, submitEvent: generatePDF }}
+      events={{ randomize: randomizeRecipes, submitEvent: generatePdf }}
     />
   default:
     return null

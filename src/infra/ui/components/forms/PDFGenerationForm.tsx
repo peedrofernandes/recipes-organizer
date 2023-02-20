@@ -243,9 +243,11 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
         errorStatus={submitErrors.randomization}
         style={{ display: selectedRecipes.length === 0 ? "none" : "" }}
       >
-        <Text style={{ margin: "16px 0"}}>Ou gere datas aleatórias!</Text>
+        <Text style={{ margin: "16px 0", textAlign: "center" }}>
+          Ou gere datas aleatórias!
+        </Text>
         <InputGroup>
-          <FieldSet errorStatus={submitErrors.randomization}>
+          <div>
             <label>Data inicial</label>
             <InputField errorStatus={submitErrors.randomization}>
               <input
@@ -254,10 +256,14 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
                 onChange={(e) => handleChangeInitialDate(e.target.value)}
               />
             </InputField>
-            {submitErrors.randomization && <Span>{submitErrors.randomizationMessage}</Span>}
-          </FieldSet>
+          </div>
           <Button type="button" variant="styled" text="Gerar datas" onClick={handleRandomize} />
         </InputGroup>
+        {submitErrors.randomization && (
+          <Span style={{ textAlign: "center", display: "block" }}>
+            {submitErrors.randomizationMessage}
+          </Span>
+        )}
       </FieldSet>
 
       

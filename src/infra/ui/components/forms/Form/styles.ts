@@ -66,7 +66,6 @@ export const InputFieldStyles = css<{
   background-color: ${({ theme }) => theme.main.primaryV1 + "00"};
   color: ${({ theme }) => theme.main.contrastV1};
   border: none;
-  min-width: 0;
   margin: 8px 0 24px 0;
 
   box-shadow: ${({ theme, errorStatus }) =>
