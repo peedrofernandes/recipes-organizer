@@ -18,7 +18,15 @@ export default function recipeHandler(
 
   const uiCallbacks = { updateUIOnCreate, updateUIOnUpdate, updateUIOnDelete }
 
-  const turnIntoJsonMethod = () => { return }
+  const turnIntoJsonMethod = (recipes: AdaptedRecipe[]) => {
+    const jsonFile = new Blob([JSON.stringify(recipes)], { type: "application/json" })
+    
+    const a = document.createElement("a")
+    a.download = "recipes"
+    a.href = window.URL.createObjectURL(jsonFile)
+
+    a.click()
+  }
 
   const generatePDFMethod = async (recipesWithDates: [AdaptedRecipe, Date][]) => {
     dispatch({

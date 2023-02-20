@@ -13,7 +13,7 @@ type PageProps = {
 export function Page(props: PageProps) {
   const { variant } = props
   const { data } = useDataContext()
-  const { generatePdfRequest } = useEvents()
+  const { generatePdfRequest, loadFromJsonRequest, saveInJson } = useEvents()
 
   useEffect(() => {
     console.log("Selected recipes updated: " + data.selectedRecipes)
@@ -36,7 +36,11 @@ export function Page(props: PageProps) {
       recipes={data.recipes}
       createRecipesLoading={data.loading.createRecipe}
       fetchRecipesLoading={data.loading.fetchRecipes}
-      events={{ generatePdfRequest }}
+      events={{
+        generatePdfRequest,
+        loadFromJsonRequest,
+        saveInJson: () => saveInJson(data.recipes)
+      }}
     />
   }
   case "PDF": {

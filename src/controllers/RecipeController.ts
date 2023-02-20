@@ -23,7 +23,7 @@ export default class RecipeController {
   constructor(
     private recipeRepository: IRepository<Recipe>,
     private ingredientRepository: IRepository<Ingredient>,
-    private turnIntoJsonMethod: (recipes: AdaptedRecipe[]) => any,
+    private turnIntoJsonMethod: (recipes: AdaptedRecipe[]) => void,
     private generatePDFMethod: (
       adaptedRecipesWithDates: [AdaptedRecipe, Date][]
     ) => Promise<void>,
@@ -129,7 +129,7 @@ export default class RecipeController {
     await generateJsonUseCase.execute(recipes)
   }
 
-  public async loadRecipesFromJson(jsonFile: any) {
+  public async loadRecipesFromJson(jsonFile: File) {
     const loadRecipesFromJsonUseCase = new LoadRecipesFromJson(
       this.ingredientRepository, this.recipeRepository
     )
