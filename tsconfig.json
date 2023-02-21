@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "noImplicitAny": true,
+    "sourceMap": true,
     "module": "commonjs",
     "strict": true,
     "jsx": "react",
@@ -13,5 +15,5 @@
       "@controllers/*": ["./src/controllers/*"]
     }
   },
-  "include": ["src", "node_modules"],
+  "include": ["src", "node_modules", "tests"],
 }

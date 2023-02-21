@@ -6,6 +6,7 @@ import ConfirmDeleteForm from "../ConfirmDeleteForm"
 import IngredientForm from "../IngredientForm"
 import RecipeForm from "../RecipeForm"
 import PDFGenerationForm from "../PDFGenerationForm"
+import LoadFromFileForm from "../LoadFromFileForm"
 
 export function Form() {
   const { form } = useFormContext()
@@ -19,7 +20,8 @@ export function Form() {
     deleteRecipe,
     cancelRequest,
     randomizeRecipes,
-    generatePdf
+    generatePdf,
+    loadFromJson
   } = useEvents()
 
   const { data } = useDataContext()
@@ -74,6 +76,10 @@ export function Form() {
         recipes: data.recipes
       }}
       events={{ randomize: randomizeRecipes, submitEvent: generatePdf }}
+    />
+  case "LoadFromFile":
+    return <LoadFromFileForm
+      events={{ load: loadFromJson }}
     />
   default:
     return null

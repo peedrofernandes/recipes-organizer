@@ -44,8 +44,8 @@ export default class IngredientRepository implements IRepository<Ingredient> {
     const adaptedNewIngredients = ingredients.map(
       i => this.ingredientAdapter.adaptIngredient(i)
     )
-    adaptedIngredients.concat(adaptedNewIngredients)
-    this.setData(adaptedIngredients)
+    const totalIngredients = adaptedIngredients.concat(adaptedNewIngredients)
+    this.setData(totalIngredients)
     return Promise.resolve()
   }
   async update(updatedIngredient: Ingredient): Promise<void> {

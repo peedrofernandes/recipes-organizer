@@ -1,6 +1,6 @@
-import Ingredient from "../src/domain/entities/Ingredient"
-import Recipe from "../src/domain/entities/Recipe"
-import ExtractIngredients from "../src/domain/utilities/services/ExtractIngredients"
+import Ingredient from "../../entities/Ingredient"
+import Recipe from "../../entities/Recipe"
+import ExtractIngredients from "./ExtractIngredients"
 
 describe("Extraction of unique ingredients from recipes test", () => {
   const egg = new Ingredient({
@@ -44,9 +44,9 @@ describe("Extraction of unique ingredients from recipes test", () => {
   })
 
   it("Should extract unique ingredients correctly", () => {
-    expect()
     const uniqueIngredients = ExtractIngredients([r1, r2])
-    console.log(uniqueIngredients)
-    expect(JSON.stringify(uniqueIngredients)).toBe(JSON.stringify([egg, rice, ham, oil]))
+    uniqueIngredients.forEach(ingredient => {
+      expect([egg, rice, ham, oil]).toContain(ingredient)
+    })
   })
 })

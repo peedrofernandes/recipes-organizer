@@ -27,13 +27,14 @@ function booleanBinarySearch <T> (
   if (arr.length === 0)
     return false
   
-  const mid = Math.floor((arr.length - 1) / 2)
+  const mid = Math.floor((arr.length) / 2)
 
   // n == arr[mid]
   if (compareFn(n, arr[mid]) === 0) return true
 
   // n > arr[mid]
-  if (compareFn(n, arr[mid])) return booleanBinarySearch(arr.slice(mid + 1, arr.length), n, compareFn)
+  if (compareFn(n, arr[mid]) > 0)
+    return booleanBinarySearch(arr.slice(mid + 1, arr.length), n, compareFn)
 
   // n < arr[mid]
   return booleanBinarySearch(arr.slice(0, mid), n, compareFn)
@@ -43,10 +44,13 @@ function booleanBinarySearch <T> (
 export function exists<T>(
   arr: T[],
   elem: T,
-  prop: (object: T) => string
+  stringAttribute: (t: T) => string
 ): boolean {
-  const compareFn = (a: T, b: T) => compareStrings(prop(a), prop(b))
+  const compareFn = (a: T, b: T) => compareStrings(
+    stringAttribute(a), stringAttribute(b)
+  )
 
+  arr.sort(compareFn)
   return booleanBinarySearch(arr, elem, compareFn)
 }
 

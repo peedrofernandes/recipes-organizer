@@ -47,12 +47,20 @@ export default class RecipeRepository implements IRepository<Recipe> {
     return Promise.resolve()
   }
   async createList(recipes: Recipe[]): Promise<void> {
+    console.log("createList() method at RecipeRepository called!")
+
     const adaptedRecipes = this.getData()
+    console.log("adaptedReipces: ", adaptedRecipes)
+
     const adaptedNewRecipes = recipes.map(
       r => this.recipeAdapter.adaptRecipe(r)
     )
-    adaptedRecipes.concat(adaptedNewRecipes)
-    this.setData(adaptedRecipes)
+    console.log("adaptedNewRecipes: ", adaptedNewRecipes)
+
+    const totalRecipes = adaptedRecipes.concat(adaptedNewRecipes)
+    console.log("totalRecipes: ", totalRecipes)
+
+    this.setData(totalRecipes)
     return Promise.resolve()
   }
   async update(updatedRecipe: Recipe): Promise<void> {
@@ -79,7 +87,11 @@ export default class RecipeRepository implements IRepository<Recipe> {
       reader.readAsText(source)
 
       reader.onload = () => {
-        const recipes = JSON.parse(reader.result as string)
+        const adaptedRecipes: AdaptedRecipe[]  = JSON.parse(reader.result as string)
+
+        const recipes = adaptedRecipes.map(
+          r => this.recipeAdapter.retrieveRecipe(r))
+        
         resolve(recipes)
       }
 

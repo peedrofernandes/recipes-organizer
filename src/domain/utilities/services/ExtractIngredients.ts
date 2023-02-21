@@ -10,8 +10,8 @@ export default function ExtractIngredients(recipes: Recipe[]) {
       return
     
     recipe.ingredientList.forEach((item) => {
-      if (exists<Ingredient>(uniqueIngredients, item.ingredient, (i) => i.id))
-        return insertSorted(
+      if (!exists<Ingredient>(uniqueIngredients, item.ingredient, (i) => i.id))
+        insertSorted(
           uniqueIngredients,
           item.ingredient,
           (a, b) => Number(a.id) - Number(b.id)

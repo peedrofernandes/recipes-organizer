@@ -1,5 +1,5 @@
-import Recipe, { IngredientList } from "../src/domain/entities/Recipe"
-import Ingredient from "../src/domain/entities/Ingredient"
+import Recipe, { IngredientList } from "./Recipe"
+import Ingredient from "./Ingredient"
 
 describe("Recipe entity tests", () => {
   const egg = new Ingredient({

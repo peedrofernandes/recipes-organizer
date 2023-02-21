@@ -1,4 +1,4 @@
-import Ingredient, { hasMacros } from "../src/domain/entities/Ingredient"
+import Ingredient, { ingredientHasMacros } from "./Ingredient"
 
 describe("Ingredient entity tests", () => {
   // const milk = new Ingredient(1, "Leite", "Leite Tirol Semidesnatado")
@@ -46,9 +46,9 @@ describe("Ingredient entity tests", () => {
     const keys = ["id", "name", "options", "macros"]
     keys.forEach((key) => expect(ingredient[key]).toBeDefined())
 
-    expect(hasMacros(ingredient)).toBeTruthy()
+    expect(ingredientHasMacros(ingredient)).toBeTruthy()
   
-    if (hasMacros(ingredient)) {
+    if (ingredientHasMacros(ingredient)) {
       const { proteins, carbs, fats, gramsPerServing } = ingredient.macros
       expect(proteins + carbs + fats + gramsPerServing).toBeCloseTo(117)
     }

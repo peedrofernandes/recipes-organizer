@@ -1,12 +1,13 @@
 {
   "name": "recipes-organizer",
+  "homepage": ".",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack-dev-server --mode development",
-    "test": "jest --testPathPattern=tests",
+    "test": "jest",
     "type-check": "tsc ./src/index.tsx --noEmit"
   },
   "keywords": [],

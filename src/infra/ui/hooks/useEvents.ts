@@ -28,6 +28,8 @@ export default function useEvents() {
 
     generatePdfRequest: () => setForm({ variant: "PDFGeneration" }),
 
+    loadFromJsonRequest: () => setForm({ variant: "LoadFromFile" }),
+
     cancelRequest: () => setForm({ variant: null }),
 
     createIngredient: async (ingredientInput: IngredientInput) => {
@@ -71,17 +73,16 @@ export default function useEvents() {
     },
 
     generatePdf: async (adaptedRecipesWithDates: [AdaptedRecipe, Date][]) => {
-      return recipeController.generatePDF(adaptedRecipesWithDates)
+      await recipeController.generatePDF(adaptedRecipesWithDates)
     },
 
     saveInJson: async (recipes: AdaptedRecipe[]) => {
-      return recipeController.turnRecipesIntoJson(recipes)
+      await recipeController.turnRecipesIntoJson(recipes)
     },
-
-    loadFromJsonRequest: () => { return },
 
     loadFromJson: async (json: File) => {
       await recipeController.loadRecipesFromJson(json)
+      setForm({ variant: null })
     }
   }), [])
 

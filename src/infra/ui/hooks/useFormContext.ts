@@ -26,6 +26,9 @@ export default function useFormContext() {
   case "PDFGeneration":
     title = "Escolha suas receitas favoritas e gere um PDF"
     break
+  case "LoadFromFile":
+    title = "Carregue as receitas e ingredientes do seu arquivo salvo"
+    break
   default:
     title = ""
     break

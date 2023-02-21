@@ -75,6 +75,9 @@ type DataAction = {
 } | {
   type: "SET_SELECTED_RECIPES_WITH_DATES"
   payload: { recipes: [AdaptedRecipe, Date][] }
+} | {
+  type: "ADD_DATA"
+  payload: { ingredients: AdaptedIngredient[], recipes: AdaptedRecipe[] }
 }
 
 function dataReducer(state: DataState, action: DataAction): DataState {
@@ -210,6 +213,18 @@ function dataReducer(state: DataState, action: DataAction): DataState {
     return {
       ...state,
       selectedRecipes: action.payload.recipes
+    }
+  }
+  case "ADD_DATA": {
+    console.log("ADD_DATA was dispatched! Data: ")
+    console.table(action.payload)
+    console.table(action.payload.recipes)
+    console.table(action.payload.ingredients)
+      
+    return {
+      ...state,
+      recipes: [ ...state.recipes, ...action.payload.recipes ],
+      ingredients: [ ...state.ingredients, ...action.payload.ingredients ]
     }
   }
   default: {

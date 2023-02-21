@@ -1,4 +1,4 @@
-import { AdaptedRecipe } from "@controllers/AdaptedTypes"
+import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import RecipeController from "@controllers/RecipeController"
 import { Id } from "@domain/utilities/types/Id"
 import IngredientRepository from "./IngredientRepository"
@@ -10,13 +10,19 @@ import useDataContext from "@infra/ui/hooks/useDataContext"
 export default function recipeHandler(
   updateUIOnCreate: (recipe: AdaptedRecipe) => void,
   updateUIOnUpdate: (recipe: AdaptedRecipe) => void,
-  updateUIOnDelete: (id: Id) => void
+  updateUIOnDelete: (id: Id) => void,
+  updateUIOnLoad: (newData: [AdaptedIngredient[], AdaptedRecipe[]]) => void
 ) {
   const recipeRepository = new RecipeRepository()
   const ingredientRepository = new IngredientRepository()
   const { dispatch } = useDataContext()
 
-  const uiCallbacks = { updateUIOnCreate, updateUIOnUpdate, updateUIOnDelete }
+  const uiCallbacks = {
+    updateUIOnCreate,
+    updateUIOnUpdate,
+    updateUIOnDelete,
+    updateUIOnLoad
+  }
 
   const turnIntoJsonMethod = (recipes: AdaptedRecipe[]) => {
     const jsonFile = new Blob([JSON.stringify(recipes)], { type: "application/json" })

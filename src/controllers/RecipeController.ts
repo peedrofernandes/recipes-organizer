@@ -10,7 +10,7 @@ import Recipe from "../domain/entities/Recipe"
 
 import { IRepository } from "../domain/repositories/IRepository"
 import { Id } from "../domain/utilities/types/Id"
-import { AdaptedRecipe, RecipeInput } from "./AdaptedTypes"
+import { AdaptedIngredient, AdaptedRecipe, RecipeInput } from "./AdaptedTypes"
 import { IngredientAdapter } from "./IngredientAdapter"
 import { RecipeAdapter } from "./RecipeAdapter"
 
@@ -30,7 +30,8 @@ export default class RecipeController {
     private uiCallbacks: {
       updateUIOnCreate: (recipe: AdaptedRecipe) => void,
       updateUIOnUpdate: (recipe: AdaptedRecipe) => void,
-      updateUIOnDelete: (id: Id) => void
+      updateUIOnDelete: (id: Id) => void,
+      updateUIOnLoad: (newData: [AdaptedIngredient[], AdaptedRecipe[]]) => void
     },
     private services: {
       postImage: (image: File) => Promise<string>,
@@ -129,12 +130,20 @@ export default class RecipeController {
     await generateJsonUseCase.execute(recipes)
   }
 
-  public async loadRecipesFromJson(jsonFile: File) {
+  public async loadRecipesFromJson(jsonFile: File): Promise<void> {
+    const updateUI = (newData: { newIngredients: Ingredient[], newRecipes: Recipe[] }) => {
+      const adaptedNewData: [AdaptedIngredient[], AdaptedRecipe[]] = [
+        newData.newIngredients.map(i => this.ingredientAdapter.adaptIngredient(i)),
+        newData.newRecipes.map(r => this.recipeAdapter.adaptRecipe(r))
+      ]
+      return this.uiCallbacks.updateUIOnLoad(adaptedNewData)
+    }
+
     const loadRecipesFromJsonUseCase = new LoadRecipesFromJson(
-      this.ingredientRepository, this.recipeRepository
+      this.ingredientRepository, this.recipeRepository, updateUI
     )
-    const { newIngredients, newRecipes } = await loadRecipesFromJsonUseCase.execute(jsonFile)
-    return { newIngredients, newRecipes }
+
+    await loadRecipesFromJsonUseCase.execute(jsonFile)
   }
 
   // ------------------------------------

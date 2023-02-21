@@ -1,6 +1,6 @@
-import RandomizeRecipes from "../src/domain/application/RandomizeRecipes"
-import Ingredient from "../src/domain/entities/Ingredient"
-import Recipe, { IngredientList, RecipeType } from "../src/domain/entities/Recipe"
+import RandomizeRecipes from "./RandomizeRecipes"
+import Ingredient from "../entities/Ingredient"
+import Recipe, { IngredientList, RecipeType } from "../entities/Recipe"
 
 describe("Randomization of recipes logic test", () => {
   // ------------ PREPARING ENVIRONMENT FOR TESTS ------------
@@ -66,7 +66,7 @@ describe("Randomization of recipes logic test", () => {
     }
   )
 
-  const randomizeRecipes = new RandomizeRecipes((recipes) => recipes)
+  const randomizeRecipes = new RandomizeRecipes()
 
   const recipesWithDates: [Recipe, Date][] = randomizeRecipes.execute(
     recipes, new Date("2022-10-30")

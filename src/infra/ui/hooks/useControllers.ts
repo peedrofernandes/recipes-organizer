@@ -33,6 +33,11 @@ export default function  useControllers() {
     // Update UI on Delete
     (id: string) => dispatch({
       type: "DELETE_RECIPE", payload: { id }
+    }),
+    // Update UI on Load
+    (newData: [AdaptedIngredient[], AdaptedRecipe[]]) => dispatch({
+      type: "ADD_DATA",
+      payload: { ingredients: newData[0], recipes: newData[1] }
     })
   )
 

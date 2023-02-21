@@ -22,6 +22,8 @@ type FormState = {
   id: Id
 } | {
   variant: "PDFGeneration"
+} | {
+  variant: "LoadFromFile"
 }
 
 type FormContext = {
@@ -30,7 +32,7 @@ type FormContext = {
 }
 
 // const initialState: FormState = { variant: null }
-const initialState: FormState = { variant: null }
+const initialState: FormState = { variant: "LoadFromFile" }
 
 export const FormContext = createContext<FormContext>({
   form: initialState,
