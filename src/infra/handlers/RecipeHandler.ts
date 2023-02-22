@@ -24,8 +24,10 @@ export default function recipeHandler(
     updateUIOnLoad
   }
 
-  const turnIntoJsonMethod = (recipes: AdaptedRecipe[]) => {
-    const jsonFile = new Blob([JSON.stringify(recipes)], { type: "application/json" })
+  const turnIntoJsonMethod = (data: [AdaptedRecipe[], AdaptedIngredient[]]) => {
+    const jsonFile = new Blob(
+      [JSON.stringify(data)], { type: "application/json" }
+    )
     
     const a = document.createElement("a")
     a.download = "recipes"

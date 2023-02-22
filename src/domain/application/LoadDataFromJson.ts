@@ -5,38 +5,35 @@ import IUseCase from "./_IUseCase"
 
 import { exists } from "../utilities/algorithms/binarySearch"
 import ExtractIngredients from "@domain/utilities/services/ExtractIngredients"
+import IRecipeRepository from "@domain/repositories/IRecipeRepository"
 
-export default class LoadRecipesFromJson implements IUseCase<[unknown], void> {
+export default class LoadDataFromJson implements IUseCase<[unknown], void> {
   constructor(
     private ingredientRepository: IRepository<Ingredient>,
-    private recipeRepository: IRepository<Recipe>,
+    private recipeRepository: IRecipeRepository,
     private updateUI: (newData: { newIngredients: Ingredient[], newRecipes: Recipe[] }) => void
   ) { }
   
   async execute(jsonFile: unknown) {
-    console.log("Execute method called at LoadRecipesFromJson usecase!")
+    const data = await this.recipeRepository.load(jsonFile)
 
-    const recipes = await this.recipeRepository.load(jsonFile)
-    console.log("Loaded recipes from the file: ", recipes)
+    // Get unique ingredients from inside the recipes
+    const ingredientsFromRecipes = ExtractIngredients(data.recipes)
 
-    const ingredients = ExtractIngredients(recipes)
-    console.log("Ingredients extracted from the recipes: ", ingredients)
-
+    // Find every existing recipes and ingredients
     const existingRecipes = await this.recipeRepository.findAll()
-    console.log("Existing recipes in the repository: ", existingRecipes)
-
     const existingIngredients = await this.ingredientRepository.findAll()
-    console.log("Existing ingredients in the repository: ", existingIngredients)
 
-    const newRecipes = recipes.filter(
+    const newRecipes = data.recipes.filter(
       r => !(exists<Recipe>(existingRecipes, r, r => r.id))
     )
-    console.log("newRecipes: ", newRecipes)
 
-    const newIngredients = ingredients.filter(
-      i => !(exists<Ingredient>(existingIngredients, i, i => i.id))
-    )
-    console.log("newIngredients: ", newIngredients)
+    // Get unique ingredients from recipes, concat with the ingredients that 
+    // were not extracted from recipes, and filter this final list 
+    // with the existing ingredients
+    const newIngredients = ingredientsFromRecipes.concat(data.ingredients.filter(
+      i => ingredientsFromRecipes.findIndex(item => item.id === i.id) < 0
+    )).filter(i => !(exists<Ingredient>(existingIngredients, i, i => i.id)))
 
     this.recipeRepository.createList(newRecipes)
     this.ingredientRepository.createList(newIngredients)

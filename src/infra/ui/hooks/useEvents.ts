@@ -76,8 +76,8 @@ export default function useEvents() {
       await recipeController.generatePDF(adaptedRecipesWithDates)
     },
 
-    saveInJson: async (recipes: AdaptedRecipe[]) => {
-      await recipeController.turnRecipesIntoJson(recipes)
+    saveToJson: async (data: [AdaptedRecipe[], AdaptedIngredient[]]) => {
+      await recipeController.turnDataIntoJson(data)
     },
 
     loadFromJson: async (json: File) => {

@@ -1,11 +1,10 @@
-import Recipe from "../entities/Recipe"
-import { IRepository } from "../repositories/IRepository"
+import IRecipeRepository from "@domain/repositories/IRecipeRepository"
 import { Id } from "../utilities/types/Id"
 import IUseCase from "./_IUseCase"
 
 export default class DeleteRecipe implements IUseCase<[Id], void> {
   constructor(
-    private recipeRepository: IRepository<Recipe>,
+    private recipeRepository: IRecipeRepository,
     private updateUI: (id: Id) => void
   ) { }
 

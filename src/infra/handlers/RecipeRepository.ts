@@ -1,13 +1,14 @@
-import { AdaptedRecipe } from "@controllers/AdaptedTypes"
+import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { IngredientAdapter } from "@controllers/IngredientAdapter"
 import { RecipeAdapter } from "@controllers/RecipeAdapter"
+import Ingredient from "@domain/entities/Ingredient"
 import Recipe from "@domain/entities/Recipe"
-import { IRepository } from "@domain/repositories/IRepository"
+import IRecipeRepository from "@domain/repositories/IRecipeRepository"
 import services from "./services"
 
 const recipes = "recipes"
 
-export default class RecipeRepository implements IRepository<Recipe> {
+export default class RecipeRepository implements IRecipeRepository {
 
   private getData(): AdaptedRecipe[] {
     const data = localStorage.getItem(recipes)
@@ -81,18 +82,22 @@ export default class RecipeRepository implements IRepository<Recipe> {
     this.setData(recipes)
     return Promise.resolve()
   }
-  load(source: File): Promise<Recipe[]> {
+  load(source: File): Promise<{ recipes: Recipe[], ingredients: Ingredient[] }> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.readAsText(source)
 
       reader.onload = () => {
-        const adaptedRecipes: AdaptedRecipe[]  = JSON.parse(reader.result as string)
+        const data: [AdaptedRecipe[], AdaptedIngredient[]] =
+          JSON.parse(reader.result as string)
 
-        const recipes = adaptedRecipes.map(
+        const recipes = data[0].map(
           r => this.recipeAdapter.retrieveRecipe(r))
+        const ingredients = data[1].map(
+          i => this.ingredientAdapter.retrieveIngredient(i)
+        )
         
-        resolve(recipes)
+        resolve({ recipes, ingredients })
       }
 
       reader.onerror = (error) => {

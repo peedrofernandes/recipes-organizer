@@ -11,7 +11,7 @@ import useTheme from "../hooks/useTheme"
 import { Title } from "../components/styles"
 import { Grid, GridItem } from "../components/MaterialGrid"
 import useViewportTracker from "../hooks/useViewportTracker"
-import { Dropdown, DropdownItem } from "../components/forms/Form/styles"
+import { Dropdown } from "../components/forms/Form/styles"
 import useEvents from "../hooks/useEvents"
 import useDataContext from "../hooks/useDataContext"
 
@@ -122,7 +122,7 @@ type PageLayoutProps = {
 export default function PageLayout(props: PageLayoutProps) {
   const { children } = props
 
-  const { generatePdfRequest, loadFromJsonRequest, saveInJson } = useEvents()
+  const { generatePdfRequest, loadFromJsonRequest, saveToJson } = useEvents()
   const { data } = useDataContext()
   const { theme, toggleTheme } = useTheme()
   const { title, form } = useFormContext()
@@ -195,7 +195,7 @@ export default function PageLayout(props: PageLayoutProps) {
                   />
                   <Button variant="dropdown"
                     text="Salvar em arquivo"
-                    onClick={() => { setShowMenuDropdown(false); saveInJson(data.recipes) }}
+                    onClick={() => { setShowMenuDropdown(false); saveToJson([data.recipes, data.ingredients]) }}
                     icon={<Icon variant="Save" size={20} />}
                   />
                   <Button variant="dropdown"
@@ -225,7 +225,7 @@ export default function PageLayout(props: PageLayoutProps) {
                   />
                   <Button variant="styled"
                     text="Salvar em arquivo"
-                    onClick={() => saveInJson(data.recipes)}
+                    onClick={() => saveToJson([data.recipes, data.ingredients])}
                     icon={<Icon variant="Save" size={20} />}
                   />
                   <Button variant="styled"

@@ -1,10 +1,10 @@
 import Recipe from "../entities/Recipe"
 import IUseCase from "./_IUseCase"
-import { IRepository } from "../repositories/IRepository"
+import IRecipeRepository from "@domain/repositories/IRecipeRepository"
 
 export default class UpdateRecipe implements IUseCase<[Recipe],void> {
   constructor(
-    private recipeRepository: IRepository<Recipe>,
+    private recipeRepository: IRecipeRepository,
     private updateUI: (newRecipe: Recipe) => void
   ) { }
 

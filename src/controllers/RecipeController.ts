@@ -1,8 +1,9 @@
 import GeneratePDF from "@domain/application/GeneratePDF"
+import IRecipeRepository from "@domain/repositories/IRecipeRepository"
 import CreateRecipe from "../domain/application/CreateRecipe"
 import DeleteRecipe from "../domain/application/DeleteRecipe"
 import GenerateJson from "../domain/application/GenerateJson"
-import LoadRecipesFromJson from "../domain/application/LoadRecipesFromJson"
+import LoadRecipesFromJson from "../domain/application/LoadDataFromJson"
 import RandomizeRecipes from "../domain/application/RandomizeRecipes"
 import UpdateRecipe from "../domain/application/UpdateRecipe"
 import Ingredient from "../domain/entities/Ingredient"
@@ -21,9 +22,9 @@ export default class RecipeController {
   // ----------- CONSTRUCTOR ------------
 
   constructor(
-    private recipeRepository: IRepository<Recipe>,
+    private recipeRepository: IRecipeRepository,
     private ingredientRepository: IRepository<Ingredient>,
-    private turnIntoJsonMethod: (recipes: AdaptedRecipe[]) => void,
+    private turnDataIntoJsonMethod: (data: [AdaptedRecipe[], AdaptedIngredient[]]) => void,
     private generatePDFMethod: (
       adaptedRecipesWithDates: [AdaptedRecipe, Date][]
     ) => Promise<void>,
@@ -116,18 +117,24 @@ export default class RecipeController {
     return generatePDFUseCase.execute(recipesWithDates)
   }
 
-  public async turnRecipesIntoJson(adaptedRecipes: AdaptedRecipe[]) {
-    const turnIntoJsonMethod = async (recipes: Recipe[]) => {
+  public async turnDataIntoJson(data: [AdaptedRecipe[], AdaptedIngredient[]]) {
+    const turnIntoJsonMethod = async (recipes: Recipe[], ingredients: Ingredient[]) => {
       const adaptedRecipes = recipes.map(
         r => this.recipeAdapter.adaptRecipe(r)
       )
-      return this.turnIntoJsonMethod(adaptedRecipes)
+      const adaptedIngredients = ingredients.map(
+        i => this.ingredientAdapter.adaptIngredient(i)
+      )
+      return this.turnDataIntoJsonMethod([adaptedRecipes, adaptedIngredients])
     }
     const generateJsonUseCase = new GenerateJson(turnIntoJsonMethod)
-    const recipes = adaptedRecipes.map(
+    const recipes = data[0].map(
       r => this.recipeAdapter.retrieveRecipe(r)
     )
-    await generateJsonUseCase.execute(recipes)
+    const ingredients = data[1].map(
+      i => this.ingredientAdapter.retrieveIngredient(i)
+    )
+    await generateJsonUseCase.execute(recipes, ingredients)
   }
 
   public async loadRecipesFromJson(jsonFile: File): Promise<void> {
