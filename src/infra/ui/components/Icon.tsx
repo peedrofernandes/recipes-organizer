@@ -30,7 +30,7 @@ const SpinnerCircle = styled.circle<{ size?: number }>`
 
 
 export type IconProps = {
-  variant: "Delete" | "Edit" | "NoRecipe" | "NoImage" | "AddRecipe" | "Plus" | "DarkMode" | "LightMode" | "Help" | "Menu Book" | "Ingredient" | "Close" | "Search" | "Spinner" | "Check" | "CheckEmpty" | "Download" | "Document" | "Save" | "Load"; 
+  variant: "Delete" | "Edit" | "NoRecipe" | "NoImage" | "AddRecipe" | "Plus" | "DarkMode" | "LightMode" | "Help" | "Menu Book" | "Ingredient" | "Close" | "Search" | "Spinner" | "Check" | "CheckEmpty" | "Download" | "Document" | "Save" | "Load" | "Menu"; 
   size?: number;
   color?: string;
 }
@@ -167,6 +167,10 @@ export default function Icon(props: IconProps) {
   case "Load":
     return <Svg size={size} viewBox={[0, 96, 960, 960]}>
       <path fill={color ?? theme.main.contrastV1} d="M452 854h60V653l82 82 42-42-156-152-154 154 42 42 84-84v201ZM220 976q-24 0-42-18t-18-42V236q0-24 18-42t42-18h361l219 219v521q0 24-18 42t-42 18H220Zm331-554V236H220v680h520V422H551ZM220 236v186-186 680-680Z"/>
+    </Svg>
+  case "Menu":
+    return <Svg size={size} viewBox={[0, 96, 960, 960]}>
+      <path fill={color ?? theme.main.contrastV1} d="M120 816v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/>
     </Svg>
   default:
     return null

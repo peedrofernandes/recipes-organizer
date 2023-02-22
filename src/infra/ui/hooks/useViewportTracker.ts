@@ -1,24 +1,51 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import useTheme from "./useTheme"
+import useThrottle from "./useThrottle"
 
-export default function useViewportTracker() {
+type Viewport = {
+  xs: boolean // 0px (always true)
+  sm: boolean // 600px
+  md: boolean // 905px
+  lg: boolean // 1240px
+  xl: boolean // 1440px
+  // min-width values
+}
+
+export default function useViewportTracker(): Viewport {
   const { breakpoints } = useTheme().theme
-  const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false)
+  
+  const getCurrentViewport = useCallback((): Viewport => {
+    
+    switch (true) {
+    case (window.matchMedia(breakpoints.xl).matches):
+      return { xs: true, sm: true, md: true, lg: true, xl: true }
+    case (window.matchMedia(breakpoints.lg).matches):
+      return { xs: true, sm: true, md: true, lg: true, xl: false }
+    case (window.matchMedia(breakpoints.md).matches):
+      return { xs: true, sm: true, md: true, lg: false, xl: false }
+    case (window.matchMedia(breakpoints.sm).matches):
+      return { xs: true, sm: true, md: false, lg: false, xl: false }
+    case (window.matchMedia(breakpoints.xs).matches):
+      return { xs: true, sm: false, md: false, lg: false, xl: false }
+    default:
+      return { xs: false, sm: false, md: false, lg: false, xl: false }
+    }
+  }, [])
+              
+  const [viewportState, setViewportState] = useState<Viewport>(getCurrentViewport())
 
   useEffect(() => {
-    const mediaWatcher = window.matchMedia(breakpoints.md)
-    setIsSmallScreen(!mediaWatcher.matches)
-
-    function update(value: boolean) {
-      setIsSmallScreen(value)
-    }
-
-    mediaWatcher.addEventListener("change", () => update(!mediaWatcher.matches))
+    
+    window.addEventListener("resize", useThrottle(() => {
+      setViewportState(getCurrentViewport())
+    }))
 
     return () => {
-      mediaWatcher.removeEventListener("change", () => update(!mediaWatcher.matches))
+      window.removeEventListener("resize", useThrottle(() => {
+        setViewportState(getCurrentViewport())
+      }))
     }
   }, [])
 
-  return isSmallScreen
+  return viewportState
 }

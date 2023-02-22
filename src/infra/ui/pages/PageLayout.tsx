@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react"
+import React, { ReactNode, useRef, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import styled, { ThemeProvider } from "styled-components"
 
@@ -8,6 +8,12 @@ import Modal from "../components/Modal"
 import Form from "../components/forms/Form"
 import useFormContext from "../hooks/useFormContext"
 import useTheme from "../hooks/useTheme"
+import { Title } from "../components/styles"
+import { Grid, GridItem } from "../components/MaterialGrid"
+import useViewportTracker from "../hooks/useViewportTracker"
+import { Dropdown, DropdownItem } from "../components/forms/Form/styles"
+import useEvents from "../hooks/useEvents"
+import useDataContext from "../hooks/useDataContext"
 
 const LayoutContainer = styled.div`
   position: relative;
@@ -45,27 +51,54 @@ const LayoutContainer = styled.div`
   }
 `
 
-const ButtonSet = styled.div`
+const Topbar = styled.div`
   display: flex;
   justify-content: space-between;
+  flex-direction: row-reverse;
   padding: 16px 16px 0 16px;
-  gap: 16px;
 
-  @media (min-width: 1000px) {
-    display: block;
+  position: relative;
 
-    & > a {
-      position: fixed;
-      top: 16px;
-      left: 16px;
+
+  ${({ theme }) => `
+    @media ${theme.breakpoints.lg} {
+      position: sticky;
+      top: 0;
+      background-color: ${theme.main.primaryV1};
     }
+  `}
+`
 
-    & > button {
+const TopRight = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  ${({ theme }) => `
+    @media ${theme.breakpoints.md} {
       position: fixed;
       top: 16px;
       right: 16px;
+      gap: 16px;
     }
-  }
+  `}
+`
+
+const ActionsDesktop = styled.section`
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  padding: 16px 0;
+  gap: 8px;
+  align-items: center;
+`
+
+const ActionsMobile = styled.section`
+  width: 100%;
+`
+
+const Content = styled.div`
+  padding-bottom: 180px;
 `
 
 const BottomNav = styled.nav`
@@ -81,16 +114,36 @@ const BottomNav = styled.nav`
   }
 `
 
-export default function PageLayout(props: { children: ReactNode }) {
+type PageLayoutProps = {
+  title: string
+  children: ReactNode
+}
+
+export default function PageLayout(props: PageLayoutProps) {
   const { children } = props
 
+  const { generatePdfRequest, loadFromJsonRequest, saveInJson } = useEvents()
+  const { data } = useDataContext()
   const { theme, toggleTheme } = useTheme()
   const { title, form } = useFormContext()
   const location = useLocation()
+  const viewportState = useViewportTracker()
+
+  const [showMenuDropdown, setShowMenuDropdown] = useState<boolean>(false)
+  function toggleMenuDropdown() {
+    setShowMenuDropdown(value => !value)
+  }
+
+  const dropdownRef = useRef<HTMLUListElement>(null)
+  function handleCloseDropdown(e: React.MouseEvent<HTMLElement>) {
+    if (!dropdownRef.current?.contains(e.target as Node)) {
+      setShowMenuDropdown(false)
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
-      <LayoutContainer>
+      <LayoutContainer onClick={handleCloseDropdown}>
 
         
         {form.variant !== null && (
@@ -108,28 +161,92 @@ export default function PageLayout(props: { children: ReactNode }) {
         )}
 
 
-        <ButtonSet>
-          {location.pathname !== "/" && (
+        <Topbar>
+
+          <TopRight>
             <Link to="/">
               <Button variant="icon">
-                <Icon variant="Help" color={theme.color.primaryV1} />
+                <Icon
+                  variant="Help"
+                  color={theme.color.primaryV1}
+                  size={viewportState.md ? 36 : 24}
+                />
               </Button>
             </Link>
+            <Button variant="icon" onClick={() => toggleTheme()} >
+              <Icon
+                variant={theme.variant === "Light" ? "DarkMode" : "LightMode"}
+                size={viewportState.md ? 36 : 24}
+              />
+            </Button>
+          </TopRight>
+
+          {!viewportState.md && (
+            <ActionsMobile ref={dropdownRef}>
+              <Button variant="icon" onClick={toggleMenuDropdown}>
+                <Icon variant="Menu" size={36} />
+              </Button>
+              {showMenuDropdown && (
+                <Dropdown style={{ width: "calc(100% - 32px)" }}>
+                  <Button variant="dropdown"
+                    text="Gerar PDF"
+                    onClick={() => { setShowMenuDropdown(false); generatePdfRequest() }}
+                    icon={<Icon variant="Document" size={20} />}
+                  />
+                  <Button variant="dropdown"
+                    text="Salvar em arquivo"
+                    onClick={() => { setShowMenuDropdown(false); saveInJson(data.recipes) }}
+                    icon={<Icon variant="Save" size={20} />}
+                  />
+                  <Button variant="dropdown"
+                    text="Carregar arquivo"
+                    onClick={() => { setShowMenuDropdown(false); loadFromJsonRequest() }}
+                    icon={<Icon variant="Load" size={20} />}
+                  />
+                </Dropdown>
+              )}
+            </ActionsMobile>
           )}
 
-          <Button variant="icon" onClick={() => toggleTheme()} >
-            <Icon
-              variant={theme.variant === "Light" ? "DarkMode" : "LightMode"}
-              size={36}
-            />
-          </Button>
-        </ButtonSet>
-
-        <section>
-          {children}
-        </section>
+        </Topbar>
 
 
+
+        <Content>
+          <Grid>
+            <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
+              <Title variant={1} as="h1">{props.title}</Title>
+              {viewportState.md && (
+                <ActionsDesktop>
+                  <Button variant="styled"
+                    text="Gerar PDF"
+                    onClick={generatePdfRequest}
+                    icon={<Icon variant="Document" size={20} />}
+                  />
+                  <Button variant="styled"
+                    text="Salvar em arquivo"
+                    onClick={() => saveInJson(data.recipes)}
+                    icon={<Icon variant="Save" size={20} />}
+                  />
+                  <Button variant="styled"
+                    text="Carregar arquivo"
+                    onClick={loadFromJsonRequest}
+                    icon={<Icon variant="Load" size={20} />}
+                  />
+                </ActionsDesktop>
+              )}
+            </GridItem>
+          </Grid>
+          <section>
+            <Grid>
+              {children}
+            </Grid>
+          </section>
+        </Content>
+
+          
+
+        
         {location.pathname !== "/" && (
 
           <BottomNav>

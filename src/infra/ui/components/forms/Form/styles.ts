@@ -132,9 +132,26 @@ export const Dropdown = styled.ul`
   z-index: 1000;
   background-color: ${({ theme }) => theme.main.primaryV1};
   border-radius: 0 8px 8px 0;
-  padding: 4px;
   max-height: 200px;
   overflow-y: auto;
+
+  animation: drop 0.2s ease-in-out forwards;
+
+  transform-origin: top center;
+  @keyframes drop {
+    0% {
+      transform: scaleY(0);
+      opacity: 0;
+    }
+    60% {
+      transform: scaleY(120%);
+    }
+    100% {
+      transform: scaleY(100%);
+      opacity: 1;
+    }
+
+  }
 `
 
 export const DropdownItem = styled.li<{

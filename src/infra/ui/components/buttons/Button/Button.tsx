@@ -1,4 +1,5 @@
 import React from "react"
+import DropdownButton from "../DropdownButton"
 import IconButton from "../IconButton"
 import LayoutButton from "../LayoutButton"
 import StyledButton from "../StyledButton"
@@ -10,7 +11,9 @@ type ButtonProps = ({
   variant: "icon"
 } & React.ComponentPropsWithoutRef<typeof IconButton>) | ({
   variant: "layout"
-} & React.ComponentPropsWithoutRef<typeof LayoutButton>)
+} & React.ComponentPropsWithoutRef<typeof LayoutButton>) | ({
+  variant: "dropdown"
+} & React.ComponentPropsWithoutRef<typeof DropdownButton>)
 
 export function Button(props: ButtonProps) {
   switch (props.variant) {
@@ -30,6 +33,10 @@ export function Button(props: ButtonProps) {
       <LayoutButton {...props}>
         {props.children}
       </LayoutButton>
+    )
+  case "dropdown":
+    return (
+      <DropdownButton {...props} />
     )
   default:
     return null

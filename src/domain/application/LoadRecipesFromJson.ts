@@ -5,7 +5,6 @@ import IUseCase from "./_IUseCase"
 
 import { exists } from "../utilities/algorithms/binarySearch"
 import ExtractIngredients from "@domain/utilities/services/ExtractIngredients"
-import compareStrings from "@domain/utilities/algorithms/compareStrings"
 
 export default class LoadRecipesFromJson implements IUseCase<[unknown], void> {
   constructor(

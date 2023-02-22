@@ -32,7 +32,7 @@ type FormContext = {
 }
 
 // const initialState: FormState = { variant: null }
-const initialState: FormState = { variant: "LoadFromFile" }
+const initialState: FormState = { variant: null }
 
 export const FormContext = createContext<FormContext>({
   form: initialState,

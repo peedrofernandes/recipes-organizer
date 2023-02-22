@@ -1,8 +1,7 @@
 import { AdaptedIngredient } from "@controllers/AdaptedTypes"
 import React from "react"
 import Card from "../components/cards/Card"
-import { Grid, GridItem } from "../components/MaterialGrid"
-import { Title } from "../components/styles"
+import { GridItem } from "../components/MaterialGrid"
 import PageLayout from "./PageLayout"
 
 type IngredientPageProps = {
@@ -13,45 +12,38 @@ type IngredientPageProps = {
 
 export default function IngredientsPage(props: IngredientPageProps) {
   return (
-    <PageLayout>
-      <Grid>
-        <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
-          <Title variant={1} as="h1">Ingredientes</Title>
+    <PageLayout title="Ingredientes">
+
+      {props.fetchIngredientsLoading ? (
+        <GridItem span={4}>
+          <Card variant="Skeleton"/>
         </GridItem>
- 
-
-        {props.fetchIngredientsLoading ? (
-          <GridItem span={4}>
-            <Card variant="Skeleton"/>
-          </GridItem>
-        ) : (
-          <>
-            {props.ingredients.map((ingredient) => {
-              return (
-                <GridItem span={4} key={ingredient.id}>
-                  <Card
-                    variant="Ingredient"
-                    ingredient={ingredient}
-                  />
-                </GridItem>
-              )
-            })}
-
-            {props.createIngredientLoading && (
-              <GridItem span={4}>
-                <Card variant="Loading" />
+      ) : (
+        <>
+          {props.ingredients.map((ingredient) => {
+            return (
+              <GridItem span={4} key={ingredient.id}>
+                <Card
+                  variant="Ingredient"
+                  ingredient={ingredient}
+                />
               </GridItem>
-            )}
+            )
+          })}
 
+          {props.createIngredientLoading && (
             <GridItem span={4}>
-              <Card
-                variant="CreateIngredient"
-              />
+              <Card variant="Loading" />
             </GridItem>
-          </>
-        )}
+          )}
 
-      </Grid>
+          <GridItem span={4}>
+            <Card
+              variant="CreateIngredient"
+            />
+          </GridItem>
+        </>
+      )}
     </PageLayout>
   )
 }
