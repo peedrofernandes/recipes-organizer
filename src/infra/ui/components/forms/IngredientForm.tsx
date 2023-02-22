@@ -3,6 +3,7 @@ import { Id } from "@domain/utilities/types/Id"
 import { FieldSet, FormContainer, InputField, InputGroup, SubmitContainer } from "@infra/ui/components/forms/Form/styles"
 import React, { useState } from "react"
 import Button from "../buttons/Button"
+import Input from "../inputs/Input"
 
 type IngredientFormProps = {
   variant: "Create"
@@ -79,6 +80,7 @@ export default function IngredientForm(props: IngredientFormProps) {
   }
 
   const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("File changed!")
     setImageFile(e.target.files?.[0] || null)
   }
 
@@ -224,14 +226,10 @@ export default function IngredientForm(props: IngredientFormProps) {
       
 
 
-      <FieldSet>
-        <label>Imagem</label>
-        <input 
-          type="file" id="Image" name="Image"
-          accept="image/png, image/gif, image/jpeg" title="Selecione"
-          onChange={handleChangeFile}
-        />
-      </FieldSet>
+      <Input variant="file" id="file" name="file"
+        accept="image/png, image/gif, image/jpeg" onChange={handleChangeFile}
+        fileName={imageFile?.name ?? ""}
+      />
 
       
 

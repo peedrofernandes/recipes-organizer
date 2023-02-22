@@ -8,6 +8,7 @@ import Icon from "../Icon"
 import Table from "../tables/Table"
 import List from "../lists/List"
 import useViewportTracker from "@infra/ui/hooks/useViewportTracker"
+import Input from "../inputs/Input"
 
 
 
@@ -390,13 +391,11 @@ export default function RecipeForm(props: RecipeFormProps) {
 
       
       {/* Image selection */}
-      <FieldSet>
-        <label>Imagem</label>
-        <input
-          type="file" accept="image/png, image/gif, image/jpeg"
-          onChange={handleChangeFile}
-        />
-      </FieldSet>
+      <Input variant="file" id="file" name="file"
+        accept="image/png, image/gif, image/jpeg"
+        onChange={handleChangeFile}
+        fileName={imageFile?.name ?? ""}
+      />
 
       
 

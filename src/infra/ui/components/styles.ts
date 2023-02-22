@@ -22,7 +22,6 @@ export const Title = styled.div<{
   `}
 
   text-align: ${({ variant }) => variant <= 2 ? "center" : "left"};
-  padding: ${({ variant }) => variant <= 2 ? "32px 0" : "16px 0"};
 
   color: ${({ theme }) => theme.main.contrastV1};
 `
