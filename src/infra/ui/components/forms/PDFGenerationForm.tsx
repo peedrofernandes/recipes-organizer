@@ -109,7 +109,7 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
 
 
   // Viewport tracker
-  const isSmallScreen = useViewportTracker()
+  const viewportStatus = useViewportTracker()
 
 
   // Handle change date of each recipe
@@ -184,44 +184,45 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
           <input
             type="text" id="search" name="search" placeholder="Pesquisar"
             onChange={(e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)} />
+        
+          {recipeOptions.length > 0 && showDropdown && (
+            <Dropdown ref={dropdownRef}>
+              {recipeOptions.map(recipe => (
+                <DropdownItem
+                  key={recipe.id}
+                  active={selectedRecipes.some(r => r[0].id === recipe.id)}
+                  onClick={() => handleChangeSelectedRecipes(recipe)}
+                >
+                  <div>
+                    <Text>{recipe.name}</Text>
+                    <Subtitle>{recipe.description}</Subtitle>
+                  </div>
+                  {recipe.macros && (
+                    <MacrosList>
+                      <li><Span>P: {recipe.macros[0].toFixed(2)}</Span></li>
+                      <li><Span>C: {recipe.macros[1].toFixed(2)}</Span></li>
+                      <li><Span>G: {recipe.macros[2].toFixed(2)}</Span></li>|
+                      <li><Span>{recipe.kcal?.toFixed(2)}kcal</Span></li>
+                    </MacrosList>
+                  )}
+                  <Icon
+                    variant={selectedRecipes.some(
+                      r => r[0].id === recipe.id)
+                      ? "Check"
+                      : "CheckEmpty"
+                    }
+                    size={20}
+                  />
+                </DropdownItem>
+              ))}
+            </Dropdown>
+          )}
         </InputField>
-        {recipeOptions.length > 0 && showDropdown && (
-          <Dropdown ref={dropdownRef}>
-            {recipeOptions.map(recipe => (
-              <DropdownItem
-                key={recipe.id}
-                active={selectedRecipes.some(r => r[0].id === recipe.id)}
-                onClick={() => handleChangeSelectedRecipes(recipe)}
-              >
-                <div>
-                  <Text>{recipe.name}</Text>
-                  <Subtitle>{recipe.description}</Subtitle>
-                </div>
-                {recipe.macros && (
-                  <MacrosList>
-                    <li><Span>P: {recipe.macros[0].toFixed(2)}</Span></li>
-                    <li><Span>C: {recipe.macros[1].toFixed(2)}</Span></li>
-                    <li><Span>G: {recipe.macros[2].toFixed(2)}</Span></li>|
-                    <li><Span>{recipe.kcal?.toFixed(2)}kcal</Span></li>
-                  </MacrosList>
-                )}
-                <Icon
-                  variant={selectedRecipes.some(
-                    r => r[0].id === recipe.id)
-                    ? "Check"
-                    : "CheckEmpty"
-                  }
-                  size={20}
-                />
-              </DropdownItem>
-            ))}
-          </Dropdown>
-        )}
         {submitErrors.recipeQuantities && <span>
           {submitErrors.recipeQuantitiesMessage}
         </span>}
         <label>Selecione uma data para cada receita:</label>
-        {!isSmallScreen ? (
+        {viewportStatus.md ? (
           <Table variant="RecipeSelection"
             recipes={selectedRecipes}
             errorStatus={submitErrors.dates || submitErrors.recipeQuantities}
@@ -247,7 +248,7 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
           Ou gere datas aleatórias!
         </Text>
         <InputGroup>
-          <div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <label>Data inicial</label>
             <InputField errorStatus={submitErrors.randomization}>
               <input

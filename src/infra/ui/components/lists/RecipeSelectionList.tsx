@@ -3,7 +3,6 @@ import { Id } from "@domain/utilities/types/Id"
 import React from "react"
 import styled from "styled-components"
 import Card from "../cards/Card"
-import RecipeSelectionCard from "../cards/RecipeSelectionCard"
 
 const List = styled.ul`
   margin-top: 8px;

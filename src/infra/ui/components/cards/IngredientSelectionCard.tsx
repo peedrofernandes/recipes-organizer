@@ -3,7 +3,7 @@ import { Id } from "@domain/utilities/types/Id"
 import { InputField } from "@infra/ui/components/forms/Form/styles"
 import React from "react"
 import styled from "styled-components"
-import { Subtitle, Text } from "../styles"
+import { Span, Subtitle, Text } from "../styles"
 
 const Card = styled.div`
   width: 100%;
@@ -37,6 +37,7 @@ const Fieldset = styled.fieldset`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 8px;
   border: none;
 
 `
@@ -103,7 +104,7 @@ export default function IngredientSelectionCard(props: IngredientSelectionCardPr
         </Macros>
       )}
       <Fieldset style={{ flexGrow: "1" }}>
-        <label>Gramas totais</label>
+        <label><Span>Gramas totais</Span></label>
         <InputField errorStatus={errorStatus}>
           <input
             type="text"

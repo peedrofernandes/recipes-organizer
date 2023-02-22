@@ -3,6 +3,7 @@ import styled, { css } from "styled-components"
 export const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
+  gap: 24px;
   height: 100%;
   overflow-y: scroll;
   padding: 0 8px;
@@ -26,9 +27,13 @@ export const FormContainer = styled.form`
 export const FieldSet = styled.fieldset<{
   errorStatus?: boolean
 }>`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+
   position: relative;
   width: 100%;
-  display: block;
   border: none;
   color: ${({ errorStatus, theme }) => errorStatus ? theme.color.red : "inherit"};
 
@@ -66,7 +71,6 @@ export const InputFieldStyles = css<{
   background-color: ${({ theme }) => theme.main.primaryV1 + "00"};
   color: ${({ theme }) => theme.main.contrastV1};
   border: none;
-  margin: 8px 0 24px 0;
 
   box-shadow: ${({ theme, errorStatus }) =>
     `inset 0 0 1px ${errorStatus ? theme.color.red : theme.main.contrastV1},
@@ -128,29 +132,30 @@ export const SelectField = styled.span<{
 
 export const Dropdown = styled.ul`
   position: absolute;
+  bottom: 0;
   max-width: 100%;
   z-index: 1000;
   background-color: ${({ theme }) => theme.main.primaryV1};
-  border-radius: 0 8px 8px 0;
+  border-radius: 8px;
   max-height: 200px;
   overflow-y: auto;
 
   animation: drop 0.2s ease-in-out forwards;
 
+  transform: translateY(100%);
   transform-origin: top center;
   @keyframes drop {
     0% {
-      transform: scaleY(0);
+      transform: translateY(100%) scaleY(0);
       opacity: 0;
     }
     60% {
-      transform: scaleY(120%);
+      transform: translateY(100%) scaleY(120%);
     }
     100% {
-      transform: scaleY(100%);
+      transform: translateY(100%) scaleY(100%);
       opacity: 1;
     }
-
   }
 `
 
@@ -158,7 +163,7 @@ export const DropdownItem = styled.li<{
   active?: boolean
 }>`
   margin: 0;
-  padding: 12px 8px;
+  padding: 16px 12px;
   color: ${({ active, theme }) =>
     active ? theme.color.green : theme.main.contrastV1};
   display: flex;
