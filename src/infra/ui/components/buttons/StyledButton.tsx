@@ -21,6 +21,7 @@ const StyledButtonContainer = styled.button`
 
   &:hover {
     cursor: pointer;
+    background-color: ${({ theme, color }) => color === "red" ? "#ff3838" : theme.color.primaryV2};
   }
 
   > span.clickCircle {

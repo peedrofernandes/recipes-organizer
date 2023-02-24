@@ -31,8 +31,8 @@ type FormContext = {
   setForm: (state: FormState) => void 
 }
 
-// const initialState: FormState = { variant: null }
-const initialState: FormState = { variant: "IngredientCreation" }
+const initialState: FormState = { variant: null }
+// const initialState: FormState = { variant: "IngredientCreation" }
 
 export const FormContext = createContext<FormContext>({
   form: initialState,

@@ -5,7 +5,7 @@ import React, {
 } from "react"
 import styled from "styled-components"
 
-import { Grid, GridItem } from "./MaterialGrid"
+import { Grid, GridItem } from "./Grid"
 import Icon from "./Icon"
 import Button from "./buttons/Button"
 import useEvents from "@infra/ui/hooks/useEvents"
@@ -30,7 +30,7 @@ const ModalBox = styled.div<{ variant?: "small" | "form" }>`
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  padding: 8px;
+  padding: 16px 8px;
 
   height: ${({ variant }) => variant === "small" ? "100px" : "80vh"};
 

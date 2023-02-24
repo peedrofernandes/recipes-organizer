@@ -131,7 +131,6 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false)
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    console.log("Submitted!")
 
     const invalidRecipeDates = selectedRecipes.some(recipe => !recipe[1])
     const noRecipes = selectedRecipes.length === 0
@@ -159,6 +158,9 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
         recipe,
         stringToDate(dateString)
       ])
+    console.log(input)
+    console.log(JSON.stringify(input))
+    console.log(JSON.parse(JSON.stringify(input)))
     
     props.events.submitEvent(input)
     setSubmitSuccess(true)

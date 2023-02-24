@@ -22,6 +22,14 @@ module.exports = {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
         use: ["file-loader"],
         exclude: /node_modules/
+      },
+      {
+        test: /\.(png|jpg)$/,
+        use: [{
+          loader: "url-loader",
+          options: { limit: false }
+        }],
+        exclude: /node_modules/
       }
     ]
   },

@@ -8,12 +8,13 @@ import Modal from "../components/Modal"
 import Form from "../components/forms/Form"
 import useFormContext from "../hooks/useFormContext"
 import useTheme from "../hooks/useTheme"
-import { Title } from "../components/styles"
-import { Grid, GridItem } from "../components/MaterialGrid"
+import { Grid, GridItem } from "../components/Grid"
 import useViewportTracker from "../hooks/useViewportTracker"
-import { Dropdown } from "../components/forms/Form/styles"
 import useEvents from "../hooks/useEvents"
 import useDataContext from "../hooks/useDataContext"
+import Wave from "../components/Wave"
+import Actions from "../components/actions/Actions"
+import ActionsMobile from "../components/actions/ActionsMobile"
 
 const LayoutContainer = styled.div`
   position: relative;
@@ -64,7 +65,6 @@ const Topbar = styled.div`
     @media ${theme.breakpoints.lg} {
       position: sticky;
       top: 0;
-      background-color: ${theme.main.primaryV1};
     }
   `}
 `
@@ -84,18 +84,6 @@ const TopRight = styled.div`
   `}
 `
 
-const ActionsDesktop = styled.section`
-  width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  padding: 16px 0;
-  gap: 8px;
-  align-items: center;
-`
-
-const ActionsMobile = styled.section`
-  width: 100%;
-`
 
 const Content = styled.div`
   padding-bottom: 180px;
@@ -115,7 +103,6 @@ const BottomNav = styled.nav`
 `
 
 type PageLayoutProps = {
-  title: string
   children: ReactNode
 }
 
@@ -129,21 +116,20 @@ export default function PageLayout(props: PageLayoutProps) {
   const location = useLocation()
   const viewportState = useViewportTracker()
 
+  const buttonRef = useRef<HTMLDivElement>(null)
   const [showMenuDropdown, setShowMenuDropdown] = useState<boolean>(false)
+  function handleCloseDropdowns(e: React.MouseEvent<HTMLElement>) {
+    if (!buttonRef.current?.contains(e.target as Node)) {
+      setShowMenuDropdown(false)
+    }
+  }
   function toggleMenuDropdown() {
     setShowMenuDropdown(value => !value)
   }
 
-  const dropdownRef = useRef<HTMLUListElement>(null)
-  function handleCloseDropdown(e: React.MouseEvent<HTMLElement>) {
-    if (!dropdownRef.current?.contains(e.target as Node)) {
-      setShowMenuDropdown(false)
-    }
-  }
-
   return (
     <ThemeProvider theme={theme}>
-      <LayoutContainer onClick={handleCloseDropdown}>
+      <LayoutContainer onClick={handleCloseDropdowns}>
 
         
         {form.variant !== null && (
@@ -160,6 +146,9 @@ export default function PageLayout(props: PageLayoutProps) {
           </Modal>
         )}
 
+        
+        {location.pathname === "/" && <Wave />}
+
 
         <Topbar>
 
@@ -168,7 +157,6 @@ export default function PageLayout(props: PageLayoutProps) {
               <Button variant="icon">
                 <Icon
                   variant="Help"
-                  color={theme.color.primaryV1}
                   size={viewportState.md ? 36 : 24}
                 />
               </Button>
@@ -181,31 +169,17 @@ export default function PageLayout(props: PageLayoutProps) {
             </Button>
           </TopRight>
 
-          {!viewportState.md && (
-            <ActionsMobile ref={dropdownRef}>
-              <Button variant="icon" onClick={toggleMenuDropdown}>
-                <Icon variant="Menu" size={36} />
-              </Button>
-              {showMenuDropdown && (
-                <Dropdown style={{ width: "calc(100% - 32px)" }}>
-                  <Button variant="dropdown"
-                    text="Gerar PDF"
-                    onClick={() => { setShowMenuDropdown(false); generatePdfRequest() }}
-                    icon={<Icon variant="Document" size={20} />}
-                  />
-                  <Button variant="dropdown"
-                    text="Salvar em arquivo"
-                    onClick={() => { setShowMenuDropdown(false); saveToJson([data.recipes, data.ingredients]) }}
-                    icon={<Icon variant="Save" size={20} />}
-                  />
-                  <Button variant="dropdown"
-                    text="Carregar arquivo"
-                    onClick={() => { setShowMenuDropdown(false); loadFromJsonRequest() }}
-                    icon={<Icon variant="Load" size={20} />}
-                  />
-                </Dropdown>
-              )}
-            </ActionsMobile>
+          {location.pathname !== "/" && !viewportState.md && (
+            <Actions variant="Mobile"
+              events={{
+                generatePdfRequestOnClick: generatePdfRequest,
+                loadFromJsonRequestOnClick: loadFromJsonRequest,
+                saveToJsonOnClick: () => saveToJson([data.recipes, data.ingredients])
+              }}
+              showMenuDropdown={showMenuDropdown}
+              toggleMenuDropdown={toggleMenuDropdown}
+              ref={buttonRef}
+            />
           )}
 
         </Topbar>
@@ -213,34 +187,8 @@ export default function PageLayout(props: PageLayoutProps) {
 
 
         <Content>
-          <Grid>
-            <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
-              <Title variant={1} as="h1">{props.title}</Title>
-              {viewportState.md && (
-                <ActionsDesktop>
-                  <Button variant="styled"
-                    text="Gerar PDF"
-                    onClick={generatePdfRequest}
-                    icon={<Icon variant="Document" size={20} />}
-                  />
-                  <Button variant="styled"
-                    text="Salvar em arquivo"
-                    onClick={() => saveToJson([data.recipes, data.ingredients])}
-                    icon={<Icon variant="Save" size={20} />}
-                  />
-                  <Button variant="styled"
-                    text="Carregar arquivo"
-                    onClick={loadFromJsonRequest}
-                    icon={<Icon variant="Load" size={20} />}
-                  />
-                </ActionsDesktop>
-              )}
-            </GridItem>
-          </Grid>
           <section>
-            <Grid>
-              {children}
-            </Grid>
+            {children}
           </section>
         </Content>
 

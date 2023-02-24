@@ -5,12 +5,14 @@ import React from "react"
 
 import CreateIngredientCard from "../CreateIngredientCard"
 import CreateRecipeCard from "../CreateRecipeCard"
+import EntryCard from "../EntryCard"
 import IngredientCard from "../IngredientCard"
 import IngredientSelectionCard from "../IngredientSelectionCard"
 import LoadingCard from "../LoadingCard"
 import RecipeCard from "../RecipeCard"
 import RecipeSelectionCard from "../RecipeSelectionCard"
 import SkeletonCard from "../SkeletonCard"
+import TutorialCard from "../TutorialCard"
 
 // --------- Visual Elements ----------
 
@@ -32,9 +34,13 @@ type CardProps = {
   variant: "IngredientSelection"
 } & React.ComponentPropsWithoutRef<typeof IngredientSelectionCard>) | ({
   variant: "RecipeSelection"
-  } & React.ComponentPropsWithoutRef<typeof RecipeSelectionCard>) | ({
+} & React.ComponentPropsWithoutRef<typeof RecipeSelectionCard>) | ({
   variant: "Skeleton"
-}) ;
+  }) | ({
+  variant: "Entry"
+  } & React.ComponentPropsWithoutRef<typeof EntryCard>) | ({
+  variant: "Tutorial"
+} & React.ComponentPropsWithoutRef<typeof TutorialCard>);
 
 
 // ------------------------------------
@@ -86,5 +92,9 @@ export function Card(props: CardProps) {
     return <SkeletonCard />
   case "Loading":
     return <LoadingCard />
+  case "Entry":
+    return <EntryCard {...props} />
+  case "Tutorial":
+    return <TutorialCard {...props} />
   }
 }

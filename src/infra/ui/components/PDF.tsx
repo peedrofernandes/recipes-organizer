@@ -81,7 +81,7 @@ const pageStyles = StyleSheet.create({
 const elementStyles = StyleSheet.create({
   element: {
     width: "100%",
-    height: "140px",
+    height: "200px",
     padding: "8px",
     border: `1px solid ${pallete.black1}`,
     borderRadius: "4px",
@@ -99,8 +99,14 @@ const elementStyles = StyleSheet.create({
     width: "100%",
     height: "100%",
     display: "flex",
-    justifyContent: "space-between",
-    flexDirection: "row"
+    gap: "8px",
+    flexDirection: "column"
+  },
+  description: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: "4px"
   },
   data: {
     display: "flex",
@@ -108,23 +114,27 @@ const elementStyles = StyleSheet.create({
     gap: "8px",
     flexDirection: "row",
   },
-  imageContainer: {
-    height: "100%",
-    width: "140px",
-    display: "flex",
-    alignItems: "center"
-  },
-  description: {
+  macrosAndImage: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between"
+    gap: "16px"
+  },
+  imageContainer: {
+    height: "100%",
+    width: "100px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-end"
+  },
+  macros: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    fontWeight: "bold",
   },
   ingredients: {
     fontSize: "8px",
     marginRight: "20px"
-  },
-  macros: {
-    fontWeight: "bold",
   }
 })
 
@@ -164,73 +174,74 @@ function Element(props: { recipe: AdaptedRecipe, date: Date }) {
 
       <View style={elementStyles.content}>
 
-        <View style={elementStyles.data}>
-          {props.recipe.imageUrl && (
-            <View style={elementStyles.imageContainer}>
-              <Image style={{borderRadius: "4px"}} src={props.recipe.imageUrl} />
-            </View>
-          )}
-          <View style={elementStyles.description}>
-            <View>
-              <Text style={pageStyles.Title2}>{props.recipe.name}</Text>
-              <Text style={pageStyles.description}>{props.recipe.description}</Text>
-            </View>
-
-            {props.recipe.macros && (
-              <View style={elementStyles.macros}>
-                <Text style={{ ...pageStyles.Title3, color: pallete.green }}>
-                Proteínas: {props.recipe.macros[0].toFixed(2)}g
-                </Text>
-                <Text style={{...pageStyles.Title3, color: pallete.orange}}>
-                Carboidratos: {props.recipe.macros[1].toFixed(2)}g
-                </Text>
-                <Text style={{...pageStyles.Title3, color: pallete.blue}}>
-                Gorduras: {props.recipe.macros[2].toFixed(2)}g
-                </Text>
-                <Text style={{...pageStyles.Title3, color: pallete.yellow}}>
-                Calorias: {props.recipe.kcal?.toFixed(2)}kcal
-                </Text>
-              </View>
-            )}
-
-          </View>
+        <View style={elementStyles.description}>
+          <Text style={pageStyles.Title2}>{props.recipe.name}</Text>
+          <Text style={pageStyles.description}>{props.recipe.description}</Text>
         </View>
 
-        {props.recipe.ingredients && (
+        <View style={elementStyles.data}>
 
-          <View style={elementStyles.ingredients}>
-            <Text style={pageStyles.Title2}>Ingredientes</Text>
-            {props.recipe.ingredients?.map(
-              i => (
-                <Text key={i[0].id}>
+          {(props.recipe.macros || props.recipe.imageUrl) && (
+
+            <View style={elementStyles.macrosAndImage}>
+              {props.recipe.macros && (
+                <View style={elementStyles.macros}>
+                  <Text style={{ ...pageStyles.Title3, color: pallete.green }}>
+                Proteínas: {props.recipe.macros[0].toFixed(2)}g
+                  </Text>
+                  <Text style={{...pageStyles.Title3, color: pallete.orange}}>
+                Carboidratos: {props.recipe.macros[1].toFixed(2)}g
+                  </Text>
+                  <Text style={{...pageStyles.Title3, color: pallete.blue}}>
+                Gorduras: {props.recipe.macros[2].toFixed(2)}g
+                  </Text>
+                  <Text style={{...pageStyles.Title3, color: pallete.yellow}}>
+                Calorias: {props.recipe.kcal?.toFixed(2)}kcal
+                  </Text>
+                </View>
+              )}
+  
+              {props.recipe.imageUrl && (
+                <View style={elementStyles.imageContainer}>
+                  <Image style={{borderRadius: "4px"}} src={props.recipe.imageUrl} />
+                </View>
+              )}
+
+            </View>
+          )}
+
+          {props.recipe.ingredients && (
+            <View style={elementStyles.ingredients}>
+              {props.recipe.ingredients?.map(
+                i => (
+                  <Text key={i[0].id}>
                   -&nbsp;{i[1]}g
                   &nbsp;{i[0].name}
                   &nbsp;{i[0].macros && (
-                    <>
+                      <>
                       &#40;
-                      <Text style={{ color: pallete.green, fontWeight: "bold" }}>
+                        <Text style={{ color: pallete.green, fontWeight: "bold" }}>
                       P: {i[0].macros[0].toFixed(2)}g
-                      </Text>
+                        </Text>
                       ,&nbsp;
-                      <Text style={{ color: pallete.orange, fontWeight: "bold" }}>
+                        <Text style={{ color: pallete.orange, fontWeight: "bold" }}>
                       C: {i[0].macros[1].toFixed(2)}g
-                      </Text>
+                        </Text>
                       ,&nbsp;
-                      <Text style={{ color: pallete.blue, fontWeight: "bold" }}>
+                        <Text style={{ color: pallete.blue, fontWeight: "bold" }}>
                       G: {i[0].macros[2].toFixed(2)}g
-                      </Text>
+                        </Text>
                       &nbsp;
-                      <Text>a cada {i[0].macros[3]}g</Text>
+                        <Text>a cada {i[0].macros[3]}g</Text>
                       &#41;
-                    </>
-                  )}
-                </Text>)
-            )}
-          </View>
-        )}
-
+                      </>
+                    )}
+                  </Text>)
+              )}
+            </View>
+          )}
+        </View>
       </View>
-
     </View>
   )
 }
@@ -241,20 +252,13 @@ export default function PDFDocument() {
 
   console.log(`List received at the PDF document: ${list}`)
 
-  // Maximum of 5 elements per page
+  // Maximum of 4 elements per page
   useEffect(() => { 
-    const newSplittedList = Array.from({ length: Math.ceil(list.length / 5) },
-      (_, i) => list.slice(i * 5, (i + 1) * 5) 
+    const newSplittedList = Array.from({ length: Math.ceil(list.length / 4) },
+      (_, i) => list.slice(i * 4, (i + 1) * 4) 
     )
     setSplittedList(newSplittedList)
-    console.log(`Splitted list updated at the PDF docs: ${splittedList}`)
   }, [list])
-
-  // const mapWeekDay = useCallback((n: number): string => {
-  //   switch (n) {
-  //     case 
-  //   }
-  // }, [])
 
   return (
     <PDFViewer style={{...pageStyles.viewer}}>
@@ -263,7 +267,7 @@ export default function PDFDocument() {
         {splittedList.map((list, i) => (
           <Page key={list[0][0].id} style={pageStyles.page}>
             <View style={pageStyles.container}>
-              {i === 0 && <Text style={pageStyles.Title1}>Título</Text>}
+              {i === 0 && <Text style={pageStyles.Title1}>Receitas</Text>}
               {list.map(([recipe, date]) =>
                 <Element key={recipe.id} recipe={recipe} date={date} />
               )}
