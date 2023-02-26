@@ -1,16 +1,17 @@
 import useDataContext from "@infra/ui/hooks/useDataContext"
 import useEvents from "@infra/ui/hooks/useEvents"
 import useFormContext from "@infra/ui/hooks/useFormContext"
-import React from "react"
-import ConfirmDeleteForm from "../ConfirmDeleteForm"
-import IngredientForm from "../IngredientForm"
-import RecipeForm from "../RecipeForm"
-import PDFGenerationForm from "../PDFGenerationForm"
-import LoadFromFileForm from "../LoadFromFileForm"
+import React, { Suspense } from "react"
+
+const ConfirmDeleteForm = React.lazy(() => import("../ConfirmDeleteForm"))
+const IngredientForm = React.lazy(() => import("../IngredientForm"))
+const RecipeForm = React.lazy(() => import("../RecipeForm"))
+const PDFGenerationForm = React.lazy(() => import("../PDFGenerationForm"))
+const LoadFromFileForm = React.lazy(() => import("../LoadFromFileForm"))
 
 export function Form() {
   const { form } = useFormContext()
-  
+
   const {
     createIngredient,
     updateIngredient,
@@ -26,28 +27,32 @@ export function Form() {
 
   const { data } = useDataContext()
 
+  let result: JSX.Element
   switch (form.variant) {
   case "IngredientCreation":
-    return <IngredientForm
+    result = <IngredientForm
       variant="Create"
       events={{ submitEvent: createIngredient }}
     />
+    break
   case "IngredientUpdate":
-    return <IngredientForm
+    result = <IngredientForm
       variant="Update"
       ingredient={form.ingredient}
       events={{ submitEvent: updateIngredient }}
     />
+    break
   case "RecipeCreation":
-    return <RecipeForm
+    result = <RecipeForm
       variant="Create"
       data={data.loading.fetchIngredients
         ? { loading: true }
         : { loading: false, ingredients: data.ingredients }}
       events={{ submitEvent: createRecipe }}
     />
+    break
   case "RecipeUpdate":
-    return <RecipeForm
+    result = <RecipeForm
       variant="Update"
       data={data.loading.fetchIngredients
         ? { loading: true }
@@ -55,33 +60,39 @@ export function Form() {
       recipe={form.recipe}
       events={{ submitEvent: updateRecipe }}
     />
+    break
   case "IngredientDeletion":
-    return <ConfirmDeleteForm
+    result = <ConfirmDeleteForm
       variant="Ingredient"
       id={form.id}
       events={{ confirmEvent: deleteIngredient, cancelEvent: cancelRequest }}
     />
+    break
   case "RecipeDeletion":
-    return <ConfirmDeleteForm
+    result = <ConfirmDeleteForm
       variant="Recipe"
       id={form.id}
       events={{ confirmEvent: deleteRecipe, cancelEvent: cancelRequest }}
     />
+    break
   case "PDFGeneration":
-    return <PDFGenerationForm
+    result = <PDFGenerationForm
       data={data.loading.fetchRecipes ? {
-        loading: true 
+        loading: true
       } : {
         loading: false,
         recipes: data.recipes
       }}
       events={{ randomize: randomizeRecipes, submitEvent: generatePdf }}
     />
+    break
   case "LoadFromFile":
-    return <LoadFromFileForm
+    result = <LoadFromFileForm
       events={{ load: loadFromJson }}
     />
+    break
   default:
     return null
   }
+  return <Suspense>{result}</Suspense>
 }

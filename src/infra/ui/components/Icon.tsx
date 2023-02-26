@@ -1,6 +1,5 @@
-import React, { ReactNode, useContext } from "react"
-import styled from "styled-components"
-import { ThemeContext } from "../context/ThemeContext"
+import React, { ReactNode } from "react"
+import styled, { useTheme } from "styled-components"
 
 const SpinnerCircle = styled.circle<{ size?: number }>`
   fill: none;
@@ -38,7 +37,7 @@ export type IconProps = {
 export default function Icon(props: IconProps) {
   const { variant, size, color } = props
 
-  const { theme } = useContext(ThemeContext)
+  const theme = useTheme()
 
   const Svg = (props: {
     children: ReactNode,

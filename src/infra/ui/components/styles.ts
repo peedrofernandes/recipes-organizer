@@ -1,11 +1,15 @@
 import styled from "styled-components"
 
-const fontSizesXs = [22, 20, 14, 14, 14]
-const fontSizesSm = [24, 22, 18, 16, 16]
-const fontSizesLg = [28, 26, 22, 20, 18]
+const fontSizesXs = [64, 48, 32, 14, 14]
+const fontSizesSm = [64, 48, 32, 16, 16]
+const fontSizesLg = [64, 48, 32, 20, 18]
+// const fontSizesXs = [22, 20, 14, 14, 14]
+// const fontSizesSm = [24, 22, 18, 16, 16]
+// const fontSizesLg = [28, 26, 22, 20, 18]
 
 export const Title = styled.div<{
-  variant: 1 | 2 | 3 | 4 | 5
+  variant: 1 | 2 | 3 | 4 | 5;
+  align?: "left" | "right" | "center"
 }>`
   ${({ theme, variant }) => `
     @media ${theme.breakpoints.xs} {
@@ -21,8 +25,7 @@ export const Title = styled.div<{
     }
   `}
 
-  text-align: ${({ variant }) => variant <= 2 ? "center" : "left"};
-
+  text-align: ${({ align }) => align ?? "left" };
   color: ${({ theme }) => theme.main.contrastV1};
 `
 

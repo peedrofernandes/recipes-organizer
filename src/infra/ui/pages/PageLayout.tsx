@@ -8,13 +8,11 @@ import Modal from "../components/Modal"
 import Form from "../components/forms/Form"
 import useFormContext from "../hooks/useFormContext"
 import useTheme from "../hooks/useTheme"
-import { Grid, GridItem } from "../components/Grid"
 import useViewportTracker from "../hooks/useViewportTracker"
 import useEvents from "../hooks/useEvents"
 import useDataContext from "../hooks/useDataContext"
 import Wave from "../components/Wave"
 import Actions from "../components/actions/Actions"
-import ActionsMobile from "../components/actions/ActionsMobile"
 
 const LayoutContainer = styled.div`
   position: relative;
