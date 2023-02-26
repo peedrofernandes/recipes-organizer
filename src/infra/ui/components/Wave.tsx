@@ -19,14 +19,18 @@ export default function Wave() {
 
   useEffect(() => {
     switch (true) {
+    case viewportStatus.lg:
+      setExtraHeight(200)
+      break
+
     case viewportStatus.md:
       setExtraHeight(400)
       break
     case viewportStatus.sm:
-      setExtraHeight(600)
+      setExtraHeight(1000)
       break
     case viewportStatus.xs:
-      setExtraHeight(1000)
+      setExtraHeight(1400)
       break
     }
   }, [viewportStatus])

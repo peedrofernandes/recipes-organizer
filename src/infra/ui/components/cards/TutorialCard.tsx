@@ -1,23 +1,80 @@
 import React from "react"
 import styled from "styled-components"
+import Blob from "../blobs/Blob"
 import { Text, Title } from "../styles"
 
 const TutorialCardContainer = styled.div`
   display: flex;
+
+  ${({ theme }) => `
+    @media ${theme.breakpoints.sm} {
+      flex-direction: row;
+    }
+  `}
+
+  & > div:nth-child(1) {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  & > div:nth-child(2) {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+
+    img {
+      max-height: 180px;
+      ${({ theme }) => `
+        @media ${theme.breakpoints.sm} {
+          max-height: 240px;
+        }
+        @media ${theme.breakpoints.md} {
+          max-height: 360px;
+        }
+      `}
+      filter:
+        drop-shadow(0px 8.5px 9.2px rgba(0, 0, 0, 0.19))
+        drop-shadow(0px 15.1px 17.8px rgba(0, 0, 0, 0.146))
+        drop-shadow(0px 23.9px 26.8px rgba(0, 0, 0, 0.115))
+        drop-shadow(0px 45.7px 40.7px rgba(0, 0, 0, 0.098))
+        drop-shadow(0px 172px 89px rgba(0, 0, 0, 0.083))
+;
+    }
+  }
+`
+
+const BlobContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 `
 
 type TutorialCardProps = {
   title: string
   text: string
-  imageSrc: string 
+  imageSrc: string
+  blob: React.ReactElement<typeof Blob>
 }
 
 export default function TutorialCard(props: TutorialCardProps) {
   return (
     <TutorialCardContainer>
-      <Title variant={2} as="h2">{props.title}</Title>
-      <Text>{props.text}</Text>
-      <img src={"../../assets/mealMindLaptop.png"} />
+      <div>
+        <Title variant={2} as="h2">{props.title}</Title>
+        <Text>{props.text}</Text>
+      </div>
+      <div>
+        <BlobContainer>
+          {props.blob}
+        </BlobContainer>
+        <img src={props.imageSrc} />
+      </div>
     </TutorialCardContainer>
   )
 }
