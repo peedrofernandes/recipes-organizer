@@ -41,25 +41,15 @@ const TutorialCardContainer = styled.div`
         drop-shadow(0px 15.1px 17.8px rgba(0, 0, 0, 0.146))
         drop-shadow(0px 23.9px 26.8px rgba(0, 0, 0, 0.115))
         drop-shadow(0px 45.7px 40.7px rgba(0, 0, 0, 0.098))
-        drop-shadow(0px 172px 89px rgba(0, 0, 0, 0.083))
-;
-    }
+        drop-shadow(0px 172px 89px rgba(0, 0, 0, 0.083));
+      }
   }
-`
-
-const BlobContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
 `
 
 type TutorialCardProps = {
   title: string
   text: string
-  imageSrc: string
-  blob: React.ReactElement<typeof Blob>
+  children: React.ReactNode
 }
 
 export default function TutorialCard(props: TutorialCardProps) {
@@ -70,10 +60,7 @@ export default function TutorialCard(props: TutorialCardProps) {
         <Text>{props.text}</Text>
       </div>
       <div>
-        <BlobContainer>
-          {props.blob}
-        </BlobContainer>
-        <img src={props.imageSrc} />
+        {props.children}
       </div>
     </TutorialCardContainer>
   )

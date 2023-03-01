@@ -5,7 +5,7 @@ export default function Blob1() {
   const { color } = useTheme()
 
   return (
-    <svg style={{ width :"100%", height: "100%" }} id="visual" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <svg id="visual" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" version="1.1">
       <g transform="translate(340.4162468126147 275.98890603874173)">
         <path fill={color.primaryV1 + "90"} d="M176.9 -173.1C211.9 -141.9 210.9 -70.9 219.7 8.7C228.4 88.4 246.8 176.8 211.8 216.6C176.8 256.4 88.4 247.7 20.2 227.6C-48.1 207.4 -96.2 175.8 -147.2 136C-198.2 96.2 -252.1 48.1 -261.6 -9.5C-271.2 -67.2 -236.4 -134.4 -185.4 -165.6C-134.4 -196.9 -67.2 -192.2 1.9 -194.1C70.9 -196 141.9 -204.4 176.9 -173.1"></path>
       </g>

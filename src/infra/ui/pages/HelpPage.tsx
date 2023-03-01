@@ -20,6 +20,10 @@ const PageTutorial = styled.div < { margin?: string }>`
   flex-direction: column;
   gap: 48px;
   margin: ${({ margin }) => margin ?? ""};
+
+  #clipped {
+    clip-path: url(#BlobClipPath);
+  }
 `
 
 export default function HelpPage() {
@@ -90,21 +94,45 @@ export default function HelpPage() {
         <Grid>
           <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
             <Card variant="Tutorial"
-              imageSrc={new URL("../assets/mealMindLaptopOptimized.png", import.meta.url).href}
               title="Title"
               text="Tutorial"
-              blob={<Blob variant="1" />}
-            />
+            >
+              <Blob variant="1" />
+              <img src={new URL("../assets/mealMindLaptopOptimized.png", import.meta.url).href} />
+            </Card>
           </GridItem>
         </Grid>
         <Grid>
           <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
             <Card variant="Tutorial"
-              imageSrc={new URL("../assets/mealMindPhoneOptimized.png", import.meta.url).href}
               title="Title"
               text="Tutorial"
-              blob={<Blob variant="2" />}
-            />
+            >
+              <Blob variant="2" />
+              <img src={new URL("../assets/mealMindPhoneOptimized.png", import.meta.url).href} />
+            </Card>
+          </GridItem>
+        </Grid>
+        <Grid>
+          <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
+            <Card variant="Tutorial"
+              title="Title"
+              text="Tutorial"
+            >
+              <Blob variant="3" />
+              <img src={new URL("../assets/recipes-pdf.png", import.meta.url).href} />
+            </Card>
+          </GridItem>
+        </Grid>
+        <Grid>
+          <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
+            <Card variant="Tutorial"
+              title="Title"
+              text="Tutorial"
+            >
+              <Blob variant="4" />
+              <img id="clipped" src={new URL("../assets/SaveButton.png", import.meta.url).href} />
+            </Card>
           </GridItem>
         </Grid>
       </PageTutorial>
