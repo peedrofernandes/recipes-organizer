@@ -1,38 +1,38 @@
 import React, { useState } from "react"
 import Button from "../buttons/Button"
-import { Span } from "../styles"
-import { FieldSet, FormContainer, InputField, SubmitContainer } from "./Form/styles"
+import Input from "../inputs/Input"
+import { FormContainer, SubmitContainer } from "./Form/styles"
 
 type LoadFromFileFormProps = {
   events: { load: (file: File) => Promise<void> }
 }
 
-type SubmitErrors = ({
-  file: false
+type Error = ({
+  status: false
 } | {
-  file: true
-  fileMessage: string
+  status: true
+  message: string
 })
 
 export default function LoadFromFileForm(props: LoadFromFileFormProps) {
   const [jsonFile, setJsonFile] = useState<File | null>(null)
   function handleChangeFile(e: React.ChangeEvent<HTMLInputElement>) {
-    setSubmitError(error => ({ ...error, file: false }))
+    setFileError(error => ({ ...error, status: false }))
 
     setJsonFile(e.target.files?.[0] || null)
   }
 
-  const [submitError, setSubmitError] = useState<SubmitErrors>({
-    file: false
+  const [fileError, setFileError] = useState<Error>({
+    status: false
   })
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!jsonFile) {
-      setSubmitError(error => ({
+      setFileError(error => ({
         ...error,
-        file: true,
-        fileMessage: "Escolha um arquivo para carregar seus dados!"
+        status: true,
+        message: "Escolha um arquivo para carregar seus dados!"
       }))
       return
     }
@@ -45,7 +45,7 @@ export default function LoadFromFileForm(props: LoadFromFileFormProps) {
   return (
     <FormContainer onSubmit={handleSubmit}>
 
-      <FieldSet errorStatus={submitError.file}>
+      {/* <FieldSet errorStatus={submitError.file}>
         <label>Selecione seu arquivo</label>
         <InputField errorStatus={submitError.file}>
           <input
@@ -55,7 +55,12 @@ export default function LoadFromFileForm(props: LoadFromFileFormProps) {
           />
         </InputField>
         {submitError.file && <Span>{submitError.fileMessage}</Span>}
-      </FieldSet>
+      </FieldSet> */}
+
+      <Input variant="file" id="LoadFromFileInput" name="LoadFromFileInput"
+        accept="application/JSON" onChange={handleChangeFile}
+        fileName={jsonFile?.name || ""} error={fileError}
+      />
 
       <SubmitContainer>
         <Button variant="styled" text="Carregar" type="submit"/>

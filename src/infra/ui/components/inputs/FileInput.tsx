@@ -9,6 +9,12 @@ type FileInputProps = {
   fileName: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   accept: string
+  error?: {
+    status: false
+  } | {
+    status: true
+    message: string
+  }
 }
 
 export default function FileInput(props: FileInputProps) {
@@ -46,7 +52,7 @@ export default function FileInput(props: FileInputProps) {
   }
 
   return (
-    <FieldSet>
+    <FieldSet errorStatus={props.error?.status ?? false}>
       <FileInputLabel
         htmlFor={props.name}
         ref={fileInputButton}
@@ -71,6 +77,7 @@ export default function FileInput(props: FileInputProps) {
         )}
 
       </FileInputLabel>
+      {props.error?.status && <Span>{props.error.message}</Span>}
     </FieldSet>
   )
 }
