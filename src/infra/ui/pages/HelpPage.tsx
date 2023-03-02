@@ -18,12 +18,18 @@ const PageCards = styled.div < { margin?: string }>`
 const PageTutorial = styled.div < { margin?: string }>`
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 96px;
   margin: ${({ margin }) => margin ?? ""};
 
   #clipped {
     clip-path: url(#BlobClipPath);
   }
+`
+const PageButton = styled.div<{ margin?: string }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: ${({ margin }) => margin ?? ""};
 `
 
 export default function HelpPage() {
@@ -32,15 +38,18 @@ export default function HelpPage() {
   const [firstElementMargin, setFirstElementMargin] = useState<string>("")
   const [secondElementMargin, setSecondElementMargin] = useState<string>("")
   const [thirdElementMargin, setThirdElementMargin] = useState<string>("")
+  const [fourthElementMargin, setFourthElementMargin] = useState<string>("")
   useEffect(() => {
     switch (true) {
     case viewportState.md:
       setFirstElementMargin("80px 0 0 0")
       setSecondElementMargin("180px 0 0 0")
       setThirdElementMargin("160px 0 0 0")
+      setFourthElementMargin("200px 0 0 0")
       break
     case viewportState.xs:
-      setFirstElementMargin("20px 0 80px 0")
+      setFirstElementMargin("20px 0 0 0")
+      setSecondElementMargin("80px 0 0 0")
       setThirdElementMargin("160px 0 0 0")
       break
     default:
@@ -67,23 +76,23 @@ export default function HelpPage() {
         <Grid>
           <GridItem rSpan={{ xs: 4, sm: 8, md: 4, lg: 4, xl: 4 }} style={{ marginBottom: "16px" }}>
             <Card variant="Entry"
-              icon={<Icon variant="Check" />}
-              title="Title"
-              text="Text Text Text Text Text Text Text Text Text Text Text Text Text "
+              icon={<Icon variant="Info" />}
+              title="Saiba o que está comendo"
+              text="Mantenha um catálogo especial personalizado de todos os ingredientes e suas informações nutricionais!"
             />
           </GridItem>
           <GridItem rSpan={{ xs: 4, sm: 8, md: 4, lg: 4, xl: 4 }} style={{ marginBottom: "16px" }}>
             <Card variant="Entry"
-              icon={<Icon variant="Check" />}
-              title="Title"
-              text="Text Text Text Text Text Text Text Text Text Text Text Text Text "
+              icon={<Icon variant="Collection" />}
+              title="Colecione suas receitas favoritas"
+              text="Crie, salve e consulte suas próprias receitas e obtenha automaticamente suas informações nutricionais!"
             />
           </GridItem>
           <GridItem rSpan={{ xs: 4, sm: 8, md: 4, lg: 4, xl: 4 }} style={{ marginBottom: "16px" }}>
             <Card variant="Entry"
-              icon={<Icon variant="Check" />}
-              title="Title"
-              text="Text Text Text Text Text Text Text Text Text Text Text Text Text "
+              icon={<Icon variant="Automation" />}
+              title="Automatize a sua rotina alimentar"
+              text="Não perca tempo escolhendo receitas todos os dias, deixe o app gerenciar tudo!"
             />
           </GridItem>
         </Grid>
@@ -94,8 +103,8 @@ export default function HelpPage() {
         <Grid>
           <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
             <Card variant="Tutorial"
-              title="Title"
-              text="Tutorial"
+              title="Cadastre os ingredientes que você mais usa"
+              text="Clique no botão de ingredientes e preencha o formulário com os dados necessários;"
             >
               <Blob variant="1" />
               <img src={new URL("../assets/mealMindLaptopOptimized.png", import.meta.url).href} />
@@ -105,8 +114,8 @@ export default function HelpPage() {
         <Grid>
           <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
             <Card variant="Tutorial"
-              title="Title"
-              text="Tutorial"
+              title="Crie suas receitas"
+              text="Depois de ter cadastrado alguns ingredientes, crie receitas totalmente personalizadas baseadas neles, igualmente preenchendo os dados que aparecem dinamicamente;"
             >
               <Blob variant="2" />
               <img src={new URL("../assets/mealMindPhoneOptimized.png", import.meta.url).href} />
@@ -116,8 +125,8 @@ export default function HelpPage() {
         <Grid>
           <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
             <Card variant="Tutorial"
-              title="Title"
-              text="Tutorial"
+              title="Gere um PDF com cronograma"
+              text="Clique no botão de gerar PDF e crie um cronograma completamente customizado ou deixe app escolher as datas para você;"
             >
               <Blob variant="3" />
               <img src={new URL("../assets/recipes-pdf.png", import.meta.url).href} />
@@ -127,8 +136,8 @@ export default function HelpPage() {
         <Grid>
           <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
             <Card variant="Tutorial"
-              title="Title"
-              text="Tutorial"
+              title="Salve em um arquivo e carregue em outro lugar"
+              text="Não perca suas receitas de vista: Salve-as em um arquivo e as recupere de qualquer lugar;"
             >
               <Blob variant="4" />
               <img id="clipped" src={new URL("../assets/SaveButton.png", import.meta.url).href} />
@@ -137,12 +146,15 @@ export default function HelpPage() {
         </Grid>
       </PageTutorial>
 
-
-      <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
-        <Link to="/recipes" style={{ display: "flex", justifyContent: "center" }}>
-          <Button variant="styled" text="Go to the dashboard" />
-        </Link>
-      </GridItem>
+      <PageButton margin={fourthElementMargin}>
+        <Grid>
+          <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
+            <Link to="/recipes" style={{ display: "flex", justifyContent: "center"}}>
+              <Button variant="styledBig" text="Começar" />
+            </Link>
+          </GridItem>
+        </Grid>
+      </PageButton>
     </>
   )
 }

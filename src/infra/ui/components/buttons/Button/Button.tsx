@@ -7,7 +7,9 @@ import StyledButton from "../StyledButton"
 
 type ButtonProps = ({
   variant: "styled"
-} & React.ComponentPropsWithoutRef<typeof StyledButton>) | ({
+} & Omit<React.ComponentPropsWithoutRef<typeof StyledButton>, "variant">) | ({
+  variant: "styledBig"
+} & Omit<React.ComponentPropsWithoutRef<typeof StyledButton>, "variant">) | ({
   variant: "icon"
 } & React.ComponentPropsWithoutRef<typeof IconButton>) | ({
   variant: "layout"
@@ -19,9 +21,9 @@ export function Button(props: ButtonProps) {
   switch (props.variant) {
 
   case "styled":
-    return (
-      <StyledButton {...props} />
-    )
+    return <StyledButton {...props} variant="normal" />
+  case "styledBig":
+    return <StyledButton {...props} variant="big" />
   case "icon":
     return (
       <IconButton {...props}>

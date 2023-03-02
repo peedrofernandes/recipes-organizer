@@ -1,26 +1,39 @@
+import useViewportTracker from "@infra/ui/hooks/useViewportTracker"
 import React from "react"
 import styled from "styled-components"
-import Blob from "../blobs/Blob"
 import { Text, Title } from "../styles"
 
 const TutorialCardContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  gap: 32px;
+
+  * {
+    text-align: center;
+  }
+
+  #TutorialCardText {
+    line-height: 1.8rem;
+  }
 
   ${({ theme }) => `
-    @media ${theme.breakpoints.sm} {
+    @media ${theme.breakpoints.md} {
       flex-direction: row;
+      * {
+        text-align: left;
+      }
     }
   `}
 
-  & > div:nth-child(1) {
+  & > div#TitleText {
     width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 4px;
+    gap: 24px;
   }
 
-  & > div:nth-child(2) {
+  & > div#imageContainer {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -43,6 +56,11 @@ const TutorialCardContainer = styled.div`
         drop-shadow(0px 45.7px 40.7px rgba(0, 0, 0, 0.098))
         drop-shadow(0px 172px 89px rgba(0, 0, 0, 0.083));
       }
+
+      svg {
+        width: 100%;
+        height: 100%;
+      }
   }
 `
 
@@ -53,15 +71,29 @@ type TutorialCardProps = {
 }
 
 export default function TutorialCard(props: TutorialCardProps) {
+  const viewportStatus = useViewportTracker()
+
   return (
     <TutorialCardContainer>
-      <div>
-        <Title variant={2} as="h2">{props.title}</Title>
-        <Text>{props.text}</Text>
-      </div>
-      <div>
-        {props.children}
-      </div>
+      {viewportStatus.md ? (
+        <>
+          <div id="TitleText">
+            <Title variant={2} as="h2">{props.title}</Title>
+            <Text id="TutorialCardText">{props.text}</Text>
+          </div>
+          <div id="imageContainer">
+            {props.children}
+          </div>
+        </>
+      ) : (
+        <>
+          <Title variant={2} as="h2">{props.title}</Title>
+          <div id="imageContainer">
+            {props.children}
+          </div>
+          <Text id="TutorialCardText">{props.text}</Text>
+        </>
+      )}
     </TutorialCardContainer>
   )
 }

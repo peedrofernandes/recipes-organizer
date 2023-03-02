@@ -1,7 +1,7 @@
 import styled from "styled-components"
 
-const fontSizesXs = [64, 48, 32, 14, 14]
-const fontSizesSm = [64, 48, 32, 16, 16]
+const fontSizesXs = [56, 32, 22, 14, 14]
+const fontSizesSm = [60, 42, 28, 16, 16]
 const fontSizesLg = [64, 48, 32, 20, 18]
 // const fontSizesXs = [22, 20, 14, 14, 14]
 // const fontSizesSm = [24, 22, 18, 16, 16]
@@ -31,12 +31,12 @@ export const Title = styled.div<{
 
 export const Text = styled.p`
 
-  font-size: 14px;  
+  font-size: 16px;  
 
 
   ${({ theme }) => `
     @media ${theme.breakpoints.md} {
-      font-size: 16px;
+      font-size: 18px;
     }
   `}
 

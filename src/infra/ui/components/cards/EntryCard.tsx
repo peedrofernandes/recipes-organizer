@@ -5,13 +5,18 @@ import { Text, Title } from "../styles"
 
 const EntryCardContainer = styled.div`
   display: flex;
+  height: 100%;
   flex-direction: column;
+  justify-content: space-between;
   gap: 32px;
   padding: 24px;
   border-radius: 4px;
 
   background-color: #ffffff;
-  color: #111414;
+  * {
+    color: #111414;
+    fill: #111414;
+  }
   box-shadow: 0 0 24px #00000090;
 
 `

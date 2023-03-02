@@ -4,13 +4,13 @@ import Icon from "../Icon"
 import { Span } from "../styles"
 import { BaseButtonProps } from "./Button"
 
-const StyledButtonContainer = styled.button`
+const StyledButtonContainer = styled.button<{ variant?: "normal" | "big" }>`
   overflow: hidden;
   position: relative;
   display: flex;
   align-items: center;
   gap: 4px;
-
+  
   background-color: ${({ theme, color }) => color === "red" ? "#ff0000" : theme.color.primaryV1};
   color: ${({ theme }) => theme.color.contrastV1};
   padding: 8px 12px;
@@ -18,6 +18,13 @@ const StyledButtonContainer = styled.button`
   border: none;
   font-weight: bold;
   white-space: nowrap;
+
+  ${({ variant }) => variant === "big" ? `
+    * {
+      font-size: 24px;
+      padding: 18px 36px;
+    }
+  ` : ""}
 
   &:hover {
     cursor: pointer;
@@ -51,6 +58,7 @@ const StyledButtonContainer = styled.button`
 `
 
 interface StyledButtonProps extends BaseButtonProps {
+  variant: "normal" | "big"
   text: string
   color?: "red" | "green" | "blue"
   icon?: React.ReactElement<typeof Icon>
@@ -88,6 +96,7 @@ export default function StyledButton(props: StyledButtonProps) {
       onClick={handleClick}
       type={props.type}
       ref={buttonRef}
+      variant={props.variant}
     >
       {props.icon}
       <Span>{props.text}</Span>

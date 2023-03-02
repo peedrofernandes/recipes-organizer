@@ -29,7 +29,7 @@ const SpinnerCircle = styled.circle<{ size?: number }>`
 
 
 export type IconProps = {
-  variant: "Delete" | "Edit" | "NoRecipe" | "NoImage" | "AddRecipe" | "Plus" | "DarkMode" | "LightMode" | "Help" | "Menu Book" | "Ingredient" | "Close" | "Search" | "Spinner" | "Check" | "CheckEmpty" | "Download" | "Document" | "Save" | "Load" | "Menu"; 
+  variant: "Delete" | "Edit" | "NoRecipe" | "NoImage" | "AddRecipe" | "Plus" | "DarkMode" | "LightMode" | "Help" | "Menu Book" | "Ingredient" | "Close" | "Search" | "Spinner" | "Check" | "CheckEmpty" | "Download" | "Document" | "Save" | "Load" | "Menu" | "Info" | "Collection" | "Automation"; 
   size?: number;
   color?: string;
 }
@@ -170,6 +170,18 @@ export default function Icon(props: IconProps) {
   case "Menu":
     return <Svg size={size} viewBox={[0, 96, 960, 960]}>
       <path fill={color ?? theme.main.contrastV1} d="M120 816v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/>
+    </Svg>
+  case "Info":
+    return <Svg size={size} viewBox={[0, 96, 960, 960]}>
+      <path fill={color ?? theme.main.contrastV1} d="M453 776h60V536h-60v240Zm26.982-314q14.018 0 23.518-9.2T513 430q0-14.45-9.482-24.225-9.483-9.775-23.5-9.775-14.018 0-23.518 9.775T447 430q0 13.6 9.482 22.8 9.483 9.2 23.5 9.2Zm.284 514q-82.734 0-155.5-31.5t-127.266-86q-54.5-54.5-86-127.341Q80 658.319 80 575.5q0-82.819 31.5-155.659Q143 347 197.5 293t127.341-85.5Q397.681 176 480.5 176q82.819 0 155.659 31.5Q709 239 763 293t85.5 127Q880 493 880 575.734q0 82.734-31.5 155.5T763 858.316q-54 54.316-127 86Q563 976 480.266 976Zm.234-60Q622 916 721 816.5t99-241Q820 434 721.188 335 622.375 236 480 236q-141 0-240.5 98.812Q140 433.625 140 576q0 141 99.5 240.5t241 99.5Zm-.5-340Z"/>
+    </Svg>
+  case "Collection":
+    return <Svg size={size} viewBox={[0, 96, 960, 960]}>
+      <path fill={color ?? theme.main.contrastV1} d="m261 530 220-354 220 354H261Zm445 446q-74 0-124-50t-50-124q0-74 50-124t124-50q74 0 124 50t50 124q0 74-50 124t-124 50Zm-586-25V647h304v304H120Zm586.085-35Q754 916 787 882.916q33-33.085 33-81Q820 754 786.916 721q-33.085-33-81.001-33Q658 688 625 721.084q-33 33.085-33 81Q592 850 625.084 883q33.085 33 81.001 33ZM180 891h184V707H180v184Zm189-421h224L481 289 369 470Zm112 0ZM364 707Zm342 95Z"/>
+    </Svg>
+  case "Automation":
+    return <Svg size={size} viewBox={[0, 96, 960, 960]}>
+      <path fill={color ?? theme.main.contrastV1} d="M280 976 120 816l160-160 42 44-86 86h464V626h60v220H236l86 86-42 44Zm-80-450V306h524l-86-86 42-44 160 160-160 160-42-44 86-86H260v160h-60Z"/>
     </Svg>
   default:
     return null
