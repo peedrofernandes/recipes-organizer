@@ -11,7 +11,7 @@ import Recipe from "../domain/entities/Recipe"
 
 import { IRepository } from "../domain/repositories/IRepository"
 import { Id } from "../domain/utilities/types/Id"
-import { AdaptedIngredient, AdaptedRecipe, RecipeInput } from "./AdaptedTypes"
+import { AdaptedIngredient, AdaptedRecipe, IngredientRecipe, RecipeInput, StoredIngredient, StoredRecipe } from "./AdaptedTypes"
 import { IngredientAdapter } from "./IngredientAdapter"
 import { RecipeAdapter } from "./RecipeAdapter"
 
@@ -24,7 +24,11 @@ export default class RecipeController {
   constructor(
     private recipeRepository: IRecipeRepository,
     private ingredientRepository: IRepository<Ingredient>,
-    private turnDataIntoJsonMethod: (data: [AdaptedRecipe[], AdaptedIngredient[]]) => void,
+    private turnDataIntoJsonMethod: (data: [
+      StoredRecipe[],
+      StoredIngredient[],
+      IngredientRecipe[]
+    ]) => void,
     private generatePDFMethod: (
       adaptedRecipesWithDates: [AdaptedRecipe, Date][]
     ) => Promise<void>,
@@ -32,11 +36,12 @@ export default class RecipeController {
       updateUIOnCreate: (recipe: AdaptedRecipe) => void,
       updateUIOnUpdate: (recipe: AdaptedRecipe) => void,
       updateUIOnDelete: (id: Id) => void,
-      updateUIOnLoad: (newData: [AdaptedIngredient[], AdaptedRecipe[]]) => void
+      updateUIOnLoad: (newData: [AdaptedRecipe[], AdaptedIngredient[]]) => void
     },
     private services: {
       postImage: (image: File) => Promise<string>,
-      retrieveImage: (imageUrl: string) => Promise<File>
+      retrieveImage: (imageUrl: string) => Promise<File>,
+      getRelationsByRecipeId: (id: Id) => Promise<IngredientRecipe[]>
     }
   ) { 
     this.ingredientAdapter = new IngredientAdapter(
@@ -44,7 +49,9 @@ export default class RecipeController {
     this.recipeAdapter = new RecipeAdapter(
       this.services.postImage,
       this.ingredientAdapter.retrieveIngredient,
-      this.ingredientAdapter.adaptIngredient
+      this.ingredientAdapter.adaptIngredient,
+      this.ingredientRepository,
+      this.services.getRelationsByRecipeId
     )
   }
 
@@ -117,15 +124,22 @@ export default class RecipeController {
     return generatePDFUseCase.execute(recipesWithDates)
   }
 
-  public async turnDataIntoJson(data: [AdaptedRecipe[], AdaptedIngredient[]]) {
+  public async turnDataIntoJson(data: [
+    StoredRecipe[],
+    StoredIngredient[],
+    IngredientRecipe[]]
+  ) {
     const turnIntoJsonMethod = async (recipes: Recipe[], ingredients: Ingredient[]) => {
-      const adaptedRecipes = recipes.map(
-        r => this.recipeAdapter.adaptRecipe(r)
+      const storedRecipes = recipes.map(
+        r => this.recipeAdapter.entityToStored(r)
       )
-      const adaptedIngredients = ingredients.map(
-        i => this.ingredientAdapter.adaptIngredient(i)
+      const storedIngredients = ingredients.map(
+        i => this.ingredientAdapter.entityToStored(i)
       )
-      return this.turnDataIntoJsonMethod([adaptedRecipes, adaptedIngredients])
+      const relations = this.recipeAdapter.recipesToRelations(recipes)
+      
+
+      return this.turnDataIntoJsonMethod([storedRecipes, storedIngredients, relations])
     }
     const generateJsonUseCase = new GenerateJson(turnIntoJsonMethod)
     const recipes = data[0].map(
@@ -138,10 +152,10 @@ export default class RecipeController {
   }
 
   public async loadRecipesFromJson(jsonFile: File): Promise<void> {
-    const updateUI = (newData: { newIngredients: Ingredient[], newRecipes: Recipe[] }) => {
-      const adaptedNewData: [AdaptedIngredient[], AdaptedRecipe[]] = [
-        newData.newIngredients.map(i => this.ingredientAdapter.adaptIngredient(i)),
-        newData.newRecipes.map(r => this.recipeAdapter.adaptRecipe(r))
+    const updateUI = (newData: { newRecipes: Recipe[], newIngredients: Ingredient[] }) => {
+      const adaptedNewData: [AdaptedRecipe[], AdaptedIngredient[]] = [
+        newData.newRecipes.map(r => this.recipeAdapter.adaptRecipe(r)),
+        newData.newIngredients.map(i => this.ingredientAdapter.adaptIngredient(i))
       ]
       return this.uiCallbacks.updateUIOnLoad(adaptedNewData)
     }

@@ -7,12 +7,18 @@ export type IngredientInput = {
   initialImageUrl?: string;
   macros?: [number, number, number, number]
 }
-
 export type AdaptedIngredient = {
   id: Id,
   name: string,
   description?: string,
   imageUrl?: string,
+  macros?: [number, number, number, number]
+}
+export type StoredIngredient = {
+  id: Id
+  name: string
+  description?: string
+  imageUrl?: string
   macros?: [number, number, number, number]
 }
 
@@ -24,7 +30,6 @@ export type RecipeInput = {
   initialImageUrl?: string;
   ingredients?: [AdaptedIngredient, number][];
 }
-
 export type  AdaptedRecipe = {
   id: Id,
   name: string,
@@ -34,4 +39,19 @@ export type  AdaptedRecipe = {
   ingredients?: [AdaptedIngredient, number][],
   macros?: [number, number, number]
   kcal?: number
+}
+export type StoredRecipe = {
+  id: Id,
+  name: string,
+  type: "Week" | "Weekend" | "Both",
+  description?: string,
+  imageUrl?: string,
+  macros?: [number, number, number]
+  kcal?: number
+}
+
+export type IngredientRecipe = {
+  ingredientId: Id
+  recipeId: Id
+  ingredientGrams: number
 }

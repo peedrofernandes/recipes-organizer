@@ -1,4 +1,5 @@
 import axios from "axios"
+import RelationsStorage from "./RelationsStorage"
 
 export default {
   async postImage(image: File): Promise<string> {
@@ -27,5 +28,6 @@ export default {
     } catch (error) {
       throw new Error("There was an error fetching ingredient image!")
     }
-  }
+  },
+  getRelationsByRecipeId: RelationsStorage.getRelationsByRecipeId
 }

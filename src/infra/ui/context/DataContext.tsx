@@ -157,6 +157,19 @@ function dataReducer(state: DataState, action: DataAction): DataState {
       throw new Error("Index of updating ingredient was not found!")
     const newIngredients = [...state.ingredients]
     newIngredients[indexFound] = action.payload.ingredient
+      
+    // Update the affected recipes from the ingredient change
+    state.recipes.forEach(recipe => {
+      
+      // Update the values of the new ingredient inside the recipes
+      recipe.ingredients = recipe.ingredients?.map(
+        item => item[0].id === action.payload.ingredient.id
+          ? [action.payload.ingredient, item[1]]
+          : item
+      ) || undefined
+    })
+      
+
     return {
       ...state,
       loading: { ...state.loading, updateIngredient: null },
@@ -164,6 +177,10 @@ function dataReducer(state: DataState, action: DataAction): DataState {
     }
   }
   case "DELETE_INGREDIENT": {
+    state.recipes.forEach(recipe => {
+      recipe.ingredients = recipe.ingredients?.filter(i => i[0].id !== action.payload.id)
+    })
+
     return {
       ...state,
       loading: { ...state.loading, deleteIngredient: false },

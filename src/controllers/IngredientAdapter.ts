@@ -1,6 +1,6 @@
 import Ingredient, { isIngredientOptions } from "@domain/entities/Ingredient"
 import { Id } from "@domain/utilities/types/Id"
-import { AdaptedIngredient, IngredientInput } from "./AdaptedTypes"
+import { AdaptedIngredient, IngredientInput, StoredIngredient } from "./AdaptedTypes"
 
 export class IngredientAdapter {
   constructor(
@@ -62,5 +62,40 @@ export class IngredientAdapter {
         gramsPerServing: macros[3]
       } : undefined)
     })
+  }
+
+  // StoredEntity => Entity
+  storedToEntity(storedIngredient: StoredIngredient): Ingredient {
+    const { id, name, description, imageUrl, macros } = storedIngredient
+
+    const options = { description, imageUrl }
+
+    return new Ingredient({
+      id, name,
+      options: (isIngredientOptions(options) ? options : undefined),
+
+      macros: (macros ? {
+        proteins: macros[0],
+        carbs: macros[1],
+        fats: macros[2],
+        gramsPerServing: macros[3]
+      } : undefined)
+    })
+  }
+
+  // Entity => StoredEntity
+  entityToStored(ingredient: Ingredient): StoredIngredient {
+    const { id, name, options, macros } = ingredient
+    return {
+      id, name,
+      description: options?.description,
+      imageUrl: options?.imageUrl,
+      macros: (macros ? ([
+        macros.proteins,
+        macros.carbs,
+        macros.fats,
+        macros.gramsPerServing
+      ]) : undefined)
+    }
   }
 }

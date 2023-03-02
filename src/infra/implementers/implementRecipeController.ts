@@ -1,17 +1,17 @@
-import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
+import { AdaptedIngredient, AdaptedRecipe, IngredientRecipe, StoredIngredient, StoredRecipe } from "@controllers/AdaptedTypes"
 import RecipeController from "@controllers/RecipeController"
 import { Id } from "@domain/utilities/types/Id"
-import IngredientRepository from "./IngredientRepository"
-import RecipeRepository from "./RecipeRepository"
-import services from "./services"
+import IngredientRepository from "../repositories/IngredientRepository"
+import RecipeRepository from "../repositories/RecipeRepository"
+import services from "../common/services"
 import useDataContext from "@infra/ui/hooks/useDataContext"
 
 
-export default function recipeHandler(
+export default function implementRecipeController(
   updateUIOnCreate: (recipe: AdaptedRecipe) => void,
   updateUIOnUpdate: (recipe: AdaptedRecipe) => void,
   updateUIOnDelete: (id: Id) => void,
-  updateUIOnLoad: (newData: [AdaptedIngredient[], AdaptedRecipe[]]) => void
+  updateUIOnLoad: (newData: [ AdaptedRecipe[], AdaptedIngredient[]]) => void
 ) {
   const recipeRepository = new RecipeRepository()
   const ingredientRepository = new IngredientRepository()
@@ -24,7 +24,11 @@ export default function recipeHandler(
     updateUIOnLoad
   }
 
-  const turnIntoJsonMethod = (data: [AdaptedRecipe[], AdaptedIngredient[]]) => {
+  const turnIntoJsonMethod = (data: [
+    StoredRecipe[],
+    StoredIngredient[],
+    IngredientRecipe[]
+  ]) => {
     const jsonFile = new Blob(
       [JSON.stringify(data)], { type: "application/json" }
     )
