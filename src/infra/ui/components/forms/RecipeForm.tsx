@@ -235,7 +235,7 @@ export default function RecipeForm(props: RecipeFormProps) {
   useEffect(() => {
     if (props.data.loading) return setIngOptions([])
     setIngOptions(props.data.ingredients.filter(
-      i => i.name.includes(search)))
+      i => i.name.toLowerCase().includes(search.toLowerCase())))
   }, [search, loading])
     
   return (

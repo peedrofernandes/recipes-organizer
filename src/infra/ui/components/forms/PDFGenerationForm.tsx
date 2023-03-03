@@ -53,7 +53,9 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
   const [recipeOptions, setRecipeOptions] = useState<AdaptedRecipe[]>([])
   useEffect(() => {
     if (loading) return
-    setRecipeOptions(props.data.recipes.filter(r => r.name.includes(search)))
+    setRecipeOptions(props.data.recipes.filter(
+      r => r.name.toLowerCase().includes(search.toLowerCase())
+    ))
   }, [search, loading])
 
 
