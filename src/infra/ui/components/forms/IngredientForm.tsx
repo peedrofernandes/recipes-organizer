@@ -1,6 +1,6 @@
 import { AdaptedIngredient, IngredientInput } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { FieldSet, FormContainer, InputField, InputGroup, SubmitContainer } from "@infra/ui/components/forms/Form/styles"
+import { FormContainer, InputGroup, SubmitContainer } from "@infra/ui/components/forms/Form/styles"
 import React, { useState } from "react"
 import Button from "../buttons/Button"
 import Input from "../inputs/Input"
@@ -21,17 +21,24 @@ type IngredientFormProps = {
 
 type StringTuple = [string, string, string, string]
 
-type SubmitErrors = ({
-  name: false;
+// type SubmitErrors = ({
+//   name: false;
+// } | {
+//   name: true;
+//   nameMessage: string;
+// }) & ({
+//   macros: false;
+// } | {
+//   macros: true;
+//   macrosMessage: string;
+// })
+
+type Error = {
+  status: false
 } | {
-  name: true;
-  nameMessage: string;
-}) & ({
-  macros: false;
-} | {
-  macros: true;
-  macrosMessage: string;
-})
+  status: true
+  message: string
+}
 
 export default function IngredientForm(props: IngredientFormProps) {
   let initialName = ""
@@ -49,10 +56,8 @@ export default function IngredientForm(props: IngredientFormProps) {
   const [description, setDescription] = useState<string>(initialDescription)
   const [macros, setMacros] = useState<[string, string, string, string]>(initialMacros)
   const [imageFile, setImageFile] = useState<File | null>()
-  const [submitError, setSubmitError] = useState<SubmitErrors>({
-    name: false,
-    macros: false
-  })
+  const [nameError, setNameError] = useState<Error>({ status: false })
+  const [macrosError, setMacrosError] = useState<Error>({ status: false })
 
 
 
@@ -60,7 +65,7 @@ export default function IngredientForm(props: IngredientFormProps) {
     type: "proteins" | "carbs" | "fats" | "totalGrams",
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setSubmitError((state): SubmitErrors => ({ ...state, macros: false }))
+    setMacrosError({ status: false })
     setMacros((prevMacros) => {
       const newMacros: typeof prevMacros = [...prevMacros]
       switch (type) {
@@ -86,7 +91,7 @@ export default function IngredientForm(props: IngredientFormProps) {
   }
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSubmitError((state): SubmitErrors => ({ ...state, name: false }))
+    setNameError({ status: false })
     setName(e.target.value)
   }
 
@@ -100,18 +105,16 @@ export default function IngredientForm(props: IngredientFormProps) {
     )
     if (invalidName || invalidMacros) {
       if (invalidMacros) {
-        setSubmitError((state): SubmitErrors => ({
-          ...state,
-          macros: true,
-          macrosMessage: "Macronutrientes devem ser completamente preenchidos!"
-        }))
+        setMacrosError({
+          status: true,
+          message: "Macronutrientes devem ser completamente preenchidos!"
+        })
       }
       if (invalidName) {
-        setSubmitError((state): SubmitErrors => ({
-          ...state,
-          name: true,
-          nameMessage: "O ingrediente deve ter nome!"
-        }))
+        setNameError({
+          status: true,
+          message: "O ingrediente deve ter nome!"
+        })
       }
       return
     }
@@ -142,98 +145,64 @@ export default function IngredientForm(props: IngredientFormProps) {
   return (
     <FormContainer onSubmit={handleSubmit}>
 
+      <Input variant="text"
+        id="IngredientName" name="IngredientName" placeholder="Nome"
+        label="Nome*"
+        onChange={handleChangeName}
+        value={name}
+        error={nameError}
+        showErrorMessage
+      />
 
-      
-      <FieldSet errorStatus={submitError.name}>
-        <label>Nome*</label>
-        <InputField errorStatus={submitError.name}>
-          <input
-            type="text" id="nome" name="nome"
-            placeholder="Nome"
-            value={name}
-            onChange={handleChangeName}
-          />
-        </InputField>
-        {submitError.name && <Span>{submitError.nameMessage}</Span>}
-      </FieldSet>
-
-      
-
-      <FieldSet>
-        <label>Descrição</label>
-        <InputField>
-          <input
-            type="text" id="description" name="description"
-            placeholder="Descrição" value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </InputField>
-      </FieldSet>
-
-      
+      <Input variant="text"
+        id="IngredientDescription" name="IngredientDescription"
+        placeholder="Descrição" label="Descrição"
+        onChange={(e) => setDescription(e.target.value)}
+        value={description}
+      />
 
       <legend>Macronutrientes</legend>
       <InputGroup>
-        <FieldSet errorStatus={submitError.macros}>
-          <label>Proteínas</label>
-          <InputField errorStatus={submitError.macros}>
-            <input
-              type="number" id="proteins" name="proteins"
-              step="any" min="0"
-              placeholder="g" value={macros[0]}
-              onChange={(e) => handleChangeMacros("proteins", e)}
-            />
-          </InputField>
-        </FieldSet>
-        <FieldSet errorStatus={submitError.macros}>
-          <label>Carboidratos</label>
-          <InputField errorStatus={submitError.macros}>
-            <input
-              type="number" id="proteins" name="proteins"
-              step="any" min="0"
-              placeholder="g" value={macros[1]}
-              onChange={(e) => handleChangeMacros("carbs", e)}
-            />
-          </InputField>
-        </FieldSet>
-        <FieldSet errorStatus={submitError.macros}>
-          <label>Gorduras</label>
-          <InputField errorStatus={submitError.macros}>
-            <input
-              type="number" id="proteins" name="proteins"
-              step="any" min="0"
-              placeholder="g" value={macros[2]}
-              onChange={(e) => handleChangeMacros("fats", e)}
-            />
-          </InputField>
-        </FieldSet>
+        <Input variant="number"
+          id="IngredientProteins" name="IngredientProteins"
+          placeholder="Proteínas" label="Proteínas"
+          min="0" step="any"
+          onChange={(e) => handleChangeMacros("proteins", e)}
+          value={macros[0]}
+          error={macrosError}
+        />
+        <Input variant="number"
+          id="IngredientCarbs" name="IngredientCarbs"
+          placeholder="Carboidratos" label="Carboidratos"
+          min="0" step="any"
+          onChange={(e) => handleChangeMacros("carbs", e)}
+          value={macros[1]}
+          error={macrosError}
+        />
+        <Input variant="number"
+          id="IngredientFats" name="IngredientFats"
+          placeholder="Gorduras" label="Gorduras"
+          min="0" step="any"
+          onChange={(e) => handleChangeMacros("fats", e)}
+          value={macros[2]}
+          error={macrosError}
+        />
       </InputGroup>
 
-
-      
-      <FieldSet errorStatus={submitError.macros}>
-        <label>Gramas totais</label>
-        <InputField errorStatus={submitError.macros}>
-          <input
-            type="number" id="totalGrams" name="totalGrams"
-            step="any" min="0" placeholder="g"
-            value={macros[3]}
-            onChange={(e) => handleChangeMacros("totalGrams", e)}
-          />
-        </InputField>
-        {submitError.macros && <Span>{submitError.macrosMessage}</Span>}
-      </FieldSet>
-
-      
-
+      <Input variant="number"
+        id="IngredientTotalGrams" name="IngredientTotalGrams"
+        placeholder="Gramas totais" label="Gramas totais"
+        min="0" step="any"
+        onChange={(e) => handleChangeMacros("totalGrams", e)}
+        value={macros[3]}
+        error={macrosError}
+        showErrorMessage
+      />
 
       <Input variant="file" id="file" name="file"
         accept="image/png, image/gif, image/jpeg" onChange={handleChangeFile}
         fileName={imageFile?.name ?? ""}
       />
-
-      
-
 
       <SubmitContainer>
         <Button
@@ -242,9 +211,8 @@ export default function IngredientForm(props: IngredientFormProps) {
           type="submit"
         />
       </SubmitContainer>
-      
-
-      
+    
+    
     </FormContainer>
   )
 }

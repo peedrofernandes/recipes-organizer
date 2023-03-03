@@ -15,6 +15,7 @@ type FileInputProps = {
     status: true
     message: string
   }
+  showErrorMessage?: boolean
 }
 
 export default function FileInput(props: FileInputProps) {
@@ -77,7 +78,9 @@ export default function FileInput(props: FileInputProps) {
         )}
 
       </FileInputLabel>
-      {props.error?.status && <Span>{props.error.message}</Span>}
+      {props.showErrorMessage && props.error?.status &&
+        <Span>{props.error.message}</Span>
+      }
     </FieldSet>
   )
 }
