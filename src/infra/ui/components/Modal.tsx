@@ -114,7 +114,7 @@ export default function Modal(props: ModalProps) {
           <ModalBox ref={modalBoxRef} variant={props.variant}>
 
             <TopContainer>
-              <Title variant={3} as="h3">{props.title}</Title>
+              <Title variant={5} as="h5">{props.title}</Title>
               <Button variant="icon" onClick={() => cancelRequest()}>
                 <Icon variant="Close" size={24} />
               </Button>
