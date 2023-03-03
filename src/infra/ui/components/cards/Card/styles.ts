@@ -69,10 +69,8 @@ export const MacrosSpan = styled.span`
     list-style: none;
     display: flex;
     justify-content: space-evenly;
-
-    li {
-      padding: 4px;
-    }
+    gap: 6px;
+    padding: 4px;
 
     li:nth-child(1) {
       color: ${({ theme }) => theme.color.green}

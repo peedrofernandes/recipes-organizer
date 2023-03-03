@@ -4,6 +4,7 @@ import { CardContainer, ContentContainer, ImageContainer, MacrosSpan, TypeSpan }
 import React from "react"
 import Button from "../buttons/Button"
 import Icon from "../Icon"
+import { Span } from "../styles"
 
 type RecipeCardProps = {
   recipe: AdaptedRecipe;
