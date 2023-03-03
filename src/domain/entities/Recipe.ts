@@ -58,13 +58,8 @@ export default class Recipe {
   }
 
   private setMacros() {
-    if (!this._ingredientList)
-      throw new Error("Recipe does not have a list of ingredients!")
-
-    if (!everyIngredientHasMacros(this._ingredientList))
-      throw new Error(
-        "It was not possible to calculate recipe macros because not every ingredient has marconutrients!"
-      )
+    if (!this._ingredientList || !everyIngredientHasMacros(this._ingredientList))
+      return
 
     this._macros = {
       // Calculate proteins based on ingredients

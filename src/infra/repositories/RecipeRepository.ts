@@ -1,4 +1,4 @@
-import { StoredIngredient, StoredRecipe } from "@controllers/AdaptedTypes"
+import { IngredientRecipe, StoredIngredient, StoredRecipe } from "@controllers/AdaptedTypes"
 import { IngredientAdapter } from "@controllers/IngredientAdapter"
 import { RecipeAdapter } from "@controllers/RecipeAdapter"
 import Ingredient from "@domain/entities/Ingredient"
@@ -52,14 +52,26 @@ export default class RecipeRepository implements IRecipeRepository {
       reader.readAsText(source)
 
       reader.onload = async () => {
-        const data: [StoredRecipe[], StoredIngredient[]] =
+
+        const data: [StoredRecipe[], StoredIngredient[], IngredientRecipe[]] =
           JSON.parse(reader.result as string)
 
         const recipes = await Promise.all(data[0].map(
           async r => await this.recipeAdapter.storedToEntity(r)))
         const ingredients = data[1].map(
-          item => this.ingredientAdapter.retrieveIngredient(item)
+          item => this.ingredientAdapter.storedToEntity(item)
         )
+        
+        // Add each ingredient to each recipe
+        recipes.forEach(recipe => {
+          const relationsFound = data[2].filter(item => item.recipeId === recipe.id)
+          relationsFound.forEach(async (item) => {
+            const ingredient = ingredients.find(ing => ing.id === item.ingredientId)
+            if (ingredient)
+              recipe.addIngredient(ingredient, item.ingredientGrams)
+          })
+        })
+
         
         resolve({ recipes, ingredients })
       }

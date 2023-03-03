@@ -8,7 +8,6 @@ import RandomizeRecipes from "../domain/application/RandomizeRecipes"
 import UpdateRecipe from "../domain/application/UpdateRecipe"
 import Ingredient from "../domain/entities/Ingredient"
 import Recipe from "../domain/entities/Recipe"
-
 import { IRepository } from "../domain/repositories/IRepository"
 import { Id } from "../domain/utilities/types/Id"
 import { AdaptedIngredient, AdaptedRecipe, IngredientRecipe, RecipeInput, StoredIngredient, StoredRecipe } from "./AdaptedTypes"
@@ -124,11 +123,7 @@ export default class RecipeController {
     return generatePDFUseCase.execute(recipesWithDates)
   }
 
-  public async turnDataIntoJson(data: [
-    StoredRecipe[],
-    StoredIngredient[],
-    IngredientRecipe[]]
-  ) {
+  public async turnDataIntoJson(data: [AdaptedRecipe[], AdaptedIngredient[]]) {
     const turnIntoJsonMethod = async (recipes: Recipe[], ingredients: Ingredient[]) => {
       const storedRecipes = recipes.map(
         r => this.recipeAdapter.entityToStored(r)
@@ -152,7 +147,9 @@ export default class RecipeController {
   }
 
   public async loadRecipesFromJson(jsonFile: File): Promise<void> {
-    const updateUI = (newData: { newRecipes: Recipe[], newIngredients: Ingredient[] }) => {
+    const updateUI = (
+      newData: { newRecipes: Recipe[], newIngredients: Ingredient[] }
+    ) => {
       const adaptedNewData: [AdaptedRecipe[], AdaptedIngredient[]] = [
         newData.newRecipes.map(r => this.recipeAdapter.adaptRecipe(r)),
         newData.newIngredients.map(i => this.ingredientAdapter.adaptIngredient(i))

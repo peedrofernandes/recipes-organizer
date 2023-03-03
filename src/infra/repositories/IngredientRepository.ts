@@ -20,12 +20,17 @@ export default class IngredientRepository implements IRepository<Ingredient> {
   private ingredientAdapter = new IngredientAdapter(services.postImage)
 
   find(id: Id): Promise<Ingredient> {
-    const adaptedIngredients = this.getData()
-    const adaptedIngredientFound = adaptedIngredients.find((item) => item.id === id)
-    if (!adaptedIngredientFound) throw new Error("Ingredient not found!")
+    const storedIngredients = this.getData()
+    const storedIngredientFound = storedIngredients.find((item) => item.id === id)
+    console.log("---------- FIND METHOD ----------")
+    console.log("StoredIngredients: ")
+    console.log(storedIngredients)
+    console.log("StoredIngredientFound: ")
+    console.log(storedIngredientFound)
+    if (!storedIngredientFound) throw new Error("Ingredient not found!")
 
     return Promise.resolve(
-      this.ingredientAdapter.storedToEntity(adaptedIngredientFound)
+      this.ingredientAdapter.storedToEntity(storedIngredientFound)
     )
   }
   findAll(): Promise<Ingredient[]> {
