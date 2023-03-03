@@ -259,7 +259,7 @@ export default function RecipeForm(props: RecipeFormProps) {
             onChange={handleChangeName}
           />
         </InputField>
-        {nameError.status && <span>{nameError.message}</span>}
+        {nameError.status && <Span>{nameError.message}</Span>}
       </FieldSet>
 
       
@@ -333,7 +333,7 @@ export default function RecipeForm(props: RecipeFormProps) {
             )}
           </>
         )}
-        {ingredientsError.status && <span>{ingredientsError.message}</span>}
+        {ingredientsError.status && <Span>{ingredientsError.message}</Span>}
       </FieldSet>
 
       
@@ -349,8 +349,7 @@ export default function RecipeForm(props: RecipeFormProps) {
           errorStatus={typeError.status}
         >
           {type ? typeTranslator[type] : "Selecione"}
-        
-          {typeError.status && <span>{typeError.message}</span>}
+      
           <Dropdown ref={typesDropdownRef}
             style={{ display: showTypesDropdown ? "block" : "none" }}
           >
@@ -365,6 +364,7 @@ export default function RecipeForm(props: RecipeFormProps) {
             </DropdownItem>
           </Dropdown>
         </SelectField>
+        {typeError.status && <Span>{typeError.message}</Span>}
       </FieldSet>
 
       

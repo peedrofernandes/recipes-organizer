@@ -4,6 +4,7 @@ import { FieldSet, FormContainer, InputField, InputGroup, SubmitContainer } from
 import React, { useState } from "react"
 import Button from "../buttons/Button"
 import Input from "../inputs/Input"
+import { Span } from "../styles"
 
 type IngredientFormProps = {
   variant: "Create"
@@ -153,7 +154,7 @@ export default function IngredientForm(props: IngredientFormProps) {
             onChange={handleChangeName}
           />
         </InputField>
-        {submitError.name && <span>{submitError.nameMessage}</span>}
+        {submitError.name && <Span>{submitError.nameMessage}</Span>}
       </FieldSet>
 
       
@@ -220,7 +221,7 @@ export default function IngredientForm(props: IngredientFormProps) {
             onChange={(e) => handleChangeMacros("totalGrams", e)}
           />
         </InputField>
-        {submitError.macros && <span>{submitError.macrosMessage}</span>}
+        {submitError.macros && <Span>{submitError.macrosMessage}</Span>}
       </FieldSet>
 
       

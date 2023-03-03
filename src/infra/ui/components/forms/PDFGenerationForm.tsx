@@ -222,9 +222,9 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
             </Dropdown>
           )}
         </InputField>
-        {submitErrors.recipeQuantities && <span>
+        {submitErrors.recipeQuantities && <Span>
           {submitErrors.recipeQuantitiesMessage}
-        </span>}
+        </Span>}
         <label>Selecione uma data para cada receita:</label>
         {viewportStatus.md ? (
           <Table variant="RecipeSelection"

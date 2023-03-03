@@ -45,18 +45,6 @@ export default function LoadFromFileForm(props: LoadFromFileFormProps) {
   return (
     <FormContainer onSubmit={handleSubmit}>
 
-      {/* <FieldSet errorStatus={submitError.file}>
-        <label>Selecione seu arquivo</label>
-        <InputField errorStatus={submitError.file}>
-          <input
-            type="file"
-            accept="application/JSON"
-            onChange={handleChangeFile}
-          />
-        </InputField>
-        {submitError.file && <Span>{submitError.fileMessage}</Span>}
-      </FieldSet> */}
-
       <Input variant="file" id="LoadFromFileInput" name="LoadFromFileInput"
         accept="application/JSON" onChange={handleChangeFile}
         fileName={jsonFile?.name || ""} error={fileError}
