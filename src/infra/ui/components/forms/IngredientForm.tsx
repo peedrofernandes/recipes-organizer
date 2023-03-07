@@ -4,7 +4,6 @@ import { FormContainer, InputGroup, SubmitContainer } from "@infra/ui/components
 import React, { useState } from "react"
 import Button from "../buttons/Button"
 import Input from "../inputs/Input"
-import { Span } from "../styles"
 
 type IngredientFormProps = {
   variant: "Create"

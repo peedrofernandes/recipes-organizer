@@ -18,15 +18,15 @@ type ActionsMobileProps = {
   showMenuDropdown: boolean
 }
 
-const ActionsMobile = React.forwardRef((
+function ActionsMobile(
   props: ActionsMobileProps,
-  buttonRef: React.ForwardedRef<HTMLDivElement>
-) => {
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
   const { generatePdfRequestOnClick, saveToJsonOnClick, loadFromJsonRequestOnClick } = props.events
 
   return (
     <ActionsMobileContainer>
-      <div ref={buttonRef}>
+      <div ref={ref}>
         <Button variant="icon" onClick={props.toggleMenuDropdown}>
           <Icon variant="Menu" size={36} />
         </Button>
@@ -52,8 +52,8 @@ const ActionsMobile = React.forwardRef((
       )}
     </ActionsMobileContainer>
   )
-})
+}
 
-ActionsMobile.displayName = "ActionsMobile"
+const ForwardedActionsMobile = React.forwardRef(ActionsMobile)
 
-export default ActionsMobile
+export default ForwardedActionsMobile
