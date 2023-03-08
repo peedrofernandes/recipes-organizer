@@ -1,7 +1,6 @@
 import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
 import { Dropdown, InputField } from "../forms/Form/styles"
 import Icon from "../Icon"
-import { Span } from "../styles"
 import { FieldSet } from "./Input/styles"
 
 declare module "react" {
@@ -12,6 +11,8 @@ declare module "react" {
 
 
 interface SelectInputProps<T> {
+  id: string
+  name: string
   data: {
     loading: true
   } | {
@@ -42,7 +43,7 @@ function SelectInputComponent<T>(
   ref: React.ForwardedRef<SelectInputRefs>
 ) {
   // Props
-  const { label, placeholder, data, createOptions, error } = props
+  const { id, name, label, placeholder, data, createOptions, error } = props
 
   // Refs
   const searchRef = useRef<HTMLDivElement>(null)
@@ -67,17 +68,17 @@ function SelectInputComponent<T>(
   }, [data])
 
   return (
-    <FieldSet errorStatus={props.error?.status}>
-      {label && (<label>{props.label}</label>)}
+    <FieldSet errorStatus={error?.status}>
+      {label && (<label htmlFor={name}>{label}</label>)}
       <InputField
         ref={searchRef}
         onClick={() => setShowDropdown(true)}
       >
         {useMemo(() => (
-          <Icon variant={props.data.loading ? "Spinner" : "Search"} size={20} />
-        ), [props.data.loading])}
+          <Icon variant={data.loading ? "Spinner" : "Search"} size={20} />
+        ), [data.loading])}
         <input
-          type="text" id="search" name="search" placeholder={placeholder ?? "Pesquisar"}
+          type="text" id={id} name={name} placeholder={placeholder ?? "Pesquisar"}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setSearch(e.target.value)
           }

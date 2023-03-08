@@ -45,15 +45,23 @@ export default function LoadFromFileForm(props: LoadFromFileFormProps) {
   return (
     <FormContainer onSubmit={handleSubmit}>
 
+      
+
+      {/* File Input */}
       <Input variant="file" id="LoadFromFileInput" name="LoadFromFileInput"
         accept="application/JSON" onChange={handleChangeFile}
         fileName={jsonFile?.name || ""} error={fileError}
       />
 
+      
+
+      {/* Submit */}
       <SubmitContainer>
         <Button variant="styled" text="Carregar" type="submit"/>
       </SubmitContainer>
 
+      
+      
     </FormContainer>
   )
 }

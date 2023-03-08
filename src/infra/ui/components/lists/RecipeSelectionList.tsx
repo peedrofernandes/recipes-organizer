@@ -14,23 +14,30 @@ const List = styled.ul`
 
 type RecipeSelectionListProps = {
   recipes: [AdaptedRecipe, string][]
-  errorStatus: boolean
   handleChangeDate: (id: Id, date: string) => void
+  error: {
+    status: false
+  } | {
+    status: true
+    message: string
+  }
 }
 
 export default function RecipeSelectionList(props: RecipeSelectionListProps) {
+  const { recipes, handleChangeDate, error } = props
+
   return (
     <List>
-      {props.recipes.length > 0 ? (
+      {recipes.length > 0 ? (
         <>
-          {props.recipes.map(r => (
+          {recipes.map(r => (
             <li key={r[0].id}>
               <Card
                 variant="RecipeSelection"
                 status="active"
                 recipeWithDate={r}
-                errorStatus={props.errorStatus}
-                handleChangeDate={props.handleChangeDate}
+                handleChangeDate={handleChangeDate}
+                error={error}
               />
             </li>
           ))}

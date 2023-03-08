@@ -2,7 +2,7 @@ import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import React from "react"
 import styled from "styled-components"
-import { FieldSet, InputField } from "../forms/Form/styles"
+import Input from "../inputs/Input"
 import { Subtitle, Text, Title } from "../styles"
 
 const Card = styled.div<{ variant: "active" | "inactive" }>`
@@ -72,8 +72,13 @@ const Macros = styled.ul`
 type RecipeSelectionCardProps = {
   status: "active"
   recipeWithDate: [AdaptedRecipe, string]
-  errorStatus: boolean
   handleChangeDate: (id: Id, date: string) => void
+  error: {
+    status: false
+  } | {
+    status: true
+    message: string
+  }
 } | {
   status: "inactive"
 }
@@ -112,17 +117,15 @@ export default function RecipeSelectionCard(props: RecipeSelectionCardProps) {
               </div>
             </Macros>
           )}
-  
-          <FieldSet errorStatus={props.errorStatus}>
-            <label>Data</label>
-            <InputField errorStatus={props.errorStatus}>
-              <input
-                type="date"
-                onChange={(e) => props.handleChangeDate(props.recipeWithDate[0].id, e.target.value)}
-                value={props.recipeWithDate[1]}
-              />
-            </InputField>
-          </FieldSet>
+          <Input variant="date"
+            id={`RecipeDate#${props.recipeWithDate[0].id}`}
+            name={`RecipeDate#${props.recipeWithDate[0].id}`}
+            label="Data"
+            handleChangeDate={(date) =>
+              props.handleChangeDate(props.recipeWithDate[0].id, date)}
+            initialDate={props.recipeWithDate[1]}
+            error={props.error}
+          />
 
         </>
       ) : (

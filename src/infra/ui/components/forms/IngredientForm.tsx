@@ -144,6 +144,9 @@ export default function IngredientForm(props: IngredientFormProps) {
   return (
     <FormContainer onSubmit={handleSubmit}>
 
+      
+
+      {/* Name Input */}
       <Input variant="text"
         id="IngredientName" name="IngredientName" placeholder="Nome"
         label="Nome*"
@@ -153,6 +156,9 @@ export default function IngredientForm(props: IngredientFormProps) {
         showErrorMessage
       />
 
+      
+
+      {/* Description Input */}
       <Input variant="text"
         id="IngredientDescription" name="IngredientDescription"
         placeholder="Descrição" label="Descrição"
@@ -160,8 +166,12 @@ export default function IngredientForm(props: IngredientFormProps) {
         value={description}
       />
 
+      
+
+      {/* Macros Inputs */}
       <legend>Macronutrientes</legend>
       <InputGroup>
+        {/* Proteins Input */}
         <Input variant="number"
           id="IngredientProteins" name="IngredientProteins"
           placeholder="Proteínas" label="Proteínas"
@@ -170,6 +180,8 @@ export default function IngredientForm(props: IngredientFormProps) {
           value={macros[0]}
           error={macrosError}
         />
+
+        {/* Carbs Input */}
         <Input variant="number"
           id="IngredientCarbs" name="IngredientCarbs"
           placeholder="Carboidratos" label="Carboidratos"
@@ -178,6 +190,8 @@ export default function IngredientForm(props: IngredientFormProps) {
           value={macros[1]}
           error={macrosError}
         />
+
+        {/* Fats Input */}
         <Input variant="number"
           id="IngredientFats" name="IngredientFats"
           placeholder="Gorduras" label="Gorduras"
@@ -188,6 +202,7 @@ export default function IngredientForm(props: IngredientFormProps) {
         />
       </InputGroup>
 
+      {/* Total grams Input */}
       <Input variant="number"
         id="IngredientTotalGrams" name="IngredientTotalGrams"
         placeholder="Gramas totais" label="Gramas totais"
@@ -198,11 +213,17 @@ export default function IngredientForm(props: IngredientFormProps) {
         showErrorMessage
       />
 
+      
+
+      {/* File Input */}
       <Input variant="file" id="file" name="file"
         accept="image/png, image/gif, image/jpeg" onChange={handleChangeFile}
         fileName={imageFile?.name ?? ""}
       />
 
+      
+
+      {/* Submit */}
       <SubmitContainer>
         <Button
           variant="styled"

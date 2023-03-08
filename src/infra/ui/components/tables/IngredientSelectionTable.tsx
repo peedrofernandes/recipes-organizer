@@ -1,17 +1,20 @@
 import { AdaptedIngredient } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { InputField } from "@infra/ui/components/forms/Form/styles"
 import { Subtitle, StyledTable, Text } from "@infra/ui/components/styles"
 import React from "react"
+import Input from "../inputs/Input"
 
 type IngredientSelectionProps = {
   ingredients: [AdaptedIngredient, string][]
-  errorStatus: boolean
   handleChangeGrams: (id: Id, value: string) => void
+  error: { status: false } | {
+    status: true
+    message: string
+  }
 }
 
 export default function IngredientSelectionTable(props: IngredientSelectionProps) {
-  const { ingredients, errorStatus, handleChangeGrams } = props
+  const { ingredients, error, handleChangeGrams } = props
 
   return (
     <StyledTable>
@@ -35,15 +38,12 @@ export default function IngredientSelectionTable(props: IngredientSelectionProps
             <td><Text>{i[0].macros ? i[0].macros[1].toFixed(2) + "g" : "-"}</Text></td>
             <td><Text>{i[0].macros ? i[0].macros[2].toFixed(2) + "g" : "-"}</Text></td>
             <td>
-              <InputField errorStatus={errorStatus}>
-                <input
-                  type="number"
-                  placeholder="Gramas totais"
-                  onChange={(e) => handleChangeGrams(
-                    i[0].id, e.target.value)}
-                  value={ingredients[index][1]}
-                />
-              </InputField>
+              <Input variant="number"
+                id={`IngTotalGrams#${i[0].id}`} name={`IngTotalGrams#${i[0].id}`}
+                placeholder="Gramas totais" value={ingredients[index][1]}
+                onChange={(e) => handleChangeGrams(i[0].id, e.target.value)}
+                error={error}
+              />
             </td>
           </tr>
         ))}

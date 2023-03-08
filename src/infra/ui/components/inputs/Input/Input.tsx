@@ -1,4 +1,5 @@
 import React from "react"
+import DateInput from "../DateInput"
 import FileInput from "../FileInput"
 import NumberInput from "../NumberInput"
 import SelectInput, { SelectInputRefs } from "../SelectInput"
@@ -10,9 +11,11 @@ type InputProps<T> = ({
   variant: "file"
 } & React.ComponentPropsWithoutRef<typeof FileInput>) | ({
   variant: "number"  
-  } & React.ComponentPropsWithoutRef<typeof NumberInput>) | ({
+} & React.ComponentPropsWithoutRef<typeof NumberInput>) | ({
   variant: "select"
-} & React.ComponentPropsWithRef<typeof SelectInput<T>>)
+} & React.ComponentPropsWithRef<typeof SelectInput<T>>) | ({
+  variant: "date"
+} & React.ComponentPropsWithoutRef<typeof DateInput>)
 
 type RefType = SelectInputRefs
 
@@ -27,9 +30,10 @@ function InputComponent<T>(
     return <FileInput {...props} />
   case "number":
     return <NumberInput {...props} />
-  case "select": {
+  case "select":
     return <SelectInput {...props} ref={ref} />
-  }
+  case "date":
+    return <DateInput {...props} />
   default:
     return null
   }

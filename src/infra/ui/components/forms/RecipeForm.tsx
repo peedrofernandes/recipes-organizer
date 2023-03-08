@@ -1,8 +1,8 @@
 import { AdaptedIngredient, AdaptedRecipe, RecipeInput } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { Dropdown, DropdownItem, FieldSet, FormContainer, MacrosList, InputField, SelectField, SubmitContainer } from "@infra/ui/components/forms/Form/styles"
+import { DropdownItem, FieldSet, FormContainer, MacrosList, InputField, SubmitContainer } from "@infra/ui/components/forms/Form/styles"
 import { Span, Subtitle, Text } from "@infra/ui/components/styles"
-import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react"
+import React, { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from "react"
 import Button from "../buttons/Button"
 import Icon from "../Icon"
 import Table from "../tables/Table"
@@ -10,7 +10,6 @@ import List from "../lists/List"
 import useViewportTracker from "@infra/ui/hooks/useViewportTracker"
 import Input from "../inputs/Input"
 import { SelectInputRefs } from "../inputs/SelectInput"
-
 
 
 
@@ -35,8 +34,6 @@ type RecipeFormProps = ({
 })
 
 
-
-
 const typeTranslator = {
   "Week": "Receita de semana",
   "Weekend": "Receita de fim de semana",
@@ -51,28 +48,8 @@ type Error = {
   message: string
 }
 
-// type SubmitErrors = ({
-//   name: false
-// } | {
-//   name: true
-//   nameMessage: string
-// }) & ({
-//   ingredients: false
-// } | {
-//   ingredients: true
-//   ingredientsMessage: string
-// }) & ({
-//   type: false
-// } | {
-//   type: true
-//   typeMessage: string
-// })
-
-
-
 
 export default function RecipeForm(props: RecipeFormProps) {
-  const { loading } = props.data
   let initialName = ""
   let initialType: "Week" | "Weekend" | "Both" | "" = ""
   let initialDescription = ""
@@ -206,14 +183,13 @@ export default function RecipeForm(props: RecipeFormProps) {
   // Auxiliar states, variables, handlers and effects
 
   const viewportState = useViewportTracker()
-  const [search, setSearch] = useState<string>("")
-  const [ingOptions, setIngOptions] = useState<AdaptedIngredient[]>([])
+  const [ingOptions] = useState<AdaptedIngredient[]>([])
 
   const typesDropdownState = useState<boolean>(false)
-  const [showTypesDropdown, setShowTypesDropdown] = typesDropdownState
+  const [, setShowTypesDropdown] = typesDropdownState
 
   const ingredientsDropdownState = useState<boolean>(false)
-  const [showIngOptionsDropdown, setShowIngOptionsDropdown] = ingredientsDropdownState
+  const [, setShowIngOptionsDropdown] = ingredientsDropdownState
 
   const typesRef = useRef<SelectInputRefs>(null)
   const selectRef = useRef<SelectInputRefs>(null)
@@ -245,18 +221,6 @@ export default function RecipeForm(props: RecipeFormProps) {
       setShowIngOptionsDropdown(false)
     }
   }
-  function handleChangeSearch(e: ChangeEvent<HTMLInputElement>) {
-    setIngredientsError({
-      status: false
-    })
-    setSearch(e.target.value)
-  }
-
-  useEffect(() => {
-    if (props.data.loading) return setIngOptions([])
-    setIngOptions(props.data.ingredients.filter(
-      i => i.name.toLowerCase().includes(search.toLowerCase())))
-  }, [search, loading])
     
   return (
     <FormContainer
@@ -269,7 +233,7 @@ export default function RecipeForm(props: RecipeFormProps) {
       
 
 
-      {/* Name Input */}
+      {/* Input Name */}
       <FieldSet errorStatus={nameError.status}>
         <label>Nome</label>
         <InputField errorStatus={nameError.status}>
@@ -283,7 +247,9 @@ export default function RecipeForm(props: RecipeFormProps) {
       </FieldSet>
 
 
+      {/* Ingredients Select */}
       <Input<AdaptedIngredient> variant="select"
+        id="SelectIngredients" name="SelectIngredients"
         label="Ingredientes" error={ingredientsError}
         ref={selectRef}
         data={props.data.loading ? { loading: true } : {
@@ -318,12 +284,16 @@ export default function RecipeForm(props: RecipeFormProps) {
           </DropdownItem>
         )}
       />
+
+      
+
+      {/* Show Selected Ingredients */}
       {ingredients.length > 0 && (
         <FieldSet errorStatus={ingredientsError.status}>
           { viewportState.md ? (
             <Table
               variant="IngredientSelection"
-              errorStatus={ingredientsError.status}
+              error={ingredientsError}
               handleChangeGrams={handleChangeGrams}
               ingredients={ingredients}
             />
@@ -341,7 +311,9 @@ export default function RecipeForm(props: RecipeFormProps) {
 
 
 
+      {/* Type Select */}
       <Input<"Week" | "Weekend" | "Both"> variant="select"
+        id="SelectRecipeType" name="SelectRecipeType"
         label="Tipo" placeholder={type ? typeTranslator[type] : "Pesquisar"}
         data={{
           loading: false,
@@ -361,13 +333,17 @@ export default function RecipeForm(props: RecipeFormProps) {
         {typeError.status && <Span>{typeError.message}</Span>}
       </FieldSet>
 
+      
+
+      {/* Description Input */}
       <Input variant="text" id="IngredientDescription" name="IngredientDescription"
         placeholder="Descrição" value={description} label="Descrição"
         onChange={(e) => setDescription(e.target.value)}
       />
 
       
-      {/* Image selection */}
+
+      {/* Image Input */}
       <Input variant="file" id="file" name="file"
         accept="image/png, image/gif, image/jpeg"
         onChange={handleChangeFile}
@@ -375,6 +351,7 @@ export default function RecipeForm(props: RecipeFormProps) {
       />
 
       
+
       {/* Submit */}
       <SubmitContainer>
         <Button type="submit" variant="styled" text="Criar" />
