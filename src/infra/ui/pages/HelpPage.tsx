@@ -9,6 +9,11 @@ import { Subtitle, Title } from "../components/styles"
 import useViewportTracker from "../hooks/useViewportTracker"
 import Blob from "../components/blobs/Blob"
 
+import Image from "../components/images/Image"
+
+// const Image = React.lazy(() => import("../components/images/Image"))
+
+
 const PageTitle = styled.div<{ margin?: string }>`
   margin: ${({ margin }) => margin ?? ""};
 `
@@ -105,10 +110,9 @@ export default function HelpPage() {
             <Card variant="Tutorial"
               title="Cadastre os ingredientes que você mais usa"
               text="Clique no botão de ingredientes e preencha o formulário com os dados necessários;"
-            >
-              <Blob variant="1" />
-              <img src={new URL("../assets/mealMindLaptopOptimized.png", import.meta.url).href} />
-            </Card>
+              image={<Image variant="Laptop" />}
+              blob={<Blob variant="1" />}
+            />
           </GridItem>
         </Grid>
         <Grid>
@@ -116,10 +120,9 @@ export default function HelpPage() {
             <Card variant="Tutorial"
               title="Crie suas receitas"
               text="Depois de ter cadastrado alguns ingredientes, crie receitas totalmente personalizadas baseadas neles, igualmente preenchendo os dados que aparecem dinamicamente;"
-            >
-              <Blob variant="2" />
-              <img src={new URL("../assets/mealMindPhoneOptimized.png", import.meta.url).href} />
-            </Card>
+              image={<Image variant="Phone" />}
+              blob={<Blob variant="2" />}
+            />
           </GridItem>
         </Grid>
         <Grid>
@@ -127,10 +130,9 @@ export default function HelpPage() {
             <Card variant="Tutorial"
               title="Gere um PDF com cronograma"
               text="Clique no botão de gerar PDF e crie um cronograma completamente customizado ou deixe app escolher as datas para você;"
-            >
-              <Blob variant="3" />
-              <img src={new URL("../assets/recipes-pdf.png", import.meta.url).href} />
-            </Card>
+              image={<Image variant="PDF" />}
+              blob={<Blob variant="3" />}
+            />
           </GridItem>
         </Grid>
         <Grid>
@@ -138,10 +140,10 @@ export default function HelpPage() {
             <Card variant="Tutorial"
               title="Salve em um arquivo e carregue em outro lugar"
               text="Não perca suas receitas de vista: Salve-as em um arquivo e as recupere de qualquer lugar;"
-            >
-              <Blob variant="4" />
-              <img id="clipped" src={new URL("../assets/SaveButton.png", import.meta.url).href} />
-            </Card>
+              image={<Image variant="SaveButton" />}
+              blob={<Blob variant="4" />}
+            />
+            {/* <img id="clipped" src={img4} alt="Clipped image"/> */}
           </GridItem>
         </Grid>
       </PageTutorial>

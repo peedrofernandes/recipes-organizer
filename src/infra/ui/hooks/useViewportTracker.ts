@@ -35,7 +35,6 @@ export default function useViewportTracker(): Viewport {
   const [viewportState, setViewportState] = useState<Viewport>(getCurrentViewport())
 
   useEffect(() => {
-    
     window.addEventListener("resize", useThrottle(() => {
       setViewportState(getCurrentViewport())
     }))

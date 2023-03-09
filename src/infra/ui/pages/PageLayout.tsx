@@ -155,14 +155,14 @@ export default function PageLayout(props: PageLayoutProps) {
               <Button variant="icon">
                 <Icon
                   variant="Help"
-                  size={viewportState.md ? 36 : 24}
+                  // size={viewportState.md ? 36 : 24}
                 />
               </Button>
             </Link>
             <Button variant="icon" onClick={() => toggleTheme()} >
               <Icon
                 variant={theme.variant === "Light" ? "DarkMode" : "LightMode"}
-                size={viewportState.md ? 36 : 24}
+                // size={viewportState.md ? 36 : 24}
               />
             </Button>
           </TopRight>

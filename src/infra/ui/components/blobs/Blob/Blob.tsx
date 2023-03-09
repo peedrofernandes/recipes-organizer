@@ -1,10 +1,13 @@
 import React, { Suspense } from "react"
-import Blob3 from "../Blob3"
-import Blob4 from "../Blob4"
 import { BlobContainer } from "./styles"
+
+// const Blob1 = React.lazy(() => import("../Blob1"))
+// const Blob2 = React.lazy(() => import("../Blob2"))
 
 const Blob1 = React.lazy(() => import("../Blob1"))
 const Blob2 = React.lazy(() => import("../Blob2"))
+const Blob3 = React.lazy(() => import("../Blob3"))
+const Blob4 = React.lazy(() => import("../Blob4"))
 
 type BlobProps = {
   variant: "1" | "2" | "3" | "4"
@@ -35,5 +38,6 @@ export function Blob(props: BlobProps) {
       <BlobContainer>
         {result}
       </BlobContainer>
-    </Suspense>)
+    </Suspense>
+  )
 }

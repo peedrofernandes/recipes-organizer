@@ -23,16 +23,8 @@ module.exports = {
         type: "asset/resource",
         exclude: /node_modules/
       },
-      // {
-      //   test: /\.(png|jpg)$/,
-      //   use: [{
-      //     loader: "url-loader",
-      //     options: { limit: false }
-      //   }],
-      //   exclude: /node_modules/
-      // },
       {
-        test: /\.(png|jpg)$/,
+        test: /\.(png|jpg|webp)$/,
         type: "asset/resource",
         exclude: /node_modules/
       },
