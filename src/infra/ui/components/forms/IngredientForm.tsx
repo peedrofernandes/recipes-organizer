@@ -20,18 +20,6 @@ type IngredientFormProps = {
 
 type StringTuple = [string, string, string, string]
 
-// type SubmitErrors = ({
-//   name: false;
-// } | {
-//   name: true;
-//   nameMessage: string;
-// }) & ({
-//   macros: false;
-// } | {
-//   macros: true;
-//   macrosMessage: string;
-// })
-
 type Error = {
   status: false
 } | {
@@ -40,6 +28,8 @@ type Error = {
 }
 
 export default function IngredientForm(props: IngredientFormProps) {
+
+  // Initial parameters
   let initialName = ""
   let initialDescription = ""
   let initialMacros: StringTuple = ["", "", "", ""]
@@ -55,10 +45,6 @@ export default function IngredientForm(props: IngredientFormProps) {
   const [description, setDescription] = useState<string>(initialDescription)
   const [macros, setMacros] = useState<[string, string, string, string]>(initialMacros)
   const [imageFile, setImageFile] = useState<File | null>()
-  const [nameError, setNameError] = useState<Error>({ status: false })
-  const [macrosError, setMacrosError] = useState<Error>({ status: false })
-
-
 
   const handleChangeMacros = (
     type: "proteins" | "carbs" | "fats" | "totalGrams",
@@ -93,6 +79,10 @@ export default function IngredientForm(props: IngredientFormProps) {
     setNameError({ status: false })
     setName(e.target.value)
   }
+
+  // Errors
+  const [nameError, setNameError] = useState<Error>({ status: false })
+  const [macrosError, setMacrosError] = useState<Error>({ status: false })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

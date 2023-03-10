@@ -19,12 +19,12 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/i,
         type: "asset/resource",
         exclude: /node_modules/
       },
       {
-        test: /\.(png|jpg|webp)$/,
+        test: /\.(png|jpe?g|webp)$/i,
         type: "asset/resource",
         exclude: /node_modules/
       },
