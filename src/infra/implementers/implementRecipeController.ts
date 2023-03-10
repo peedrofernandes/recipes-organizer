@@ -5,6 +5,10 @@ import IngredientRepository from "../repositories/IngredientRepository"
 import RecipeRepository from "../repositories/RecipeRepository"
 import services from "../common/services"
 import useDataContext from "@infra/ui/hooks/useDataContext"
+import React from "react"
+import PDF from "@infra/ui/components/PDF"
+import { pdf } from "@react-pdf/renderer"
+import { saveAs } from "file-saver"
 
 
 export default function implementRecipeController(
@@ -45,6 +49,15 @@ export default function implementRecipeController(
       type: "SET_SELECTED_RECIPES_WITH_DATES",
       payload: { recipes: recipesWithDates }
     })
+
+    console.log("Recipes with dates at the IMplementer: ")
+    console.log(recipesWithDates)
+
+    const pdfProps = { list: recipesWithDates }
+    const PDFElement: React.ReactElement = React.createElement(PDF, pdfProps)
+
+    const blob = await pdf(PDFElement).toBlob()
+    saveAs(blob, "Recipes.pdf")
   }
 
   const recipeController = new RecipeController(

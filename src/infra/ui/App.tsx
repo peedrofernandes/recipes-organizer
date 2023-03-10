@@ -31,7 +31,7 @@ export default function App() {
           <Route path="/" element={<Page variant="Help" />} />
           <Route path="/recipes" element={<Page variant="Recipes" />} />
           <Route path="/ingredients" element={<Page variant="Ingredients" /> } />
-          <Route path="/PDF" element={<Page variant="PDF" />} />
+          {/* <Route path="/PDF" element={<Page variant="PDF" />} /> */}
         </Routes>
       </Router>
     </>

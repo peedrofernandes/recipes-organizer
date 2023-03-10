@@ -5,7 +5,6 @@ import { Span, Subtitle, Text } from "@infra/ui/components/styles"
 import useDateFormatter from "@infra/ui/hooks/useDateFormatter"
 import useViewportTracker from "@infra/ui/hooks/useViewportTracker"
 import React, { FormEvent, MouseEvent, useCallback, useEffect, useRef, useState } from "react"
-import { Link } from "react-router-dom"
 import Button from "../buttons/Button"
 import Icon from "../icons/Icon"
 import Input from "../inputs/Input"
@@ -21,7 +20,7 @@ type GeneratePDFFormProps = {
     recipes: AdaptedRecipe[]
   }
   events: {
-    submitEvent: (adaptedRecipesWithDates: [AdaptedRecipe, Date][]) => Promise<void>
+    submitEvent: (adaptedRecipesWithDates: [AdaptedRecipe, Date][]) => Promise<void>,
     randomize: (
       adaptedRecipes: AdaptedRecipe[], initialDate: Date
     ) => Promise<[AdaptedRecipe, Date][]>
@@ -270,14 +269,14 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
 
       {/* Submit */}
       <SubmitContainer style={{ display: selectedRecipes.length === 0 ? "none" : ""}}>
-        <Button variant="styled" type="submit" text="Criar PDF" />
-        {submitSuccess && (
-          <Link to="/PDF">
-            <Button variant="icon">
-              <Icon variant="Download" size={24} />
-            </Button>
-          </Link>
-        )}
+        <Button variant="styled"
+          type="submit" text="Criar PDF"
+        />
+        {/* {submitSuccess && (
+          <Button variant="icon">
+            <Icon variant="Download" size={24} />
+          </Button>
+        )} */}
       </SubmitContainer>
 
       

@@ -1,4 +1,5 @@
 import "react"
+import "react-pdf"
 import "styled-components"
 
 declare module "react" {

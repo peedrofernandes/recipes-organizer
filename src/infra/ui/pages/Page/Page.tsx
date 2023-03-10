@@ -5,7 +5,6 @@ import styled from "styled-components"
 import PageLayout from "../PageLayout"
 import Icon from "@infra/ui/components/icons/Icon"
 
-const PDFDocument = React.lazy(() => import("../../components/PDF"))
 const IngredientsPage = React.lazy(() => import("../IngredientsPage"))
 const RecipesPage = React.lazy(() => import("../RecipesPage"))
 const HelpPage = React.lazy(() => import("../HelpPage"))
@@ -33,7 +32,7 @@ const LoadingPage = () => {
 }
 
 type PageProps = {
-  variant: "Help" | "Ingredients" | "Recipes" | "PDF"
+  variant: "Help" | "Ingredients" | "Recipes"
 }
 
 export function Page(props: PageProps) {
@@ -73,10 +72,10 @@ export function Page(props: PageProps) {
     />
     break
   }
-  case "PDF": {
-    result = <PDFDocument />
-    break
-  }
+  // case "PDF": {
+  //   result = <PDFDocument />
+  //   break
+  // }
   }
 
   return (

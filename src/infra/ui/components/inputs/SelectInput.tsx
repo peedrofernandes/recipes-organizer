@@ -53,16 +53,21 @@ function SelectInputComponent<T>(
     if (!search) return setDataSearched(data.options)
     setDataSearched(data.options.filter(
       item => data.searchableProp(item).toLowerCase().includes(search.toLowerCase())))
-  }, [search])
+  }, [search, data.loading])
 
   useEffect(() => {
     if (!data.loading)
       setDataSearched(data.options)
   }, [data])
 
+  useEffect(() => {
+    console.log("Data.loading is " + data.loading)
+    if (!data.loading) console.log(data.options)
+  }, [data.loading])
+
   return (
     <FieldSet errorStatus={error?.status}>
-      {label && (<label htmlFor={name}>{label}</label>)}
+      {label && (<label>{label}</label>)}
       <InputField
         ref={searchRef}
         onClick={() => setShowDropdown(true)}

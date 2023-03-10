@@ -26,7 +26,7 @@ export default function DateInput(props: DateInputProps) {
 
   return (
     <FieldSet errorStatus={error?.status}>
-      {label && <label htmlFor={name}>{label}</label>}
+      {label && <label>{label}</label>}
       <InputField errorStatus={error?.status}>
 
         {viewportState.md ? (

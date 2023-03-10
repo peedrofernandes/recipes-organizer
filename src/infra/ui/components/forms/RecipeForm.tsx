@@ -53,7 +53,6 @@ export default function RecipeForm(props: RecipeFormProps) {
   // Auxiliar states, variables, handlers and visual effects
 
   const viewportState = useViewportTracker()
-  const [ingOptions] = useState<AdaptedIngredient[]>([])
   
   const typesDropdownState = useState<boolean>(false)
   const [, setShowTypesDropdown] = typesDropdownState
@@ -246,7 +245,7 @@ export default function RecipeForm(props: RecipeFormProps) {
         ref={selectRef}
         data={props.data.loading ? { loading: true } : {
           loading: false,
-          options: ingOptions,
+          options: props.data.ingredients,
           searchableProp: (ing) => ing.name
         }}
         dropdownState={ingredientsDropdownState}

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { AdaptedRecipe } from "@controllers/AdaptedTypes"
-import { Document, Page, View, Text, Image, PDFViewer, StyleSheet, Font } from "@react-pdf/renderer"
+import { Document, Page, View, Text, Image, StyleSheet, Font, PDFViewer } from "@react-pdf/renderer"
 import useDataContext from "../hooks/useDataContext"
 import fontThin from "../assets/Montserrat-Thin.ttf"
 import fontRegular from "../assets/Montserrat-Regular.ttf"
@@ -246,36 +246,32 @@ function Element(props: { recipe: AdaptedRecipe, date: Date }) {
   )
 }
 
-export default function PDFDocument() {
-  const list = useDataContext().data.selectedRecipes
-  const [splittedList, setSplittedList] = useState<[AdaptedRecipe, Date][][]>([])
+type PDFProps = {
+  list: [AdaptedRecipe, Date][]
+}
 
-  console.log(`List received at the PDF document: ${list}`)
+export default function PDF(props: PDFProps) {
+  const { list } = props
 
-  // Maximum of 4 elements per page
-  useEffect(() => { 
-    const newSplittedList = Array.from({ length: Math.ceil(list.length / 4) },
-      (_, i) => list.slice(i * 4, (i + 1) * 4) 
-    )
-    setSplittedList(newSplittedList)
-  }, [list])
-
+  const splittedList: [AdaptedRecipe, Date][][] = Array.from(
+    { length: Math.ceil(list.length / 4) },
+    (_, i) => list.slice(i * 4, (i + 1) * 4)
+  )
+  
   return (
-    <PDFViewer style={{...pageStyles.viewer}}>
-      <Document>
+    <Document>
 
-        {splittedList.map((list, i) => (
-          <Page key={list[0][0].id} style={pageStyles.page}>
-            <View style={pageStyles.container}>
-              {i === 0 && <Text style={pageStyles.Title1}>Receitas</Text>}
-              {list.map(([recipe, date]) =>
-                <Element key={recipe.id} recipe={recipe} date={date} />
-              )}
-            </View>
-          </Page>
-        ))}
+      {splittedList.map((list, i) => (
+        <Page key={list[0][0].id} style={pageStyles.page}>
+          <View style={pageStyles.container}>
+            {i === 0 && <Text style={pageStyles.Title1}>Receitas</Text>}
+            {list.map(([recipe, date]) =>
+              <Element key={recipe.id} recipe={recipe} date={date} />
+            )}
+          </View>
+        </Page>
+      ))}
 
-      </Document>
-    </PDFViewer>
+    </Document>
   )
 }

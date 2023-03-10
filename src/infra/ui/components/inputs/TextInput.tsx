@@ -23,7 +23,7 @@ export default function TextInput(props: TextInputProps) {
   return (
     <FieldSet errorStatus={props.error?.status}>
 
-      {props.label && (<label htmlFor={props.name}>{props.label}</label>)}
+      {props.label && (<label>{props.label}</label>)}
       <InputField errorStatus={props.error?.status}>
         <input
           type="text" id={props.id} name={props.name}

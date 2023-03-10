@@ -24,7 +24,7 @@ type NumberInputProps = {
 export default function NumberInput(props: NumberInputProps) {
   return (
     <FieldSet errorStatus={props.error?.status}>
-      {props.label && (<label htmlFor={props.name}>{props.label}</label>)}
+      {props.label && (<label>{props.label}</label>)}
       <InputField errorStatus={props.error?.status}>
         <input
           type="number" id={props.id} name={props.name}
