@@ -1,6 +1,6 @@
 import React, { useRef } from "react"
 import styled from "styled-components"
-import Icon from "../Icon"
+import Icon from "../icons/Icon"
 import { Span } from "../styles"
 import { BaseButtonProps } from "./Button"
 

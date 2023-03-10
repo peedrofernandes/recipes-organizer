@@ -1,4 +1,15 @@
+import "react"
 import "styled-components"
+
+declare module "react" {
+  function forwardRef<T, P = object>(
+    render: (props: P, ref: React.Ref<T>) => React.ReactElement | null
+  ): (props: P & React.RefAttributes<T>) => React.ReactElement | null
+
+  function lazy<T extends ComponentType<any>>(
+    factory: () => Promise<{ default: T }>
+  ): T
+}
 
 declare module "styled-components" {
   export interface DefaultTheme {

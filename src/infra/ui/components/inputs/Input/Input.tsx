@@ -1,9 +1,12 @@
-import React from "react"
-import DateInput from "../DateInput"
-import FileInput from "../FileInput"
-import NumberInput from "../NumberInput"
-import SelectInput, { SelectInputRefs } from "../SelectInput"
-import TextInput from "../TextInput"
+import React, { Suspense } from "react"
+
+const DateInput = React.lazy(() => import("../DateInput"))
+const FileInput = React.lazy(() => import("../FileInput"))
+const NumberInput = React.lazy(() => import("../NumberInput"))
+const SelectInput = React.lazy(() => import("../SelectInput"))
+const TextInput = React.lazy(() => import("../TextInput"))
+
+import { SelectInputRefs } from "../SelectInput"
 
 type InputProps<T> = ({
   variant: "text"
@@ -23,20 +26,29 @@ function InputComponent<T>(
   props: InputProps<T>,
   ref?: React.ForwardedRef<RefType>
 ) {
+
+  let result: JSX.Element
   switch (props.variant) {
   case "text":
-    return <TextInput {...props} />
+    result = <TextInput {...props} />
+    break
   case "file":
-    return <FileInput {...props} />
+    result = <FileInput {...props} />
+    break
   case "number":
-    return <NumberInput {...props} />
+    result = <NumberInput {...props} />
+    break
   case "select":
-    return <SelectInput {...props} ref={ref} />
+    result = <SelectInput<T> {...props} ref={ref} />
+    break
   case "date":
-    return <DateInput {...props} />
+    result = <DateInput {...props} />
+    break
   default:
     return null
   }
+
+  return <Suspense>{result}</Suspense>
 }
 
 const Input = React.forwardRef(InputComponent)

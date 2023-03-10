@@ -3,7 +3,7 @@ import { Id } from "@domain/utilities/types/Id"
 import { CardContainer, ContentContainer, ImageContainer, MacrosSpan } from "@infra/ui/components/cards/Card/styles"
 import React from "react"
 import Button from "../buttons/Button"
-import Icon from "../Icon"
+import Icon from "../icons/Icon"
 
 type IngredientCardProps = {
   ingredient: AdaptedIngredient;

@@ -1,5 +1,5 @@
 import React, { useRef } from "react"
-import Icon from "../Icon"
+import Icon from "../icons/Icon"
 import { Span, Subtitle, Title } from "../styles"
 import { FieldSet, FileInputData, FileInputLabel } from "./Input/styles"
 

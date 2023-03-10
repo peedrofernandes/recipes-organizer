@@ -1,7 +1,7 @@
 import React from "react"
 import styled from "styled-components"
 import Button from "../buttons/Button"
-import Icon from "../Icon"
+import Icon from "../icons/Icon"
 
 const ActionsDesktopContainer = styled.section`
   width: 100%;

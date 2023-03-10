@@ -1,7 +1,7 @@
-import React from "react"
-import IngredientSelectionTable from "../IngredientSelectionTable"
-import RecipeSelectionTable from "../RecipeSelectionTable"
+import React, { Suspense } from "react"
 
+const IngredientSelectionTable = React.lazy(() => import("../IngredientSelectionTable"))
+const RecipeSelectionTable = React.lazy(() => import("../RecipeSelectionTable"))
 
 type TableProps = ({
   variant: "IngredientSelection"
@@ -12,10 +12,17 @@ type TableProps = ({
 
 export function Table(props: TableProps) {
 
+  let result: JSX.Element
   switch (props.variant) {
   case "IngredientSelection":
-    return <IngredientSelectionTable {...props} />
+    result = <IngredientSelectionTable {...props} />
+    break
   case "RecipeSelection":
-    return <RecipeSelectionTable {...props} />
+    result = <RecipeSelectionTable {...props} />
+    break
+  default:
+    return null
   }
+
+  return <Suspense>{result}</Suspense>
 }

@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom"
 import styled, { ThemeProvider } from "styled-components"
 
 import Button from "../components/buttons/Button"
-import Icon from "../components/Icon"
 import Modal from "../components/Modal"
 import Form from "../components/forms/Form"
 import useFormContext from "../hooks/useFormContext"
@@ -13,6 +12,7 @@ import useEvents from "../hooks/useEvents"
 import useDataContext from "../hooks/useDataContext"
 import Wave from "../components/Wave"
 import Actions from "../components/actions/Actions"
+import Icon from "../components/icons/Icon"
 
 const LayoutContainer = styled.div`
   position: relative;

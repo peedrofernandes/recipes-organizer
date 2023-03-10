@@ -2,17 +2,13 @@ import React, { Suspense, useEffect } from "react"
 import useDataContext from "../../hooks/useDataContext"
 import useEvents from "../../hooks/useEvents"
 import styled from "styled-components"
-import Icon from "@infra/ui/components/Icon"
 import PageLayout from "../PageLayout"
-import PDFDocument from "@infra/ui/components/PDF"
-import RecipesPage from "../RecipesPage"
-import IngredientsPage from "../IngredientsPage"
-import HelpPage from "../HelpPage"
+import Icon from "@infra/ui/components/icons/Icon"
 
-// const PDFDocument = React.lazy(() => import("../../components/PDF"))
-// const IngredientsPage = React.lazy(() => import("../IngredientsPage"))
-// const RecipesPage = React.lazy(() => import("../RecipesPage"))
-// const HelpPage = React.lazy(() => import("../HelpPage"))
+const PDFDocument = React.lazy(() => import("../../components/PDF"))
+const IngredientsPage = React.lazy(() => import("../IngredientsPage"))
+const RecipesPage = React.lazy(() => import("../RecipesPage"))
+const HelpPage = React.lazy(() => import("../HelpPage"))
 
 const LoadingContainer = styled.div`
   width: 100%;
@@ -84,17 +80,14 @@ export function Page(props: PageProps) {
   }
 
   return (
-    <PageLayout>{result}</PageLayout>
+    <Suspense fallback={(
+      <PageLayout>
+        <LoadingPage />
+      </PageLayout>
+    )}>
+      <PageLayout>
+        {result}
+      </PageLayout>
+    </Suspense>
   )
-  // return (
-  //   <Suspense fallback={(
-  //     <PageLayout>
-  //       <LoadingPage />
-  //     </PageLayout>
-  //   )}>
-  //     <PageLayout>
-  //       {result}
-  //     </PageLayout>
-  //   </Suspense>
-  // )
 }

@@ -1,9 +1,6 @@
 import React, { Suspense } from "react"
 import { BlobContainer } from "./styles"
 
-// const Blob1 = React.lazy(() => import("../Blob1"))
-// const Blob2 = React.lazy(() => import("../Blob2"))
-
 const Blob1 = React.lazy(() => import("../Blob1"))
 const Blob2 = React.lazy(() => import("../Blob2"))
 const Blob3 = React.lazy(() => import("../Blob3"))

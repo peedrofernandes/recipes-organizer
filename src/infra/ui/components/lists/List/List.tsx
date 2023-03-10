@@ -1,6 +1,7 @@
-import React from "react"
-import IngredientSelectionList from "../IngredientSelectionList"
-import RecipeSelectionList from "../RecipeSelectionList"
+import React, { Suspense } from "react"
+
+const IngredientSelectionList = React.lazy(() => import("../IngredientSelectionList"))
+const RecipeSelectionList = React.lazy(() => import("../RecipeSelectionList"))
 
 type ListProps = {
   variant: "IngredientSelection"
@@ -9,10 +10,17 @@ type ListProps = {
 } & React.ComponentPropsWithoutRef<typeof RecipeSelectionList>
 
 export function List(props: ListProps) {
+  let result: JSX.Element
   switch (props.variant) {
   case "IngredientSelection":
-    return <IngredientSelectionList {...props} />
+    result = <IngredientSelectionList {...props} />
+    break
   case "RecipeSelection":
-    return <RecipeSelectionList {...props} />
+    result = <RecipeSelectionList {...props} />
+    break
+  default:
+    return null
   }
+
+  return <Suspense>{result}</Suspense>
 }

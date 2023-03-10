@@ -1,10 +1,5 @@
 import React, { Suspense } from "react"
 
-// import LaptopImage from "../LaptopImage"
-// import PDFImage from "../PDFImage"
-// import PhoneImage from "../PhoneImage"
-// import SaveButtonImage from "../SaveButtonImage"
-
 const LaptopImage = React.lazy(() => import("../LaptopImage"))
 const PDFImage = React.lazy(() => import("../PDFImage"))
 const PhoneImage = React.lazy(() => import("../PhoneImage"))

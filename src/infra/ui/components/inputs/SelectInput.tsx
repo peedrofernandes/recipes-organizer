@@ -1,14 +1,7 @@
 import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
 import { Dropdown, InputField } from "../forms/Form/styles"
-import Icon from "../Icon"
+import Icon from "../icons/Icon"
 import { FieldSet } from "./Input/styles"
-
-declare module "react" {
-  function forwardRef<T, P = object>(
-    render: (props: P, ref: React.Ref<T>) => React.ReactElement | null
-  ): (props: P & React.RefAttributes<T>) => React.ReactElement| null
-}
-
 
 interface SelectInputProps<T> {
   id: string

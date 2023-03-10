@@ -1,6 +1,7 @@
-import React from "react"
-import ActionsDesktop from "../ActionsDesktop"
-import ActionsMobile from "../ActionsMobile"
+import React, { Suspense } from "react"
+
+const ActionsDesktop = React.lazy(() => import("../ActionsDesktop"))
+const ActionsMobile = React.lazy(() => import("../ActionsMobile"))
 
 type ActionsProps = ({
   variant: "Mobile"
@@ -8,15 +9,28 @@ type ActionsProps = ({
   variant: "Desktop"
 } & React.ComponentPropsWithoutRef<typeof ActionsDesktop>)
 
-export const Actions = React.forwardRef((
+function ActionsComponent(
   props: ActionsProps,
   ref?: React.ForwardedRef<HTMLDivElement>
-) => {
+) {
+
+  let result: JSX.Element
   switch (props.variant) {
   case "Mobile":
-    return <ActionsMobile {...props} ref={ref} />
+    result = <ActionsMobile {...props} ref={ref} />
+    break
   case "Desktop":
-    return <ActionsDesktop {...props} />
+    result = <ActionsDesktop {...props} />
+    break
+  default:
+    return null
   }
-})
-Actions.displayName = "Actions"
+
+  return (
+    <Suspense>
+      {result}
+    </Suspense>
+  )
+}
+
+export const Actions = React.forwardRef(ActionsComponent)

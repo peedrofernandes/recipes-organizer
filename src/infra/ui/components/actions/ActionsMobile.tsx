@@ -2,7 +2,7 @@ import React from "react"
 import styled from "styled-components"
 import Button from "../buttons/Button"
 import { Dropdown } from "../forms/Form/styles"
-import Icon from "../Icon"
+import Icon from "../icons/Icon"
 
 const ActionsMobileContainer = styled.section`
 

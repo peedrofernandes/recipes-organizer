@@ -4,7 +4,7 @@ import { DropdownItem, FieldSet, FormContainer, MacrosList, InputField, SubmitCo
 import { Span, Subtitle, Text } from "@infra/ui/components/styles"
 import React, { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from "react"
 import Button from "../buttons/Button"
-import Icon from "../Icon"
+import Icon from "../icons/Icon"
 import Table from "../tables/Table"
 import List from "../lists/List"
 import useViewportTracker from "@infra/ui/hooks/useViewportTracker"

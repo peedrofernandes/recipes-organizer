@@ -1,18 +1,18 @@
 import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import useDataContext from "@infra/ui/hooks/useDataContext"
 import useEvents from "@infra/ui/hooks/useEvents"
-import React from "react"
+import React, { Suspense } from "react"
 
-import CreateIngredientCard from "../CreateIngredientCard"
-import CreateRecipeCard from "../CreateRecipeCard"
-import EntryCard from "../EntryCard"
-import IngredientCard from "../IngredientCard"
-import IngredientSelectionCard from "../IngredientSelectionCard"
-import LoadingCard from "../LoadingCard"
-import RecipeCard from "../RecipeCard"
-import RecipeSelectionCard from "../RecipeSelectionCard"
-import SkeletonCard from "../SkeletonCard"
-import TutorialCard from "../TutorialCard"
+const CreateIngredientCard = React.lazy(() => import("../CreateIngredientCard"))
+const CreateRecipeCard = React.lazy(() => import("../CreateRecipeCard"))
+const EntryCard = React.lazy(() => import("../EntryCard"))
+const IngredientCard = React.lazy(() => import("../IngredientCard"))
+const IngredientSelectionCard = React.lazy(() => import("../IngredientSelectionCard"))
+const LoadingCard = React.lazy(() => import("../LoadingCard"))
+const RecipeCard = React.lazy(() => import("../RecipeCard"))
+const RecipeSelectionCard = React.lazy(() => import("../RecipeSelectionCard"))
+const SkeletonCard = React.lazy(() => import("../SkeletonCard"))
+const TutorialCard = React.lazy(() => import("../TutorialCard"))
 
 // --------- Visual Elements ----------
 
@@ -57,9 +57,10 @@ export function Card(props: CardProps) {
 
   const { data } = useDataContext()
 
+  let result : JSX.Element
   switch (props.variant) {
   case "Ingredient":
-    return <IngredientCard
+    result = <IngredientCard
       ingredient={props.ingredient}
       events={{
         updateEvent: updateIngredientRequest,
@@ -67,12 +68,14 @@ export function Card(props: CardProps) {
       }}
       loadingUpdate={data.loading.updateIngredient === props.ingredient.id}
     />
+    break
   case "CreateIngredient":
-    return <CreateIngredientCard
+    result = <CreateIngredientCard
       events={{ createEvent: createIngredientRequest }}
     />
+    break
   case "Recipe":
-    return <RecipeCard
+    result = <RecipeCard
       recipe={props.recipe}
       events={{ 
         updateEvent: updateRecipeRequest,
@@ -80,21 +83,37 @@ export function Card(props: CardProps) {
       }}
       loadingUpdate={data.loading.updateRecipe === props.recipe.id}
     />
+    break
   case "CreateRecipe":
-    return <CreateRecipeCard
+    result = <CreateRecipeCard
       events={{ createEvent: createRecipeRequest }}
     />
+    break
   case "IngredientSelection":
-    return <IngredientSelectionCard {...props} />
+    result = <IngredientSelectionCard {...props} />
+    break
   case "RecipeSelection":
-    return <RecipeSelectionCard {...props} />
+    result = <RecipeSelectionCard {...props} />
+    break
   case "Skeleton":
-    return <SkeletonCard />
+    result = <SkeletonCard />
+    break
   case "Loading":
-    return <LoadingCard />
+    result = <LoadingCard />
+    break
   case "Entry":
-    return <EntryCard {...props} />
+    result = <EntryCard {...props} />
+    break
   case "Tutorial":
-    return <TutorialCard {...props} />
+    result = <TutorialCard {...props} />
+    break
+  default:
+    return null
   }
+
+  return (
+    <Suspense>
+      {result}
+    </Suspense>
+  )
 }

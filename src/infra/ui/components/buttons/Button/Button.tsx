@@ -1,9 +1,9 @@
-import React from "react"
-import DropdownButton from "../DropdownButton"
-import IconButton from "../IconButton"
-import LayoutButton from "../LayoutButton"
-import StyledButton from "../StyledButton"
+import React, { Suspense } from "react"
 
+const DropdownButton = React.lazy(() => import("../DropdownButton"))
+const IconButton = React.lazy(() => import("../IconButton"))
+const LayoutButton = React.lazy(() => import("../LayoutButton"))
+const StyledButton = React.lazy(() => import("../StyledButton"))
 
 type ButtonProps = ({
   variant: "styled"
@@ -18,29 +18,30 @@ type ButtonProps = ({
 } & React.ComponentPropsWithoutRef<typeof DropdownButton>)
 
 export function Button(props: ButtonProps) {
+  let result: JSX.Element
   switch (props.variant) {
-
   case "styled":
-    return <StyledButton {...props} variant="normal" />
+    result = <StyledButton {...props} variant="normal" />
+    break
   case "styledBig":
-    return <StyledButton {...props} variant="big" />
+    result = <StyledButton {...props} variant="big" />
+    break
   case "icon":
-    return (
-      <IconButton {...props}>
-        {props.children}
-      </IconButton>
-    )
+    result = <IconButton {...props} />
+    break
   case "layout":
-    return (
-      <LayoutButton {...props}>
-        {props.children}
-      </LayoutButton>
-    )
+    result = <LayoutButton {...props} />
+    break
   case "dropdown":
-    return (
-      <DropdownButton {...props} />
-    )
+    result = <DropdownButton {...props} />
+    break
   default:
     return null
   }
+
+  return (
+    <Suspense>
+      {result}
+    </Suspense>
+  )
 }

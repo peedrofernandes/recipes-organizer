@@ -6,7 +6,7 @@ import React, {
 import styled from "styled-components"
 
 import { Grid, GridItem } from "./Grid"
-import Icon from "./Icon"
+import Icon from "./icons/Icon"
 import Button from "./buttons/Button"
 import useEvents from "@infra/ui/hooks/useEvents"
 import { Title } from "./styles"

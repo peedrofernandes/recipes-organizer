@@ -3,15 +3,13 @@ import { Link } from "react-router-dom"
 import styled from "styled-components"
 import Button from "../components/buttons/Button"
 import Card from "../components/cards/Card"
-import Icon from "../components/Icon"
 import { Grid, GridItem } from "../components/Grid"
 import { Subtitle, Title } from "../components/styles"
 import useViewportTracker from "../hooks/useViewportTracker"
 import Blob from "../components/blobs/Blob"
 
 import Image from "../components/images/Image"
-
-// const Image = React.lazy(() => import("../components/images/Image"))
+import Icon from "../components/icons/Icon"
 
 
 const PageTitle = styled.div<{ margin?: string }>`
