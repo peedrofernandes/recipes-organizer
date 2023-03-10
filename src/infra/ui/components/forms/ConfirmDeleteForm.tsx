@@ -1,7 +1,7 @@
 import React from "react"
 import { Id } from "@domain/utilities/types/Id"
 import Button from "../buttons/Button"
-import { ConfirmButtonSet } from "@infra/ui/components/forms/Form/styles"
+import { ConfirmButtonSet } from "./Form/styles"
 
 type ConfirmDeleteFormProps = {
   variant: "Recipe",
@@ -23,7 +23,6 @@ export default function ConfirmDeleteForm(props: ConfirmDeleteFormProps) {
   const handleConfirm = () => {
     props.events.confirmEvent(props.id)
   }
-
   const handleCancel = () => {
     props.events.cancelEvent()
   }

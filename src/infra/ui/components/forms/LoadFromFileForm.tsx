@@ -18,7 +18,6 @@ export default function LoadFromFileForm(props: LoadFromFileFormProps) {
   const [jsonFile, setJsonFile] = useState<File | null>(null)
   function handleChangeFile(e: React.ChangeEvent<HTMLInputElement>) {
     setFileError(error => ({ ...error, status: false }))
-
     setJsonFile(e.target.files?.[0] || null)
   }
 
@@ -37,8 +36,6 @@ export default function LoadFromFileForm(props: LoadFromFileFormProps) {
       return
     }
 
-    console.log("Submitted at the LoadFromFileForm! File: ")
-    console.table(jsonFile)
     props.events.load(jsonFile)
   }
 

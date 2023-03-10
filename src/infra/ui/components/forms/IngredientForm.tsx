@@ -1,6 +1,6 @@
 import { AdaptedIngredient, IngredientInput } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
-import { FormContainer, InputGroup, SubmitContainer } from "@infra/ui/components/forms/Form/styles"
+import { FormContainer, InputGroup, SubmitContainer } from "./Form/styles"
 import React, { useState } from "react"
 import Button from "../buttons/Button"
 import Input from "../inputs/Input"
@@ -30,6 +30,8 @@ type Error = {
 export default function IngredientForm(props: IngredientFormProps) {
 
   // Initial parameters
+  // ------------------------------------
+
   let initialName = ""
   let initialDescription = ""
   let initialMacros: StringTuple = ["", "", "", ""]
@@ -40,12 +42,16 @@ export default function IngredientForm(props: IngredientFormProps) {
     initialMacros = props.ingredient.macros?.map(item => item.toString()) as StringTuple || ["", "", "", ""]
     initialImageUrl = props.ingredient.imageUrl || ""
   }
-  
-  const [name, setName] = useState<string>(initialName)
-  const [description, setDescription] = useState<string>(initialDescription)
-  const [macros, setMacros] = useState<[string, string, string, string]>(initialMacros)
-  const [imageFile, setImageFile] = useState<File | null>()
 
+  const [name, setName] = useState<string>(initialName)
+  const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNameError({ status: false })
+    setName(e.target.value)
+  }
+
+  const [description, setDescription] = useState<string>(initialDescription)
+
+  const [macros, setMacros] = useState<[string, string, string, string]>(initialMacros)
   const handleChangeMacros = (
     type: "proteins" | "carbs" | "fats" | "totalGrams",
     e: React.ChangeEvent<HTMLInputElement>
@@ -70,17 +76,13 @@ export default function IngredientForm(props: IngredientFormProps) {
     })
   }
 
+
+
+  const [imageFile, setImageFile] = useState<File | null>()
   const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("File changed!")
     setImageFile(e.target.files?.[0] || null)
   }
 
-  const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNameError({ status: false })
-    setName(e.target.value)
-  }
-
-  // Errors
   const [nameError, setNameError] = useState<Error>({ status: false })
   const [macrosError, setMacrosError] = useState<Error>({ status: false })
 
@@ -107,7 +109,6 @@ export default function IngredientForm(props: IngredientFormProps) {
       }
       return
     }
-
     const inputData: IngredientInput = {
       name,
       description,
@@ -119,7 +120,6 @@ export default function IngredientForm(props: IngredientFormProps) {
         ) as [number, number, number, number]
       } : null)
     }
-
     switch (props.variant) {
     case "Create":
       props.events.submitEvent(inputData)

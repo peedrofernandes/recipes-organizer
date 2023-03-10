@@ -50,6 +50,47 @@ type Error = {
 
 
 export default function RecipeForm(props: RecipeFormProps) {
+  // Auxiliar states, variables, handlers and visual effects
+
+  const viewportState = useViewportTracker()
+  const [ingOptions] = useState<AdaptedIngredient[]>([])
+  
+  const typesDropdownState = useState<boolean>(false)
+  const [, setShowTypesDropdown] = typesDropdownState
+  
+  const ingredientsDropdownState = useState<boolean>(false)
+  const [, setShowIngOptionsDropdown] = ingredientsDropdownState
+  
+  const typesRef = useRef<SelectInputRefs>(null)
+  const selectRef = useRef<SelectInputRefs>(null)
+  function handleCloseDropdowns(e: MouseEvent) {
+    const ingsDropdownRef = selectRef.current?.dropdownRef
+    const ingsBoxRef = selectRef.current?.searchRef
+  
+    const typesBoxRef = typesRef.current?.searchRef
+  
+    const isInvalidRefs = (
+      !ingsBoxRef?.current || !typesBoxRef?.current 
+    )
+  
+    if (isInvalidRefs)
+      return
+  
+    const eventClickContainsTypesBox =
+        typesBoxRef.current?.contains(e.target as Node)
+    if (!eventClickContainsTypesBox) {
+      setShowTypesDropdown(false)
+    }
+  
+    const eventClickContainsIngsDropdown =
+        ingsDropdownRef?.current?.contains(e.target as Node)
+    const eventClickContainsIngsBox =
+        ingsBoxRef.current.contains(e.target as Node)
+    if (!eventClickContainsIngsDropdown && !eventClickContainsIngsBox) {
+      setShowIngOptionsDropdown(false)
+    }
+  }
+
   let initialName = ""
   let initialType: "Week" | "Weekend" | "Both" | "" = ""
   let initialDescription = ""
@@ -69,25 +110,12 @@ export default function RecipeForm(props: RecipeFormProps) {
   // Data States and handlers
 
   const [name, setName] = useState<string>(initialName)
-  const [type, setType] = useState<"Week" | "Weekend" | "Both" | "">(initialType)
-  const [description, setDescription] = useState<string>(initialDescription)
-  const [imageFile, setImageFile] = useState<File | null>(null)
-  const [ingredients, setIngredients] = useState<[AdaptedIngredient, string][]>(initialIngredients)
-
-  const [nameError, setNameError] = useState<Error>({ status: false })
-  const [ingredientsError, setIngredientsError] = useState<Error>({ status: false })
-  const [typeError, setTypeError] = useState<Error>({ status: false })
-  // const [submitError, setSubmitError] = useState<SubmitErrors>({
-  //   name: false,
-  //   ingredients: false,
-  //   type: false
-  // })
-
   function handleChangeName(e: ChangeEvent<HTMLInputElement>) {
     setNameError({ status: false })
     setName(e.target.value)
   }
 
+  const [type, setType] = useState<"Week" | "Weekend" | "Both" | "">(initialType)
   function handleChangeType(t: "Week" | "Weekend" | "Both") {
     setTypeError({ status: false })
     switch (t) {
@@ -109,13 +137,21 @@ export default function RecipeForm(props: RecipeFormProps) {
     }
   }
 
+  const [description, setDescription] = useState<string>(initialDescription)
+
+
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  function handleChangeFile(e: ChangeEvent<HTMLInputElement>) {
+    setImageFile(e.target.files?.[0] || null)
+  }
+
+  const [ingredients, setIngredients] = useState<[AdaptedIngredient, string][]>(initialIngredients)
   function handleChangeIngredients(ing: AdaptedIngredient) {
     if (ingredients.some(i => i[0].id === ing.id))
       setIngredients(ingredients.filter(i => i[0].id !== ing.id))
     else
       setIngredients([...ingredients, [ing, ""]])
   }
-
   function handleChangeGrams(id: Id, value: string) {
     setIngredientsError({ status: false })
     const index = ingredients.findIndex(item => item[0].id === id)
@@ -132,9 +168,10 @@ export default function RecipeForm(props: RecipeFormProps) {
     setIngredients(ingredients)
   }
 
-  function handleChangeFile(e: ChangeEvent<HTMLInputElement>) {
-    setImageFile(e.target.files?.[0] || null)
-  }
+  // Errors and submit logic
+  const [nameError, setNameError] = useState<Error>({ status: false })
+  const [ingredientsError, setIngredientsError] = useState<Error>({ status: false })
+  const [typeError, setTypeError] = useState<Error>({ status: false })
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -175,51 +212,6 @@ export default function RecipeForm(props: RecipeFormProps) {
       props.events.submitEvent(recipeInput)
     else
       props.events.submitEvent(recipeInput, props.recipe.id)
-  }
-
-
-
-
-  // Auxiliar states, variables, handlers and effects
-
-  const viewportState = useViewportTracker()
-  const [ingOptions] = useState<AdaptedIngredient[]>([])
-
-  const typesDropdownState = useState<boolean>(false)
-  const [, setShowTypesDropdown] = typesDropdownState
-
-  const ingredientsDropdownState = useState<boolean>(false)
-  const [, setShowIngOptionsDropdown] = ingredientsDropdownState
-
-  const typesRef = useRef<SelectInputRefs>(null)
-  const selectRef = useRef<SelectInputRefs>(null)
-  
-  function handleCloseDropdowns(e: MouseEvent) {
-    const ingsDropdownRef = selectRef.current?.dropdownRef
-    const ingsBoxRef = selectRef.current?.searchRef
-
-    const typesBoxRef = typesRef.current?.searchRef
-
-    const isInvalidRefs = (
-      !ingsBoxRef?.current || !typesBoxRef?.current 
-    )
-
-    if (isInvalidRefs)
-      return
-
-    const eventClickContainsTypesBox =
-      typesBoxRef.current?.contains(e.target as Node)
-    if (!eventClickContainsTypesBox) {
-      setShowTypesDropdown(false)
-    }
-
-    const eventClickContainsIngsDropdown =
-      ingsDropdownRef?.current?.contains(e.target as Node)
-    const eventClickContainsIngsBox =
-      ingsBoxRef.current.contains(e.target as Node)
-    if (!eventClickContainsIngsDropdown && !eventClickContainsIngsBox) {
-      setShowIngOptionsDropdown(false)
-    }
   }
     
   return (

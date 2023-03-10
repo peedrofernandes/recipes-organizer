@@ -36,9 +36,10 @@ type Error = {
 }
 
 export default function PDFGenerationForm(props: GeneratePDFFormProps) {
-  // Props
+  // Props and helpers
   const { loading } = props.data
   const { dateToString, stringToDate } = useDateFormatter()
+  const viewportStatus = useViewportTracker()
 
 
   // functionality of search for recipes
@@ -102,13 +103,8 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
   }
 
 
-  // Viewport tracker
-  const viewportStatus = useViewportTracker()
-
-
   // Handle change date of each recipe
   function handleChangeDate(id: Id, value: string) {
-    console.log(`Date changed: ${value}`)
     setDatesError({ status: false })
     const index = selectedRecipes.findIndex(r => r[0].id === id)
     const updatedRecipe = selectedRecipes[index]
@@ -164,9 +160,6 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
         recipe,
         stringToDate(dateString)
       ])
-    console.log(input)
-    console.log(JSON.stringify(input))
-    console.log(JSON.parse(JSON.stringify(input)))
     
     props.events.submitEvent(input)
     setSubmitSuccess(true)
