@@ -130,8 +130,7 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
       } else return { ...resultError }
     }, { status: false })
   }, [])
-  
-  const [submitSuccess, setSubmitSuccess] = useState<boolean>(false)
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -161,7 +160,6 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
       ])
     
     props.events.submitEvent(input)
-    setSubmitSuccess(true)
   }
 
   return (

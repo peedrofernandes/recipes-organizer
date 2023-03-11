@@ -84,9 +84,10 @@ export default function DropdownButton(props: DropdownButtonProps) {
       onClick={handleClick}
       type={props.type}
       ref={buttonRef}
+      aria-labelledby={`labelSpan-${props.text}`}
     >
       {props.icon}
-      <Span>{props.text}</Span>
+      <Span id={`labelSpan-${props.text}`}>{props.text}</Span>
     </DropdownButtonContainer>
   )
 }

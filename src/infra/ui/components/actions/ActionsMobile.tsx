@@ -27,7 +27,7 @@ function ActionsMobile(
   return (
     <ActionsMobileContainer>
       <div ref={ref}>
-        <Button variant="icon" onClick={props.toggleMenuDropdown}>
+        <Button variant="icon" onClick={props.toggleMenuDropdown} ariaLabel="Menu Icon">
           <Icon variant="Menu" size={36} />
         </Button>
       </div>

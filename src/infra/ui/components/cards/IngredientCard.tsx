@@ -49,10 +49,10 @@ export default function IngredientCard(props: IngredientCardProps) {
           {description && <p>{description}</p>}
         </div>
         <div>
-          <Button variant="icon" onClick={() => props.events.updateEvent(props.ingredient)}>
+          <Button variant="icon" onClick={() => props.events.updateEvent(props.ingredient)} ariaLabel="Edit Ingredient Icon">
             <Icon variant="Edit" size={24} />
           </Button>
-          <Button variant="icon" onClick={() => props.events.deleteEvent(id)}>
+          <Button variant="icon" onClick={() => props.events.deleteEvent(id)} ariaLabel="Delete Ingredient Icon">
             <Icon variant="Delete" size={24} color="red" />
           </Button>
         </div>

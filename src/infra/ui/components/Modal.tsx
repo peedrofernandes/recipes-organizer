@@ -115,7 +115,7 @@ export default function Modal(props: ModalProps) {
 
             <TopContainer>
               <Title variant={5} as="h5">{props.title}</Title>
-              <Button variant="icon" onClick={() => cancelRequest()}>
+              <Button variant="icon" onClick={() => cancelRequest()} ariaLabel="Close Modal Button">
                 <Icon variant="Close" size={24} />
               </Button>
             </TopContainer>

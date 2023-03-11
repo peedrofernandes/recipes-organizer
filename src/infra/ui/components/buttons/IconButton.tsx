@@ -25,6 +25,7 @@ const IconButtonContainer = styled.button`
 `
 
 interface IconButtonProps extends BaseButtonProps {
+  ariaLabel: string
   children: ReactElement<typeof Icon>
 }
 
@@ -33,6 +34,7 @@ export default function IconButton(props: IconButtonProps) {
     <IconButtonContainer
       onClick={props.onClick}
       type={props.type}
+      aria-label={props.ariaLabel}
     >
       {props.children}
     </IconButtonContainer>
