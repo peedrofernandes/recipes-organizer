@@ -10,6 +10,7 @@ import Blob from "../components/blobs/Blob"
 
 import Image from "../components/images/Image"
 import Icon from "../components/icons/Icon"
+import useDataContext from "../hooks/useDataContext"
 
 
 const PageTitle = styled.div<{ margin?: string }>`
@@ -36,6 +37,12 @@ const PageButton = styled.div<{ margin?: string }>`
 `
 
 export default function HelpPage() {
+
+  const { dispatch } = useDataContext()
+  function handleExitTutorial() {
+    dispatch({ type: "PASSED_TUTORIAL" })
+  }
+
   const viewportState = useViewportTracker()
 
   const [firstElementMargin, setFirstElementMargin] = useState<string>("")
@@ -150,7 +157,7 @@ export default function HelpPage() {
         <Grid>
           <GridItem rSpan={{ xs: 4, sm: 8, md: 12, lg: 12, xl: 12 }}>
             <Link to="/recipes" style={{ display: "flex", justifyContent: "center"}}>
-              <Button variant="styledBig" text="Começar" />
+              <Button variant="styledBig" text="Começar" onClick={handleExitTutorial}/>
             </Link>
           </GridItem>
         </Grid>

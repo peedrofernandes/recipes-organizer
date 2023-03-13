@@ -3,6 +3,7 @@ import { AdaptedIngredient, AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 
 type DataState = {
+  passedTutorial: boolean
   loading: {
     fetchIngredients: boolean
     createIngredient: boolean
@@ -26,6 +27,8 @@ type DataAction = {
     | "LOADING_FETCH_RECIPES"
     | "LOADING_CREATE_RECIPE"
     | "LOADING_DELETE_RECIPE"
+    | "PASSED_TUTORIAL"
+    | "RETURN_TO_TUTORIAL"
 } | {
   type: "LOADING_UPDATE_INGREDIENT"
   payload: { id: Id }
@@ -82,6 +85,18 @@ type DataAction = {
 
 function dataReducer(state: DataState, action: DataAction): DataState {
   switch (action.type) {
+  case "PASSED_TUTORIAL":
+    localStorage.setItem("PASSED_TUTORIAL", "true")    
+    return {
+      ...state,
+      passedTutorial: true
+    }
+  case "RETURN_TO_TUTORIAL":
+    localStorage.setItem("PASSED_TUTORIAL", "false")
+    return {
+      ...state,
+      passedTutorial: false
+    }
   case "LOADING_FETCH_INGREDIENTS":
     return {
       ...state,
@@ -251,6 +266,7 @@ function dataReducer(state: DataState, action: DataAction): DataState {
 }
 
 const initialState: DataState = {
+  passedTutorial: JSON.parse(localStorage.getItem("PASSED_TUTORIAL") as string) ?? false,
   loading: {
     fetchIngredients: false,
     createIngredient: false,

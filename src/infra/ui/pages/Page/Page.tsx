@@ -4,6 +4,7 @@ import useEvents from "../../hooks/useEvents"
 import styled from "styled-components"
 import PageLayout from "../PageLayout"
 import Icon from "@infra/ui/components/icons/Icon"
+import { useNavigate } from "react-router"
 
 const IngredientsPage = React.lazy(() => import("../IngredientsPage"))
 const RecipesPage = React.lazy(() => import("../RecipesPage"))
@@ -36,9 +37,14 @@ type PageProps = {
 }
 
 export function Page(props: PageProps) {
+
+  const navigate = useNavigate()
   const { variant } = props
   const { data } = useDataContext()
   const { generatePdfRequest, loadFromJsonRequest, saveToJson } = useEvents()
+
+  if (data.passedTutorial && variant === "Help")
+    navigate("/recipes")
 
   useEffect(() => {
     console.log("Selected recipes updated: " + data.selectedRecipes)

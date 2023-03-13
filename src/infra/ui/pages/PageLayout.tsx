@@ -108,11 +108,15 @@ export default function PageLayout(props: PageLayoutProps) {
   const { children } = props
 
   const { generatePdfRequest, loadFromJsonRequest, saveToJson } = useEvents()
-  const { data } = useDataContext()
+  const { data, dispatch } = useDataContext()
   const { theme, toggleTheme } = useTheme()
   const { title, form } = useFormContext()
   const location = useLocation()
   const viewportState = useViewportTracker()
+
+  function handleGotoTutorial() {
+    dispatch({ type: "RETURN_TO_TUTORIAL"})
+  }
 
   const buttonRef = useRef<HTMLDivElement>(null)
   const [showMenuDropdown, setShowMenuDropdown] = useState<boolean>(false)
@@ -152,7 +156,7 @@ export default function PageLayout(props: PageLayoutProps) {
 
           <TopRight>
             <Link to="/">
-              <Button variant="icon" ariaLabel="Help Icon Button">
+              <Button variant="icon" ariaLabel="Help Icon Button" onClick={handleGotoTutorial}>
                 <Icon
                   variant="Help"
                   // size={viewportState.md ? 36 : 24}
