@@ -111,7 +111,7 @@ export default class Recipe {
     this.setMacros()
   }
 
-  public removeIngredient(id: number | string): void {
+  public removeIngredient(id: Id): void {
     if (this.ingredientList) {
       this._ingredientList = this.ingredientList.filter(
         (item) => item.ingredient.id !== id
