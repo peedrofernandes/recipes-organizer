@@ -1,20 +1,18 @@
 import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import { StyledTable, Text } from "@infra/ui/components/styles"
+import { Error } from "@infra/ui/types/Error"
 import React from "react"
 import Input from "../inputs/Input"
 
 type RecipeSelectionTableProps = {
   recipes: [AdaptedRecipe, string][];
   handleChangeDate: (id: Id, value: string) => void
-  error: { status: false } | {
-    status: true
-    message: string
-  }
+  errorState: React.StateType<Error>
 }
 
 export default function RecipeSelectionTable(props: RecipeSelectionTableProps) {
-  const { recipes, handleChangeDate, error } = props
+  const { recipes, handleChangeDate, errorState } = props
 
   return (
     <StyledTable>
@@ -37,7 +35,7 @@ export default function RecipeSelectionTable(props: RecipeSelectionTableProps) {
                 id={`RecipeDate#${r[0].id}`} name={`RecipeDate#${r[0].id}`}
                 initialDate={r[1]}
                 handleChangeDate={(date) => handleChangeDate(r[0].id, date)}
-                error={error}
+                errorState={errorState}
               />
             </td>
           </tr>

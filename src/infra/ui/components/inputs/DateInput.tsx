@@ -12,15 +12,15 @@ type DateInputProps = {
   label?: string
   initialDate: string
   handleChangeDate: (date: string) => void
-  errorState: React.StateType<Error>
+  errorState?: React.StateType<Error>
 }
 
 export default function DateInput(props: DateInputProps) {
   // Props
-  const { id, name, label, initialDate, handleChangeDate, errorState } = props
-  const viewportState = useViewportTracker()
+  const { id, name, label, initialDate, handleChangeDate } = props
+  const [error] = props.errorState || []
 
-  const [error] = errorState
+  const viewportState = useViewportTracker()
 
   return (
     <FieldSet errorStatus={error?.status}>

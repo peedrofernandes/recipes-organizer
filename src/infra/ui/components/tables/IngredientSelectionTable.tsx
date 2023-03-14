@@ -1,20 +1,19 @@
 import { AdaptedIngredient } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import { Subtitle, StyledTable, Text } from "@infra/ui/components/styles"
+import { Error } from "@infra/ui/types/Error"
 import React from "react"
 import Input from "../inputs/Input"
 
 type IngredientSelectionProps = {
   ingredients: [AdaptedIngredient, string][]
   handleChangeGrams: (id: Id, value: string) => void
-  error: { status: false } | {
-    status: true
-    message: string
-  }
+  errorState: React.StateType<Error>
 }
 
 export default function IngredientSelectionTable(props: IngredientSelectionProps) {
-  const { ingredients, error, handleChangeGrams } = props
+  const { ingredients, errorState, handleChangeGrams } = props
+
 
   return (
     <StyledTable>
@@ -42,7 +41,7 @@ export default function IngredientSelectionTable(props: IngredientSelectionProps
                 id={`IngTotalGrams#${i[0].id}`} name={`IngTotalGrams#${i[0].id}`}
                 placeholder="Gramas totais" value={ingredients[index][1]}
                 onChange={(e) => handleChangeGrams(i[0].id, e.target.value)}
-                error={error}
+                errorState={errorState}
               />
             </td>
           </tr>

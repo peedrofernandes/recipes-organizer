@@ -175,7 +175,7 @@ export default function RecipeForm(props: RecipeFormProps) {
   const [ingredientsError, setIngredientsError] = ingredientsErrorState
 
   const typeErrorState = useState<Error>({ status: false })
-  const [typeError, setTypeError] = typeErrorState
+  const [, setTypeError] = typeErrorState
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -289,7 +289,7 @@ export default function RecipeForm(props: RecipeFormProps) {
           { viewportState.md ? (
             <Table
               variant="IngredientSelection"
-              error={ingredientsError}
+              errorState={ingredientsErrorState}
               handleChangeGrams={handleChangeGrams}
               ingredients={ingredients}
             />
@@ -297,7 +297,7 @@ export default function RecipeForm(props: RecipeFormProps) {
             <List
               variant="IngredientSelection"
               ingredients={ingredients}
-              errorStatus={ingredientsError.status}
+              errorState={ingredientsErrorState}
               handleChangeGrams={handleChangeGrams}
             />
           )}

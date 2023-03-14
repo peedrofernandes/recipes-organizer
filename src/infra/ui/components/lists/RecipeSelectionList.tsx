@@ -1,5 +1,6 @@
 import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
+import { Error } from "@infra/ui/types/Error"
 import React from "react"
 import styled from "styled-components"
 import Card from "../cards/Card"
@@ -15,16 +16,11 @@ const List = styled.ul`
 type RecipeSelectionListProps = {
   recipes: [AdaptedRecipe, string][]
   handleChangeDate: (id: Id, date: string) => void
-  error: {
-    status: false
-  } | {
-    status: true
-    message: string
-  }
+  errorState: React.StateType<Error>
 }
 
 export default function RecipeSelectionList(props: RecipeSelectionListProps) {
-  const { recipes, handleChangeDate, error } = props
+  const { recipes, handleChangeDate, errorState } = props
 
   return (
     <List>
@@ -37,7 +33,7 @@ export default function RecipeSelectionList(props: RecipeSelectionListProps) {
                 status="active"
                 recipeWithDate={r}
                 handleChangeDate={handleChangeDate}
-                error={error}
+                errorState={errorState}
               />
             </li>
           ))}

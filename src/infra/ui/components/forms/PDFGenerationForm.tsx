@@ -114,12 +114,15 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
 
 
   // Submit errors and success handling
-  const [datesError, setDatesError] = useState<Error>({ status: false })
+  const datesErrorState = useState<Error>({ status: false })
+  const [datesError, setDatesError] = datesErrorState
+
+
   const [recipesError, setRecipesError] = useState<Error>({ status: false })
   const [randomizationError, setRandomizationError] = useState<Error>({ status: false })
   
-  const mergeErrors = useCallback((errors: Error[]): Error => {
-    return errors.reduce((resultError, currentError) => {
+  const mergeErrors = useCallback((errors: Error[]): React.StateType<Error> => {
+    const defaultStatus = errors.reduce((resultError, currentError) => {
       if (currentError.status) {
         return {
           status: true,
@@ -129,6 +132,8 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
         }
       } else return { ...resultError }
     }, { status: false })
+
+    return useState<Error>(defaultStatus)
   }, [])
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -209,7 +214,7 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
             />
           </DropdownItem>
         )}
-        error={datesError}
+        errorState={datesErrorState}
       />
 
 
@@ -221,17 +226,16 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
           <Table variant="RecipeSelection"
             recipes={selectedRecipes}
             handleChangeDate={handleChangeDate}
-            error={mergeErrors([datesError, recipesError])}
+            errorState={mergeErrors([datesError, recipesError])}
           />
           
         ) : (
           <List variant="RecipeSelection"
             recipes={selectedRecipes}
             handleChangeDate={handleChangeDate}
-            error={mergeErrors([datesError, recipesError])}
+            errorState={mergeErrors([datesError, recipesError])}
           />
         )}
-        {datesError.status && <Span>{datesError.message}</Span>}
       </FieldSet>
 
       
@@ -251,7 +255,7 @@ export default function PDFGenerationForm(props: GeneratePDFFormProps) {
               label="Data inicial"
               initialDate={initialDate}
               handleChangeDate={handleChangeInitialDate}
-              error={datesError}
+              errorState={datesErrorState}
             />
           </div>
           <Button type="button" variant="styled" text="Gerar datas" onClick={handleRandomize} />

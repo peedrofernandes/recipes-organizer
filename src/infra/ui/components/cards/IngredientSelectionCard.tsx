@@ -1,6 +1,7 @@
 import { AdaptedIngredient } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
 import { InputField } from "@infra/ui/components/forms/Form/styles"
+import { Error } from "@infra/ui/types/Error"
 import React from "react"
 import styled from "styled-components"
 import { Span, Subtitle, Text } from "../styles"
@@ -73,12 +74,13 @@ const Macros = styled.ul`
 
 type IngredientSelectionCardProps = {
   ingredientWithGrams: [AdaptedIngredient, string]
-  errorStatus: boolean
+  errorState?: React.StateType<Error>
   handleChangeGrams: (id: Id, qtd: string) => void
 }
 
 export default function IngredientSelectionCard(props: IngredientSelectionCardProps) {
-  const { ingredientWithGrams, errorStatus } = props
+  const { ingredientWithGrams } = props
+  const [error] = props.errorState || []
 
   return (
     <Card>
@@ -105,7 +107,7 @@ export default function IngredientSelectionCard(props: IngredientSelectionCardPr
       )}
       <Fieldset style={{ flexGrow: "1" }}>
         <label><Span>Gramas totais</Span></label>
-        <InputField errorStatus={errorStatus}>
+        <InputField errorStatus={error?.status}>
           <input
             type="text"
             placeholder="Gramas totais"

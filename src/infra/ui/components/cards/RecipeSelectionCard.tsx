@@ -1,5 +1,6 @@
 import { AdaptedRecipe } from "@controllers/AdaptedTypes"
 import { Id } from "@domain/utilities/types/Id"
+import { Error } from "@infra/ui/types/Error"
 import React from "react"
 import styled from "styled-components"
 import Input from "../inputs/Input"
@@ -73,12 +74,7 @@ type RecipeSelectionCardProps = {
   status: "active"
   recipeWithDate: [AdaptedRecipe, string]
   handleChangeDate: (id: Id, date: string) => void
-  error: {
-    status: false
-  } | {
-    status: true
-    message: string
-  }
+  errorState: React.StateType<Error>
 } | {
   status: "inactive"
 }
@@ -124,7 +120,7 @@ export default function RecipeSelectionCard(props: RecipeSelectionCardProps) {
             handleChangeDate={(date) =>
               props.handleChangeDate(props.recipeWithDate[0].id, date)}
             initialDate={props.recipeWithDate[1]}
-            error={props.error}
+            errorState={props.errorState}
           />
 
         </>
