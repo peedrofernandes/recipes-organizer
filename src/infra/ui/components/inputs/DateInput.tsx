@@ -1,4 +1,5 @@
 import useViewportTracker from "@infra/ui/hooks/useViewportTracker"
+import { Error } from "@infra/ui/types/Error"
 import React from "react"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
@@ -11,18 +12,15 @@ type DateInputProps = {
   label?: string
   initialDate: string
   handleChangeDate: (date: string) => void
-  error?: {
-    status: false
-  } | {
-    status: true
-    message: string
-  }
+  errorState: React.StateType<Error>
 }
 
 export default function DateInput(props: DateInputProps) {
   // Props
-  const { id, name, label, initialDate, handleChangeDate, error } = props
+  const { id, name, label, initialDate, handleChangeDate, errorState } = props
   const viewportState = useViewportTracker()
+
+  const [error] = errorState
 
   return (
     <FieldSet errorStatus={error?.status}>

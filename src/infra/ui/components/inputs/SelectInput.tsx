@@ -1,6 +1,8 @@
+import { Error } from "@infra/ui/types/Error"
 import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
 import { Dropdown, InputField } from "../forms/Form/styles"
 import Icon from "../icons/Icon"
+import { Span } from "../styles"
 import { FieldSet } from "./Input/styles"
 
 interface SelectInputProps<T> {
@@ -20,10 +22,7 @@ interface SelectInputProps<T> {
   ]
   label?: string
   placeholder?: string
-  error?: { status: false } | {
-    status: true
-    message: string
-  }
+  errorState?: React.StateType<Error>
 }
 
 export type SelectInputRefs = {
@@ -36,7 +35,8 @@ function SelectInputComponent<T>(
   ref: React.ForwardedRef<SelectInputRefs>
 ) {
   // Props
-  const { id, name, label, placeholder, data, createOptions, error } = props
+  const { id, name, label, placeholder, data, createOptions } = props
+  const [error] = props.errorState || []
 
   // Refs
   const searchRef = useRef<HTMLDivElement>(null)
@@ -71,6 +71,7 @@ function SelectInputComponent<T>(
       <InputField
         ref={searchRef}
         onClick={() => setShowDropdown(true)}
+        errorStatus={error?.status}
       >
         {useMemo(() => (
           <Icon variant={data.loading ? "Spinner" : "Search"} size={20} />
@@ -84,6 +85,7 @@ function SelectInputComponent<T>(
         />
     
       </InputField>
+      {error?.status && <Span>{error.message}</Span>}
       {showDropdown && !data.loading && data.options.length > 0 && (
         <Dropdown ref={dropdownRef}>
           {dataSearched.map(createOptions)}

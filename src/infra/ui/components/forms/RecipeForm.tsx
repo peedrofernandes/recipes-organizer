@@ -168,9 +168,14 @@ export default function RecipeForm(props: RecipeFormProps) {
   }
 
   // Errors and submit logic
-  const [nameError, setNameError] = useState<Error>({ status: false })
-  const [ingredientsError, setIngredientsError] = useState<Error>({ status: false })
-  const [typeError, setTypeError] = useState<Error>({ status: false })
+  const nameErrorState = useState<Error>({ status: false })
+  const [nameError, setNameError] = nameErrorState
+
+  const ingredientsErrorState = useState<Error>({ status: false })
+  const [ingredientsError, setIngredientsError] = ingredientsErrorState
+
+  const typeErrorState = useState<Error>({ status: false })
+  const [typeError, setTypeError] = typeErrorState
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -241,7 +246,7 @@ export default function RecipeForm(props: RecipeFormProps) {
       {/* Ingredients Select */}
       <Input<AdaptedIngredient> variant="select"
         id="SelectIngredients" name="SelectIngredients"
-        label="Ingredientes" error={ingredientsError}
+        label="Ingredientes" errorState={ingredientsErrorState}
         ref={selectRef}
         data={props.data.loading ? { loading: true } : {
           loading: false,
@@ -296,7 +301,6 @@ export default function RecipeForm(props: RecipeFormProps) {
               handleChangeGrams={handleChangeGrams}
             />
           )}
-          {ingredientsError.status && <Span>{ingredientsError.message}</Span>}
         </FieldSet>
       )}
 
@@ -318,11 +322,8 @@ export default function RecipeForm(props: RecipeFormProps) {
             {typeTranslator[opt]}
           </DropdownItem>
         )}
-        error={typeError}
+        errorState={typeErrorState}
       />
-      <FieldSet errorStatus={typeError.status}>
-        {typeError.status && <Span>{typeError.message}</Span>}
-      </FieldSet>
 
       
 

@@ -1,3 +1,4 @@
+import { Error } from "@infra/ui/types/Error"
 import React from "react"
 import { InputField } from "../forms/Form/styles"
 import { Span } from "../styles"
@@ -12,20 +13,17 @@ type NumberInputProps = {
   step?: string
   min?: string
   placeholder?: string
-  error?: {
-    status: false
-  } | {
-    status: true
-    message: string
-  }
+  errorState?: React.StateType<Error>
   showErrorMessage?: boolean
 }
 
 export default function NumberInput(props: NumberInputProps) {
+  const [error] = props.errorState || []
+
   return (
-    <FieldSet errorStatus={props.error?.status}>
+    <FieldSet errorStatus={error?.status}>
       {props.label && (<label>{props.label}</label>)}
-      <InputField errorStatus={props.error?.status}>
+      <InputField errorStatus={error?.status}>
         <input
           type="number" id={props.id} name={props.name}
           step={props.step} min={props.min}
@@ -33,8 +31,8 @@ export default function NumberInput(props: NumberInputProps) {
           onChange={props.onChange}
         />
       </InputField>
-      {props.showErrorMessage && props.error?.status && (
-        <Span>{props.error.message}</Span>
+      {props.showErrorMessage && error?.status && (
+        <Span>{error.message}</Span>
       )}
     </FieldSet>
   )

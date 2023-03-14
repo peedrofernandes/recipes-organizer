@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 
 export const FieldSet = styled.fieldset<{
   errorStatus?: boolean
@@ -35,14 +35,19 @@ export const FieldSet = styled.fieldset<{
   }
 `
 
-export const FileInputLabel = styled.label`
+export const FileInputLabel = styled.label<{ errorStatus?: boolean }>`
   position: relative;
   overflow: hidden;
   background-color: ${({ theme }) => theme.main.primaryV2};
   width: 80%;
   padding: 16px;
-  border: 1px dashed ${({ theme }) => theme.main.contrastV2};
   border-radius: 4px;
+  
+  ${({ theme, errorStatus }) => css`
+    border: 1px dashed ${errorStatus ? theme.color.red : theme.main.contrastV2};
+    * { color: ${errorStatus ? theme.color.red : theme.main.contrastV1}; };
+  `}
+
 
   input[type="file"] {
     position: absolute;

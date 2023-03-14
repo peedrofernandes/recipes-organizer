@@ -4,6 +4,7 @@ import { FormContainer, InputGroup, SubmitContainer } from "./Form/styles"
 import React, { useState } from "react"
 import Button from "../buttons/Button"
 import Input from "../inputs/Input"
+import { Error } from "@infra/ui/types/Error"
 
 type IngredientFormProps = {
   variant: "Create"
@@ -19,13 +20,6 @@ type IngredientFormProps = {
 }
 
 type StringTuple = [string, string, string, string]
-
-type Error = {
-  status: false
-} | {
-  status: true
-  message: string
-}
 
 export default function IngredientForm(props: IngredientFormProps) {
 
@@ -83,8 +77,10 @@ export default function IngredientForm(props: IngredientFormProps) {
     setImageFile(e.target.files?.[0] || null)
   }
 
-  const [nameError, setNameError] = useState<Error>({ status: false })
-  const [macrosError, setMacrosError] = useState<Error>({ status: false })
+  const nameErrorState = useState<Error>({ status: false })
+  const [, setNameError] = nameErrorState
+  const macrosErrorState = useState<Error>({ status: false })
+  const [, setMacrosError] = macrosErrorState
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -142,7 +138,7 @@ export default function IngredientForm(props: IngredientFormProps) {
         label="Nome*"
         onChange={handleChangeName}
         value={name}
-        error={nameError}
+        errorState={nameErrorState}
         showErrorMessage
       />
 
@@ -168,7 +164,7 @@ export default function IngredientForm(props: IngredientFormProps) {
           min="0" step="any"
           onChange={(e) => handleChangeMacros("proteins", e)}
           value={macros[0]}
-          error={macrosError}
+          errorState={macrosErrorState}
         />
 
         {/* Carbs Input */}
@@ -178,7 +174,7 @@ export default function IngredientForm(props: IngredientFormProps) {
           min="0" step="any"
           onChange={(e) => handleChangeMacros("carbs", e)}
           value={macros[1]}
-          error={macrosError}
+          errorState={macrosErrorState}
         />
 
         {/* Fats Input */}
@@ -188,7 +184,7 @@ export default function IngredientForm(props: IngredientFormProps) {
           min="0" step="any"
           onChange={(e) => handleChangeMacros("fats", e)}
           value={macros[2]}
-          error={macrosError}
+          errorState={macrosErrorState}
         />
       </InputGroup>
 
@@ -199,7 +195,7 @@ export default function IngredientForm(props: IngredientFormProps) {
         min="0" step="any"
         onChange={(e) => handleChangeMacros("totalGrams", e)}
         value={macros[3]}
-        error={macrosError}
+        errorState={macrosErrorState}
         showErrorMessage
       />
 
@@ -209,7 +205,7 @@ export default function IngredientForm(props: IngredientFormProps) {
       <Input variant="file" id="file" name="file"
         accept="image/png, image/gif, image/jpeg" onChange={handleChangeFile}
         fileName={imageFile?.name ?? ""}
-      />
+      /> 
 
       
 

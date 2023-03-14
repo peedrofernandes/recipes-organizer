@@ -1,3 +1,4 @@
+import { Error } from "@infra/ui/types/Error"
 import React, { useState } from "react"
 import Button from "../buttons/Button"
 import Input from "../inputs/Input"
@@ -7,13 +8,6 @@ type LoadFromFileFormProps = {
   events: { load: (file: File) => Promise<void> }
 }
 
-type Error = ({
-  status: false
-} | {
-  status: true
-  message: string
-})
-
 export default function LoadFromFileForm(props: LoadFromFileFormProps) {
   const [jsonFile, setJsonFile] = useState<File | null>(null)
   function handleChangeFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -21,18 +15,16 @@ export default function LoadFromFileForm(props: LoadFromFileFormProps) {
     setJsonFile(e.target.files?.[0] || null)
   }
 
-  const [fileError, setFileError] = useState<Error>({
-    status: false
-  })
+  const fileErrorState = useState<Error>({ status: false })
+  const [, setFileError] = fileErrorState
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!jsonFile) {
-      setFileError(error => ({
-        ...error,
+      setFileError({
         status: true,
         message: "Escolha um arquivo para carregar seus dados!"
-      }))
+      })
       return
     }
 
@@ -47,7 +39,7 @@ export default function LoadFromFileForm(props: LoadFromFileFormProps) {
       {/* File Input */}
       <Input variant="file" id="LoadFromFileInput" name="LoadFromFileInput"
         accept="application/JSON" onChange={handleChangeFile}
-        fileName={jsonFile?.name || ""} error={fileError}
+        fileName={jsonFile?.name || ""} errorState={fileErrorState} showErrorMessage
       />
 
       

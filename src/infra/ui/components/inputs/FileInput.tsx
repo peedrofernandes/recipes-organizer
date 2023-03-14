@@ -1,3 +1,4 @@
+import { Error } from "@infra/ui/types/Error"
 import React, { useRef } from "react"
 import Icon from "../icons/Icon"
 import { Span, Subtitle, Title } from "../styles"
@@ -9,16 +10,13 @@ type FileInputProps = {
   fileName: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   accept: string
-  error?: {
-    status: false
-  } | {
-    status: true
-    message: string
-  }
+  errorState?: React.StateType<Error>
   showErrorMessage?: boolean
 }
 
 export default function FileInput(props: FileInputProps) {
+  const [error, setError] = props.errorState || []
+
   const fileInputButton = useRef<HTMLLabelElement>(null)
 
   function handleDragOver(e: React.MouseEvent<HTMLLabelElement>) {
@@ -35,8 +33,10 @@ export default function FileInput(props: FileInputProps) {
     fileInputButton.current.classList.remove("dragged")
   }
 
-  function handleClick(e: React.MouseEvent<HTMLLabelElement>) {
+  function handleClick(e: React.MouseEvent<HTMLElement>) {
     if (!fileInputButton.current) return
+
+    if (setError) setError({ status: false })
 
     const rect = fileInputButton.current.getBoundingClientRect()
     const x = e.clientX - rect.x
@@ -53,13 +53,14 @@ export default function FileInput(props: FileInputProps) {
   }
 
   return (
-    <FieldSet errorStatus={props.error?.status ?? false}>
+    <FieldSet errorStatus={error?.status ?? false}>
       <FileInputLabel
         htmlFor={props.name}
         ref={fileInputButton}
         onDragOverCapture={handleDragOver}
         onDragLeaveCapture={handleDragEnd}
         onDrop={handleDragEnd}
+        errorStatus={error?.status}
         onClick={handleClick}
       >
         <input
@@ -78,8 +79,8 @@ export default function FileInput(props: FileInputProps) {
         )}
 
       </FileInputLabel>
-      {props.showErrorMessage && props.error?.status &&
-        <Span>{props.error.message}</Span>
+      {props.showErrorMessage && error?.status &&
+        <Span>{error.message}</Span>
       }
     </FieldSet>
   )

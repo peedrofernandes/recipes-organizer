@@ -1,3 +1,4 @@
+import { Error } from "@infra/ui/types/Error"
 import React from "react"
 import { InputField } from "../forms/Form/styles"
 import { Span } from "../styles"
@@ -10,21 +11,18 @@ type TextInputProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   label?: string
   placeholder?: string
-  error?: {
-    status: false
-  } | {
-    status: true
-    message: string
-  }
+  errorState?: React.StateType<Error>
   showErrorMessage?: boolean
 }
 
 export default function TextInput(props: TextInputProps) {
+  const [error] = props.errorState ?? []
+
   return (
-    <FieldSet errorStatus={props.error?.status}>
+    <FieldSet errorStatus={error?.status}>
 
       {props.label && (<label>{props.label}</label>)}
-      <InputField errorStatus={props.error?.status}>
+      <InputField errorStatus={error?.status}>
         <input
           type="text" id={props.id} name={props.name}
           placeholder={props.placeholder}
@@ -32,8 +30,8 @@ export default function TextInput(props: TextInputProps) {
           onChange={props.onChange}
         />
       </InputField>
-      {props.showErrorMessage && props.error?.status && (
-        <Span>{props.error.message}</Span>
+      {props.showErrorMessage && error?.status && (
+        <Span>{error.message}</Span>
       )}
     </FieldSet>
   )

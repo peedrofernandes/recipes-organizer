@@ -10,6 +10,11 @@ declare module "react" {
   function lazy<T extends ComponentType<any>>(
     factory: () => Promise<{ default: T }>
   ): T
+  
+  type StateType<T> = [
+    T,
+    React.Dispatch<React.SetStateAction<T>>
+  ]
 }
 
 declare module "styled-components" {
