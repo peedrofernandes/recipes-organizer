@@ -36,7 +36,7 @@ type PageProps = {
   variant: "Help" | "Ingredients" | "Recipes"
 }
 
-export function Page(props: PageProps) {
+function PageComponent(props: PageProps) {
 
   const navigate = useNavigate()
   const { variant } = props
@@ -96,3 +96,5 @@ export function Page(props: PageProps) {
     </Suspense>
   )
 }
+
+export const Page = React.memo(PageComponent)

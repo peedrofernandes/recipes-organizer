@@ -5,11 +5,9 @@ import IngredientRepository from "../repositories/IngredientRepository"
 import RecipeRepository from "../repositories/RecipeRepository"
 import services from "../common/services"
 import useDataContext from "@infra/ui/hooks/useDataContext"
-import React from "react"
-import PDF from "@infra/ui/components/PDF"
+import { createElement } from "react"
 import { pdf } from "@react-pdf/renderer"
 import { saveAs } from "file-saver"
-
 
 export default function implementRecipeController(
   updateUIOnCreate: (recipe: AdaptedRecipe) => void,
@@ -54,7 +52,8 @@ export default function implementRecipeController(
     console.log(recipesWithDates)
 
     const pdfProps = { list: recipesWithDates }
-    const PDFElement: React.ReactElement = React.createElement(PDF, pdfProps)
+    const PDF = (await import("@infra/ui/components/PDF")).default
+    const PDFElement: React.ReactElement = createElement(PDF, pdfProps)
 
     const blob = await pdf(PDFElement).toBlob()
     saveAs(blob, "Recipes.pdf")
